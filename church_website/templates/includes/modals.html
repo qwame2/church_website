@@ -1,0 +1,46 @@
+<div
+  id="newsModal"
+  class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300"
+>
+  <div
+    class="bg-white rounded-2xl max-w-2xl w-full max-h-[80vh] overflow-y-auto relative"
+  >
+    <button
+      onclick="closeNewsModal()"
+      class="absolute top-4 right-4 bg-gray-100 rounded-full p-2"
+    >
+      <i class="ri-close-line"></i>
+    </button>
+    <img
+      id="newsModalImage"
+      src=""
+      class="w-full h-48 object-cover rounded-t-2xl"
+    />
+    <div class="p-8">
+      <span
+        id="newsModalCategory"
+        class="text-primary font-bold text-xs uppercase tracking-wide"
+      ></span>
+      <h2
+        id="newsModalTitle"
+        class="text-2xl font-black text-gray-900 mt-2 mb-4"
+      ></h2>
+      <div id="newsModalContent" class="prose text-gray-600"></div>
+    </div>
+  </div>
+</div>
+
+<div
+  id="imageModal"
+  class="fixed inset-0 z-[70] flex items-center justify-center bg-black/95 p-4 opacity-0 pointer-events-none transition-opacity duration-300"
+  onclick="closeImageModal()"
+>
+  <img
+    id="lightboxImage"
+    src=""
+    class="max-w-full max-h-[90vh] rounded shadow-2xl scale-90 transition-transform duration-300"
+  />
+  <button class="absolute top-4 right-4 text-white hover:text-gray-300">
+    <i class="ri-close-line text-4xl"></i>
+  </button>
+</div>

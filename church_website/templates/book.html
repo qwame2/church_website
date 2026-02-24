@@ -1,0 +1,4466 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Church of Christ (SM) Library | Free Christian Resources</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      /* Mini Player Styles */
+      .mini-player {
+        position: fixed;
+        z-index: 9999;
+        background: white;
+        border-radius: 12px;
+        box-shadow:
+          0 10px 25px -5px rgba(0, 0, 0, 0.2),
+          0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        width: 360px;
+        cursor: default;
+        user-select: none;
+        transition: box-shadow 0.2s ease;
+        border: 1px solid #e2e8f0;
+        bottom: 20px;
+        right: 20px;
+      }
+
+      .mini-player.dragging {
+        opacity: 0.95;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        cursor: grabbing;
+      }
+
+      .mini-player.dragging .mini-player-drag-handle {
+        cursor: grabbing;
+      }
+
+      .mini-player.hidden {
+        display: none;
+      }
+
+      .mini-player-drag-handle {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 24px;
+        background: #f8f4e9;
+        border-top-left-radius: 12px;
+        border-top-right-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #8b6b4d;
+        cursor: grab;
+        border-bottom: 1px solid #e2e8f0;
+        font-size: 12px;
+      }
+
+      .mini-player-drag-handle:hover {
+        background: #f0e6d2;
+      }
+
+      .mini-player-drag-handle i {
+        font-size: 14px;
+      }
+
+      .mini-player-content {
+        padding: 28px 16px 16px 16px;
+        position: relative;
+      }
+
+      .mini-player-cover {
+        width: 60px;
+        height: 60px;
+        border-radius: 8px;
+        object-fit: cover;
+        position: absolute;
+        top: 28px;
+        left: 16px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      }
+
+      .mini-player-info {
+        margin-left: 76px;
+        margin-bottom: 12px;
+        padding-right: 30px;
+      }
+
+      .mini-player-title {
+        font-weight: 600;
+        font-size: 14px;
+        color: #1e293b;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .mini-player-author {
+        font-size: 12px;
+        color: #64748b;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .mini-player-controls {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 16px;
+        margin: 16px 0 12px 0;
+      }
+
+      .mini-player-control-btn {
+        background: none;
+        border: none;
+        color: #4b5563;
+        cursor: pointer;
+        font-size: 14px;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        transition: all 0.2s ease;
+      }
+
+      .mini-player-control-btn:hover {
+        background: #f3f4f6;
+        color: #8b6b4d;
+      }
+
+      .mini-player-control-btn.play-pause-btn {
+        background: #8b6b4d;
+        color: white;
+        width: 40px;
+        height: 40px;
+        font-size: 16px;
+      }
+
+      .mini-player-control-btn.play-pause-btn:hover {
+        background: #6b4f3a;
+        transform: scale(1.05);
+      }
+
+      .mini-player-progress-container {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 8px;
+      }
+
+      .mini-player-time {
+        font-size: 11px;
+        color: #64748b;
+        min-width: 35px;
+      }
+
+      .mini-player-progress-bar {
+        flex: 1;
+        height: 4px;
+        background: #e2e8f0;
+        border-radius: 2px;
+        cursor: pointer;
+        position: relative;
+      }
+
+      .mini-player-progress-fill {
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 100%;
+        background: #8b6b4d;
+        border-radius: 2px;
+        width: 0%;
+        transition: width 0.1s linear;
+      }
+
+      .mini-player-close-btn {
+        position: absolute;
+        top: 32px;
+        right: 16px;
+        background: none;
+        border: none;
+        color: #9ca3af;
+        cursor: pointer;
+        font-size: 14px;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        transition: all 0.2s ease;
+      }
+
+      .mini-player-close-btn:hover {
+        background: #fee2e2;
+        color: #ef4444;
+      }
+
+      /* Mobile responsiveness */
+      @media (max-width: 480px) {
+        .mini-player {
+          width: 300px;
+          bottom: 10px;
+          right: 10px;
+        }
+
+        .mini-player-cover {
+          width: 50px;
+          height: 50px;
+        }
+
+        .mini-player-info {
+          margin-left: 66px;
+        }
+
+        .mini-player-title {
+          font-size: 13px;
+        }
+
+        .mini-player-author {
+          font-size: 11px;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+
+      :root {
+        --easing: cubic-bezier(0.4, 0, 0.2, 1);
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.07);
+        --card-hover:
+          0 20px 25px -5px rgba(0, 0, 0, 0.1),
+          0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          "Inter",
+          -apple-system,
+          BlinkMacSystemFont,
+          sans-serif;
+        background-color: #faf9f8;
+        color: #2c3e50;
+        min-height: 100vh;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      /* Library Card Styles */
+      .library-card {
+        background: #ffffff;
+        border-radius: 16px;
+        box-shadow: var(--shadow-sm);
+        border: 1px solid rgba(0, 0, 0, 0.03);
+        transition: all 0.4s var(--easing);
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        will-change: transform, box-shadow;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .library-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--card-hover);
+        border-color: rgba(0, 0, 0, 0.05);
+      }
+
+      .library-card:active {
+        transform: translateY(-2px);
+        transition-duration: 0.1s;
+      }
+
+      .library-card.featured {
+        border-left: 4px solid #b8860b;
+      }
+
+      .library-card.new::after {
+        content: "NEW";
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        background: #b8860b;
+        color: white;
+        font-size: 10px;
+        font-weight: 600;
+        padding: 2px 8px;
+        border-radius: 12px;
+        letter-spacing: 0.5px;
+        z-index: 10;
+      }
+
+      .book-cover-wrapper {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 2/3;
+        overflow: hidden;
+        background: linear-gradient(135deg, #e6d5b8 0%, #d4bc8c 100%);
+      }
+
+      .book-cover {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.6s var(--easing);
+      }
+
+      .library-card:hover .book-cover {
+        transform: scale(1.05);
+      }
+
+      .book-info {
+        padding: 20px 16px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        background: linear-gradient(to bottom, #ffffff, #fafafa);
+      }
+
+      .book-title {
+        font-size: 16px;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #1e293b;
+        margin-bottom: 4px;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+
+      .book-author {
+        font-size: 13px;
+        color: #64748b;
+        margin-bottom: 8px;
+        line-height: 1.4;
+      }
+
+      .book-metadata {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin: 12px 0;
+        font-size: 12px;
+        color: #475569;
+      }
+
+      .metadata-item {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .metadata-item i {
+        color: #94a3b8;
+        font-size: 11px;
+      }
+
+      /* Format badges */
+      .format-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 2px 8px;
+        background: #f1f5f9;
+        border-radius: 12px;
+        font-size: 10px;
+        font-weight: 500;
+        color: #475569;
+      }
+
+      .format-badge i {
+        font-size: 8px;
+      }
+
+      /* Free access badge */
+      .access-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 10px;
+        background: #f0e6d2;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+        color: #8b6b4d;
+        width: fit-content;
+        margin-top: auto;
+      }
+
+      .access-badge i {
+        color: #8b6b4d;
+      }
+
+      .read-count {
+        font-size: 11px;
+        color: #64748b;
+        margin-top: 8px;
+      }
+
+      .read-count i {
+        color: #94a3b8;
+        margin-right: 4px;
+      }
+
+      /* Category Tags */
+      .category-tag {
+        display: inline-flex;
+        align-items: center;
+        padding: 8px 16px;
+        background: #f1f5f9;
+        border-radius: 30px;
+        font-size: 13px;
+        font-weight: 500;
+        color: #334155;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        border: 1px solid transparent;
+      }
+
+      .category-tag:hover {
+        background: #e2e8f0;
+        border-color: #cbd5e1;
+      }
+
+      .category-tag.active {
+        background: #8b6b4d;
+        color: white;
+        border-color: #8b6b4d;
+      }
+
+      .category-tag i {
+        margin-right: 6px;
+        font-size: 12px;
+      }
+
+      /* Hero Section */
+      .library-hero {
+        background: linear-gradient(135deg, #8b6b4d 0%, #6b4f3a 100%);
+        border-radius: 24px;
+        padding: 48px 40px;
+        margin-bottom: 40px;
+        color: white;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .library-hero::before {
+        content: "✝️📖🎧📱";
+        position: absolute;
+        right: 40px;
+        bottom: 20px;
+        font-size: 120px;
+        opacity: 0.1;
+        transform: rotate(-10deg);
+      }
+
+      .hero-title {
+        font-size: 40px;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        margin-bottom: 16px;
+        line-height: 1.2;
+      }
+
+      .hero-subtitle {
+        font-size: 18px;
+        color: #f0e6d2;
+        max-width: 600px;
+        margin-bottom: 32px;
+        line-height: 1.5;
+      }
+
+      .hero-stats {
+        display: flex;
+        gap: 40px;
+        flex-wrap: wrap;
+      }
+
+      .hero-stat {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .hero-stat-value {
+        font-size: 28px;
+        font-weight: 700;
+        color: white;
+      }
+
+      .hero-stat-label {
+        font-size: 14px;
+        color: #e6d5b8;
+      }
+
+      /* Free Access Banner */
+      .free-banner {
+        background: white;
+        border-radius: 16px;
+        padding: 20px 24px;
+        margin-bottom: 30px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        border: 1px solid #e2e8f0;
+        box-shadow: var(--shadow-sm);
+        flex-wrap: wrap;
+      }
+
+      .free-icon {
+        width: 48px;
+        height: 48px;
+        background: #f0e6d2;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #8b6b4d;
+        font-size: 24px;
+        flex-shrink: 0;
+      }
+
+      .free-text h3 {
+        font-size: 18px;
+        font-weight: 600;
+        color: #1e293b;
+        margin-bottom: 4px;
+      }
+
+      .free-text p {
+        font-size: 14px;
+        color: #64748b;
+      }
+
+      /* Search Section */
+      .search-section {
+        background: white;
+        border-radius: 20px;
+        padding: 24px;
+        box-shadow: var(--shadow-md);
+        margin-bottom: 40px;
+        border: 1px solid rgba(0, 0, 0, 0.03);
+      }
+
+      .search-container {
+        position: relative;
+        max-width: 100%;
+        margin-bottom: 20px;
+      }
+
+      .search-input {
+        width: 100%;
+        padding: 16px 20px 16px 52px;
+        border: 1px solid #e2e8f0;
+        border-radius: 14px;
+        font-size: 16px;
+        color: #1e293b;
+        background: #ffffff;
+        transition: all 0.3s var(--easing);
+        box-shadow: var(--shadow-sm);
+      }
+
+      .search-input:focus {
+        outline: none;
+        border-color: #8b6b4d;
+        box-shadow: 0 0 0 3px rgba(139, 107, 77, 0.1);
+      }
+
+      .search-icon {
+        position: absolute;
+        left: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #94a3b8;
+        font-size: 18px;
+      }
+
+      /* Quick Filters */
+      .quick-filters {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+      }
+
+      .filter-label {
+        font-size: 14px;
+        font-weight: 500;
+        color: #475569;
+        margin-right: 4px;
+      }
+
+      /* Section Headers */
+      .section-header {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+
+      .section-title {
+        font-size: 24px;
+        font-weight: 700;
+        color: #1e293b;
+        letter-spacing: -0.02em;
+      }
+
+      .section-title i {
+        color: #8b6b4d;
+        margin-right: 8px;
+        font-size: 20px;
+      }
+
+      .section-link {
+        font-size: 14px;
+        color: #64748b;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: color 0.2s ease;
+      }
+
+      .section-link:hover {
+        color: #1e293b;
+      }
+
+      /* Categories Grid */
+      .categories-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 12px;
+        margin-bottom: 40px;
+      }
+
+      .category-chip {
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 40px;
+        padding: 12px 16px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        transition: all 0.2s ease;
+        cursor: pointer;
+      }
+
+      .category-chip:hover {
+        border-color: #8b6b4d;
+        background: #f0e6d2;
+        transform: translateY(-2px);
+      }
+
+      .category-name {
+        font-size: 14px;
+        font-weight: 500;
+        color: #334155;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .category-name i {
+        color: #8b6b4d;
+        font-size: 16px;
+      }
+
+      .category-count {
+        font-size: 12px;
+        color: #94a3b8;
+        background: #f1f5f9;
+        padding: 2px 8px;
+        border-radius: 20px;
+      }
+
+      /* Now Reading Counter */
+      .now-reading {
+        position: absolute;
+        bottom: 12px;
+        left: 12px;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(4px);
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 500;
+        color: #1e293b;
+        box-shadow: var(--shadow-sm);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        z-index: 5;
+      }
+
+      .now-reading i {
+        color: #8b6b4d;
+        font-size: 10px;
+      }
+
+      /* Audio indicator */
+      .audio-indicator {
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(4px);
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 500;
+        color: #1e293b;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        z-index: 5;
+      }
+
+      .audio-indicator i {
+        color: #8b6b4d;
+      }
+
+      /* E-book indicator */
+      .ebook-indicator {
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(4px);
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 500;
+        color: #1e293b;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        z-index: 5;
+      }
+
+      .ebook-indicator i {
+        color: #2563eb;
+      }
+
+      /* Footer */
+      .library-footer {
+        background: white;
+        border-top: 1px solid #e2e8f0;
+        padding: 48px 0 24px;
+        margin-top: 60px;
+      }
+
+      .footer-links {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: 32px;
+        margin-bottom: 40px;
+      }
+
+      .footer-heading {
+        font-size: 14px;
+        font-weight: 600;
+        color: #1e293b;
+        margin-bottom: 16px;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+      }
+
+      .footer-link {
+        display: block;
+        font-size: 14px;
+        color: #64748b;
+        margin-bottom: 10px;
+        transition: color 0.2s ease;
+      }
+
+      .footer-link:hover {
+        color: #1e293b;
+      }
+
+      /* Church info section */
+      .church-info {
+        background: white;
+        border-radius: 16px;
+        padding: 24px;
+        border: 1px solid #e2e8f0;
+        margin-bottom: 30px;
+      }
+
+      .church-verse {
+        font-style: italic;
+        color: #8b6b4d;
+        border-left: 3px solid #8b6b4d;
+        padding-left: 16px;
+        margin: 16px 0;
+        font-size: 16px;
+      }
+
+      /* Modal Styles - Updated */
+      #audioPlayerModal,
+      #ebookReaderModal {
+        transition: opacity 0.3s ease;
+      }
+
+      /* Removed backdrop blur */
+      #modal-backdrop,
+      #ebook-modal-backdrop {
+        background: rgba(0, 0, 0, 0.5);
+      }
+
+      #modal-content,
+      #ebook-modal-content {
+        transform-origin: center;
+        transition: all 0.3s var(--easing);
+      }
+
+      /* Make modal draggable */
+      #modal-content.draggable {
+        cursor: move;
+        position: relative;
+      }
+
+      #modal-content.dragging {
+        opacity: 0.95;
+        cursor: grabbing;
+        box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.5);
+      }
+
+      /* Modal close button inside container */
+      .modal-close-btn {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        background: rgba(255, 255, 255, 0.9);
+        border: none;
+        color: #4b5563;
+        cursor: pointer;
+        font-size: 14px;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        transition: all 0.2s ease;
+        z-index: 10;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .modal-close-btn:hover {
+        background: #fee2e2;
+        color: #ef4444;
+        transform: scale(1.1);
+      }
+
+      #audioPlayer {
+        width: 100%;
+        height: 40px;
+        border-radius: 20px;
+      }
+
+      #audioPlayer::-webkit-media-controls-panel {
+        background-color: #f1f5f9;
+      }
+
+      #audioPlayer::-webkit-media-controls-play-button {
+        background-color: #8b6b4d;
+        border-radius: 50%;
+        color: white;
+      }
+
+      /* PDF Viewer Styles */
+      .pdf-viewer-container {
+        background: #525659;
+        padding: 20px;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        overflow: auto;
+      }
+
+      .pdf-embed {
+        width: 100%;
+        height: 100%;
+        border: none;
+        border-radius: 4px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .library-hero {
+          padding: 32px 24px;
+        }
+
+        .hero-title {
+          font-size: 32px;
+        }
+
+        .hero-subtitle {
+          font-size: 16px;
+        }
+
+        .hero-stats {
+          gap: 24px;
+        }
+
+        .section-title {
+          font-size: 20px;
+        }
+      }
+
+      @media (max-width: 640px) {
+        .library-hero {
+          border-radius: 16px;
+          padding: 24px 20px;
+        }
+
+        .hero-title {
+          font-size: 28px;
+        }
+
+        .quick-filters {
+          overflow-x: auto;
+          padding-bottom: 8px;
+          -webkit-overflow-scrolling: touch;
+          flex-wrap: nowrap;
+        }
+
+        .category-tag {
+          white-space: nowrap;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Navigation -->
+    {% include 'bookIncludes/nav.html' %}
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <!-- Hero Section -->
+      <!-- Hero Section with Real-Time Stats -->
+      <div class="library-hero">
+        <h1 class="hero-title">The Church of Christ (SM) Library</h1>
+        <p class="hero-subtitle">
+          Free Christian resources for spiritual growth. Scripture,
+          commentaries, audiobooks, e-books, poetry, mysteries, and more —
+          available to all, anytime.
+        </p>
+
+        <div class="hero-stats" id="hero-stats">
+          <div class="hero-stat">
+            <span class="hero-stat-value" id="total-resources">0</span>
+            <span class="hero-stat-label">Total Resources</span>
+          </div>
+          <div class="hero-stat">
+            <span class="hero-stat-value" id="total-audiobooks">0</span>
+            <span class="hero-stat-label">Audiobooks</span>
+          </div>
+          <div class="hero-stat">
+            <span class="hero-stat-value" id="total-ebooks">0</span>
+            <span class="hero-stat-label">E-Books</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Scripture Verse -->
+      <div class="church-info">
+        <div class="church-verse">
+          "Study to shew thyself approved unto God, a workman that needeth not
+          to be ashamed, rightly dividing the word of truth." — 2 Timothy 2:15
+        </div>
+      </div>
+
+      <!-- Free Access Banner -->
+      <div class="free-banner">
+        <div class="free-icon">
+          <i class="fas fa-infinity"></i>
+        </div>
+        <div class="free-text">
+          <h3>Free for all members</h3>
+          <p>
+            All resources are available to everyone simultaneously. No
+            waitlists, no barriers.
+          </p>
+        </div>
+        <div class="ml-auto flex gap-3">
+          <span class="format-badge"
+            ><i class="fas fa-headphones"></i> Audiobooks</span
+          >
+          <span class="format-badge"
+            ><i class="fas fa-tablet-alt"></i> E-books</span
+          >
+          <span class="format-badge"
+            ><i class="fas fa-feather"></i> Poetry</span
+          >
+        </div>
+      </div>
+
+      <!-- Search Section -->
+      <div class="search-section">
+        <div class="search-container">
+          <i class="fas fa-search search-icon"></i>
+          <input
+            type="text"
+            placeholder="Search Scripture, commentaries, audiobooks, e-books, poetry, mysteries..."
+            class="search-input"
+            id="search-input"
+          />
+        </div>
+
+        <div class="quick-filters">
+          <span class="filter-label">Browse:</span>
+          <button class="category-tag active" data-filter="all">
+            <i class="fas fa-layer-group"></i> All
+          </button>
+          <button class="category-tag" data-filter="scripture">
+            <i class="fas fa-bible"></i> Scripture
+          </button>
+          <button class="category-tag" data-filter="commentary">
+            <i class="fas fa-scroll"></i> Commentaries
+          </button>
+          <button class="category-tag" data-filter="audiobook">
+            <i class="fas fa-headphones"></i> Audiobooks
+          </button>
+          <button class="category-tag" data-filter="ebook">
+            <i class="fas fa-tablet-alt"></i> E-Books
+          </button>
+          <button class="category-tag" data-filter="poetry">
+            <i class="fas fa-feather"></i> Poetry
+          </button>
+          <button class="category-tag" data-filter="mystery">
+            <i class="fas fa-search"></i> Mysteries
+          </button>
+          <button class="category-tag" data-filter="sermons">
+            <i class="fas fa-microphone-alt"></i> Sermons
+          </button>
+          <button class="category-tag" data-filter="church-history">
+            <i class="fas fa-history"></i> Church History
+          </button>
+          <button class="category-tag" data-filter="devotional">
+            <i class="fas fa-pray"></i> Devotionals
+          </button>
+        </div>
+      </div>
+
+      <!-- Featured Section -->
+      <div class="mb-12">
+        <div class="section-header">
+          <h2 class="section-title">
+            <i class="fas fa-star"></i> Featured Resources
+          </h2>
+        </div>
+
+        <div
+          id="featured-container"
+          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+        >
+          <!-- Books will be dynamically inserted here -->
+        </div>
+      </div>
+
+      <!-- Audiobooks Section -->
+      <div class="mb-12">
+        <div class="section-header">
+          <h2 class="section-title">
+            <i class="fas fa-headphones"></i> Popular Audiobooks
+          </h2>
+        </div>
+
+        <div
+          id="audiobooks-container"
+          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+        >
+          <!-- Audiobooks will be dynamically inserted here -->
+        </div>
+      </div>
+
+      <!-- E-Books Section -->
+      <div class="mb-12">
+        <div class="section-header">
+          <h2 class="section-title">
+            <i class="fas fa-tablet-alt"></i> Christian E-Books
+          </h2>
+        </div>
+
+        <div
+          id="ebooks-container"
+          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+        >
+          <!-- E-books will be dynamically inserted here -->
+        </div>
+      </div>
+
+      <!-- Christian Mysteries Section -->
+      <div class="mb-12">
+        <div class="section-header">
+          <h2 class="section-title">
+            <i class="fas fa-search"></i> Christian Mysteries
+          </h2>
+        </div>
+
+        <div
+          id="mysteries-container"
+          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+        >
+          <!-- Mysteries will be dynamically inserted here -->
+        </div>
+      </div>
+
+      <!-- Poetry Section -->
+      <div class="mb-12">
+        <div class="section-header">
+          <h2 class="section-title">
+            <i class="fas fa-feather"></i> Christian Poetry
+          </h2>
+          <!-- <a href="#" class="section-link">
+            View all <i class="fas fa-arrow-right"></i>
+          </a> -->
+        </div>
+
+        <div
+          id="poetry-container"
+          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+        >
+          <!-- Poetry will be dynamically inserted here -->
+        </div>
+      </div>
+
+      <!-- Commentaries Section -->
+      <div class="mb-12">
+        <div class="section-header">
+          <h2 class="section-title">
+            <i class="fas fa-scroll"></i> Popular Commentaries
+          </h2>
+        </div>
+
+        <div
+          id="commentaries-container"
+          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+        >
+          <!-- Commentaries will be dynamically inserted here -->
+        </div>
+      </div>
+    </main>
+
+    <!-- Audio Player Modal - Updated with draggable container and close button inside -->
+    <div
+      id="audioPlayerModal"
+      class="fixed inset-0 z-[100] hidden"
+      aria-hidden="true"
+    >
+      <div
+        class="absolute inset-0 bg-black/50 transition-opacity duration-300 opacity-0"
+        id="modal-backdrop"
+      ></div>
+      <div
+        class="absolute inset-0 z-[101] flex items-center justify-center p-4"
+      >
+        <div
+          class="relative w-full max-w-2xl bg-white rounded-2xl shadow-2xl opacity-0 scale-95 transition-all duration-300 cursor-move"
+          id="modal-content"
+        >
+          <!-- Close button inside the container -->
+          <button
+            onclick="closeAudioPlayer()"
+            class="modal-close-btn"
+            id="modal-close-btn"
+            title="Close"
+          >
+            <i class="fas fa-times"></i>
+          </button>
+
+          <div class="p-8">
+            <!-- Book Info -->
+            <div class="flex items-center gap-4 mb-6">
+              <img
+                id="modal-cover"
+                src=""
+                alt="Book cover"
+                class="w-20 h-20 rounded-lg object-cover shadow-md"
+              />
+              <div>
+                <h3
+                  id="modal-title"
+                  class="text-xl font-semibold text-gray-900 mb-1"
+                ></h3>
+                <p id="modal-author" class="text-gray-600 mb-2"></p>
+                <div class="flex items-center gap-3 text-sm text-gray-500">
+                  <span id="modal-duration" class="flex items-center gap-1"
+                    ><i class="fas fa-clock"></i
+                  ></span>
+                  <span id="modal-narrator" class="flex items-center gap-1"
+                    ><i class="fas fa-microphone"></i
+                  ></span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Audio Player -->
+            <div class="bg-gray-50 rounded-xl p-6">
+              <audio id="audioPlayer" controls class="w-full">
+                Your browser does not support the audio element.
+              </audio>
+
+              <!-- Playback Controls Info -->
+              <div
+                class="flex items-center justify-between mt-4 text-sm text-gray-500"
+              >
+                <div class="flex items-center gap-4">
+                  <span class="flex items-center gap-1"
+                    ><i class="fas fa-infinity text-emerald-600"></i> Free
+                    access</span
+                  >
+                  <span class="flex items-center gap-1"
+                    ><i class="fas fa-users"></i>
+                    <span id="modal-readers"></span> listening now</span
+                  >
+                </div>
+                <a
+                  id="download-link"
+                  href="#"
+                  download
+                  class="text-emerald-600 hover:text-emerald-700 flex items-center gap-1"
+                >
+                  <i class="fas fa-download"></i> Download MP3
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- E-book Reader Modal - Updated -->
+    <div
+      id="ebookReaderModal"
+      class="fixed inset-0 z-[100] hidden"
+      aria-hidden="true"
+    >
+      <div
+        class="absolute inset-0 bg-black/50 transition-opacity duration-300 opacity-0"
+        id="ebook-modal-backdrop"
+      ></div>
+      <div
+        class="absolute inset-0 z-[101] flex items-center justify-center p-4"
+      >
+        <div
+          class="relative w-full max-w-6xl bg-white rounded-2xl shadow-2xl opacity-0 scale-95 transition-all duration-300 overflow-hidden"
+          id="ebook-modal-content"
+          style="height: 90vh"
+        >
+          <!-- Close button inside the container -->
+          <button
+            onclick="closeEbookReader()"
+            class="modal-close-btn"
+            id="ebook-modal-close-btn"
+            title="Close"
+          >
+            <i class="fas fa-times"></i>
+          </button>
+
+          <div class="h-full flex flex-col">
+            <!-- Book Header - will be populated by JavaScript -->
+            <div
+              id="ebook-header"
+              class="p-4 border-b border-gray-200 flex-shrink-0"
+            >
+              <!-- Header content will be inserted by JS -->
+            </div>
+
+            <!-- E-book Reader - will be populated by JavaScript -->
+            <div
+              id="ebook-content"
+              class="flex-1 overflow-hidden"
+              style="background: #525659"
+            >
+              <!-- PDF viewer will be inserted here -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <!-- Modern Advanced Footer -->
+    <footer
+      class="relative bg-gradient-to-b from-gray-900 to-gray-800 text-gray-300 overflow-hidden"
+    >
+      <!-- Decorative Background Elements -->
+      <div
+        class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-amber-500 via-amber-400 to-amber-500"
+      ></div>
+      <div
+        class="absolute top-0 right-0 w-96 h-96 bg-amber-500/5 rounded-full blur-3xl -mr-48 -mt-48"
+      ></div>
+      <div
+        class="absolute bottom-0 left-0 w-80 h-80 bg-amber-600/5 rounded-full blur-3xl -ml-40 -mb-40"
+      ></div>
+
+      <!-- Main Footer Content -->
+      <div
+        class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20"
+      >
+        <!-- Footer Grid - Responsive layout -->
+        <div
+          class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 sm:gap-8 lg:gap-12 mb-10 sm:mb-12 lg:mb-16"
+        >
+          <!-- Scripture Section -->
+          <div class="col-span-1 group">
+            <h4
+              class="text-amber-400 font-semibold text-sm sm:text-base uppercase tracking-wider mb-3 sm:mb-4 flex items-center gap-2"
+            >
+              <i class="fas fa-bible text-amber-400 text-xs sm:text-sm"></i>
+              Scripture
+            </h4>
+            <ul class="space-y-2 sm:space-y-3">
+              <li>
+                <a
+                  href="#"
+                  class="text-xs sm:text-sm text-gray-400 hover:text-amber-400 transition-all duration-300 flex items-center gap-2 group/link"
+                >
+                  <span
+                    class="w-0 group-hover/link:w-2 h-0.5 bg-amber-400 transition-all duration-300"
+                  ></span>
+                  Old Testament
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="text-xs sm:text-sm text-gray-400 hover:text-amber-400 transition-all duration-300 flex items-center gap-2 group/link"
+                >
+                  <span
+                    class="w-0 group-hover/link:w-2 h-0.5 bg-amber-400 transition-all duration-300"
+                  ></span>
+                  New Testament
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="text-xs sm:text-sm text-gray-400 hover:text-amber-400 transition-all duration-300 flex items-center gap-2 group/link"
+                >
+                  <span
+                    class="w-0 group-hover/link:w-2 h-0.5 bg-amber-400 transition-all duration-300"
+                  ></span>
+                  Gospels
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="text-xs sm:text-sm text-gray-400 hover:text-amber-400 transition-all duration-300 flex items-center gap-2 group/link"
+                >
+                  <span
+                    class="w-0 group-hover/link:w-2 h-0.5 bg-amber-400 transition-all duration-300"
+                  ></span>
+                  Epistles
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="text-xs sm:text-sm text-gray-400 hover:text-amber-400 transition-all duration-300 flex items-center gap-2 group/link"
+                >
+                  <span
+                    class="w-0 group-hover/link:w-2 h-0.5 bg-amber-400 transition-all duration-300"
+                  ></span>
+                  Prophets
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Audiobooks Section -->
+          <div class="col-span-1 group">
+            <h4
+              class="text-amber-400 font-semibold text-sm sm:text-base uppercase tracking-wider mb-3 sm:mb-4 flex items-center gap-2"
+            >
+              <i
+                class="fas fa-headphones text-amber-400 text-xs sm:text-sm"
+              ></i>
+              Audiobooks
+            </h4>
+            <ul class="space-y-2 sm:space-y-3">
+              <li>
+                <a
+                  href="#"
+                  class="text-xs sm:text-sm text-gray-400 hover:text-amber-400 transition-all duration-300 flex items-center gap-2 group/link"
+                >
+                  <span
+                    class="w-0 group-hover/link:w-2 h-0.5 bg-amber-400 transition-all duration-300"
+                  ></span>
+                  Bible Narration
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="text-xs sm:text-sm text-gray-400 hover:text-amber-400 transition-all duration-300 flex items-center gap-2 group/link"
+                >
+                  <span
+                    class="w-0 group-hover/link:w-2 h-0.5 bg-amber-400 transition-all duration-300"
+                  ></span>
+                  Theology
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="text-xs sm:text-sm text-gray-400 hover:text-amber-400 transition-all duration-300 flex items-center gap-2 group/link"
+                >
+                  <span
+                    class="w-0 group-hover/link:w-2 h-0.5 bg-amber-400 transition-all duration-300"
+                  ></span>
+                  Christian Classics
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="text-xs sm:text-sm text-gray-400 hover:text-amber-400 transition-all duration-300 flex items-center gap-2 group/link"
+                >
+                  <span
+                    class="w-0 group-hover/link:w-2 h-0.5 bg-amber-400 transition-all duration-300"
+                  ></span>
+                  Sermons
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="text-xs sm:text-sm text-gray-400 hover:text-amber-400 transition-all duration-300 flex items-center gap-2 group/link"
+                >
+                  <span
+                    class="w-0 group-hover/link:w-2 h-0.5 bg-amber-400 transition-all duration-300"
+                  ></span>
+                  Hymns
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <!-- E-Books Section -->
+          <div class="col-span-1 group">
+            <h4
+              class="text-amber-400 font-semibold text-sm sm:text-base uppercase tracking-wider mb-3 sm:mb-4 flex items-center gap-2"
+            >
+              <i class="fas fa-book-open text-amber-400 text-xs sm:text-sm"></i>
+              E-Books
+            </h4>
+            <ul class="space-y-2 sm:space-y-3">
+              <li>
+                <a
+                  href="#"
+                  class="text-xs sm:text-sm text-gray-400 hover:text-amber-400 transition-all duration-300 flex items-center gap-2 group/link"
+                >
+                  <span
+                    class="w-0 group-hover/link:w-2 h-0.5 bg-amber-400 transition-all duration-300"
+                  ></span>
+                  Theology
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="text-xs sm:text-sm text-gray-400 hover:text-amber-400 transition-all duration-300 flex items-center gap-2 group/link"
+                >
+                  <span
+                    class="w-0 group-hover/link:w-2 h-0.5 bg-amber-400 transition-all duration-300"
+                  ></span>
+                  Commentaries
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="text-xs sm:text-sm text-gray-400 hover:text-amber-400 transition-all duration-300 flex items-center gap-2 group/link"
+                >
+                  <span
+                    class="w-0 group-hover/link:w-2 h-0.5 bg-amber-400 transition-all duration-300"
+                  ></span>
+                  Devotionals
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="text-xs sm:text-sm text-gray-400 hover:text-amber-400 transition-all duration-300 flex items-center gap-2 group/link"
+                >
+                  <span
+                    class="w-0 group-hover/link:w-2 h-0.5 bg-amber-400 transition-all duration-300"
+                  ></span>
+                  Church History
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="text-xs sm:text-sm text-gray-400 hover:text-amber-400 transition-all duration-300 flex items-center gap-2 group/link"
+                >
+                  <span
+                    class="w-0 group-hover/link:w-2 h-0.5 bg-amber-400 transition-all duration-300"
+                  ></span>
+                  Study Guides
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Poetry Section -->
+          <div class="col-span-1 group">
+            <h4
+              class="text-amber-400 font-semibold text-sm sm:text-base uppercase tracking-wider mb-3 sm:mb-4 flex items-center gap-2"
+            >
+              <i
+                class="fas fa-feather-alt text-amber-400 text-xs sm:text-sm"
+              ></i>
+              Poetry
+            </h4>
+            <ul class="space-y-2 sm:space-y-3">
+              <li>
+                <a
+                  href="#"
+                  class="text-xs sm:text-sm text-gray-400 hover:text-amber-400 transition-all duration-300 flex items-center gap-2 group/link"
+                >
+                  <span
+                    class="w-0 group-hover/link:w-2 h-0.5 bg-amber-400 transition-all duration-300"
+                  ></span>
+                  Christian Poetry
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="text-xs sm:text-sm text-gray-400 hover:text-amber-400 transition-all duration-300 flex items-center gap-2 group/link"
+                >
+                  <span
+                    class="w-0 group-hover/link:w-2 h-0.5 bg-amber-400 transition-all duration-300"
+                  ></span>
+                  Hymns & Psalms
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="text-xs sm:text-sm text-gray-400 hover:text-amber-400 transition-all duration-300 flex items-center gap-2 group/link"
+                >
+                  <span
+                    class="w-0 group-hover/link:w-2 h-0.5 bg-amber-400 transition-all duration-300"
+                  ></span>
+                  Devotional Poetry
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="text-xs sm:text-sm text-gray-400 hover:text-amber-400 transition-all duration-300 flex items-center gap-2 group/link"
+                >
+                  <span
+                    class="w-0 group-hover/link:w-2 h-0.5 bg-amber-400 transition-all duration-300"
+                  ></span>
+                  Sacred Writings
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Church Section -->
+          <div class="col-span-2 md:col-span-1 group">
+            <h4
+              class="text-amber-400 font-semibold text-sm sm:text-base uppercase tracking-wider mb-3 sm:mb-4 flex items-center gap-2"
+            >
+              <i class="fas fa-church text-amber-400 text-xs sm:text-sm"></i>
+              The Church
+            </h4>
+            <ul class="space-y-2 sm:space-y-3">
+              <li>
+                <a
+                  href="#"
+                  class="text-xs sm:text-sm text-gray-400 hover:text-amber-400 transition-all duration-300 flex items-center gap-2 group/link"
+                >
+                  <span
+                    class="w-0 group-hover/link:w-2 h-0.5 bg-amber-400 transition-all duration-300"
+                  ></span>
+                  About Us
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="text-xs sm:text-sm text-gray-400 hover:text-amber-400 transition-all duration-300 flex items-center gap-2 group/link"
+                >
+                  <span
+                    class="w-0 group-hover/link:w-2 h-0.5 bg-amber-400 transition-all duration-300"
+                  ></span>
+                  Service Times
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="text-xs sm:text-sm text-gray-400 hover:text-amber-400 transition-all duration-300 flex items-center gap-2 group/link"
+                >
+                  <span
+                    class="w-0 group-hover/link:w-2 h-0.5 bg-amber-400 transition-all duration-300"
+                  ></span>
+                  Contact
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="text-xs sm:text-sm text-gray-400 hover:text-amber-400 transition-all duration-300 flex items-center gap-2 group/link"
+                >
+                  <span
+                    class="w-0 group-hover/link:w-2 h-0.5 bg-amber-400 transition-all duration-300"
+                  ></span>
+                  Prayer Requests
+                </a>
+              </li>
+            </ul>
+
+            <!-- Quick Contact on Mobile -->
+            <div class="mt-4 sm:hidden">
+              <div class="flex items-center gap-2 text-amber-400">
+                <i class="fas fa-phone-alt text-xs"></i>
+                <span class="text-xs text-gray-400">+1 (555) 123-4567</span>
+              </div>
+              <div class="flex items-center gap-2 mt-2 text-amber-400">
+                <i class="fas fa-envelope text-xs"></i>
+                <span class="text-xs text-gray-400">info@church.org</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Newsletter Section - Modern addition -->
+        <div
+          class="relative mb-10 sm:mb-12 lg:mb-16 p-4 sm:p-6 bg-gray-800/50 rounded-2xl border border-gray-700 backdrop-blur-sm"
+        >
+          <div
+            class="flex flex-col sm:flex-row items-center justify-between gap-4"
+          >
+            <div class="text-center sm:text-left">
+              <h5 class="text-white font-semibold text-sm sm:text-base mb-1">
+                Stay Updated
+              </h5>
+              <p class="text-xs sm:text-sm text-gray-400">
+                Get the latest resources and updates
+              </p>
+            </div>
+            <div class="flex w-full sm:w-auto flex-col xs:flex-row gap-2">
+              <input
+                type="email"
+                placeholder="Your email address"
+                class="flex-1 px-4 py-2 sm:py-2.5 bg-gray-700 border border-gray-600 rounded-lg text-xs sm:text-sm text-white placeholder-gray-400 focus:outline-none focus:border-amber-400 transition-colors"
+              />
+              <button
+                class="px-4 sm:px-6 py-2 sm:py-2.5 bg-gradient-to-r from-amber-500 to-amber-600 text-white text-xs sm:text-sm font-semibold rounded-lg hover:from-amber-600 hover:to-amber-700 transition-all duration-300 shadow-lg shadow-amber-600/20 whitespace-nowrap"
+              >
+                Subscribe
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom Footer -->
+        <div class="relative pt-6 sm:pt-8 border-t border-gray-800">
+          <div
+            class="flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-6"
+          >
+            <!-- Copyright -->
+            <p
+              class="text-xs sm:text-sm text-gray-500 order-2 sm:order-1 text-center sm:text-left"
+            >
+              © 2025 The Church of Christ (SM) Library.
+              <span class="block sm:inline text-amber-400/70"
+                >All rights reserved.</span
+              >
+            </p>
+
+            <!-- Social Links - Modern addition -->
+            <div class="flex items-center gap-3 sm:gap-4 order-1 sm:order-2">
+              <a
+                href="#"
+                class="w-8 h-8 sm:w-10 sm:h-10 bg-gray-800 rounded-lg flex items-center justify-center text-gray-400 hover:text-amber-400 hover:bg-gray-700 transition-all duration-300 group"
+              >
+                <i
+                  class="fab fa-facebook-f text-sm sm:text-base group-hover:scale-110 transition-transform"
+                ></i>
+              </a>
+              <a
+                href="#"
+                class="w-8 h-8 sm:w-10 sm:h-10 bg-gray-800 rounded-lg flex items-center justify-center text-gray-400 hover:text-amber-400 hover:bg-gray-700 transition-all duration-300 group"
+              >
+                <i
+                  class="fab fa-twitter text-sm sm:text-base group-hover:scale-110 transition-transform"
+                ></i>
+              </a>
+              <a
+                href="#"
+                class="w-8 h-8 sm:w-10 sm:h-10 bg-gray-800 rounded-lg flex items-center justify-center text-gray-400 hover:text-amber-400 hover:bg-gray-700 transition-all duration-300 group"
+              >
+                <i
+                  class="fab fa-instagram text-sm sm:text-base group-hover:scale-110 transition-transform"
+                ></i>
+              </a>
+              <a
+                href="#"
+                class="w-8 h-8 sm:w-10 sm:h-10 bg-gray-800 rounded-lg flex items-center justify-center text-gray-400 hover:text-amber-400 hover:bg-gray-700 transition-all duration-300 group"
+              >
+                <i
+                  class="fab fa-youtube text-sm sm:text-base group-hover:scale-110 transition-transform"
+                ></i>
+              </a>
+            </div>
+
+            <!-- Legal Links -->
+            <div class="flex flex-wrap justify-center gap-3 sm:gap-6 order-3">
+              <a
+                href="#"
+                class="text-xs sm:text-sm text-gray-500 hover:text-amber-400 transition-colors"
+                >Statement of Faith</a
+              >
+              <a
+                href="#"
+                class="text-xs sm:text-sm text-gray-500 hover:text-amber-400 transition-colors"
+                >Privacy</a
+              >
+              <a
+                href="#"
+                class="text-xs sm:text-sm text-gray-500 hover:text-amber-400 transition-colors"
+                >Contact</a
+              >
+            </div>
+          </div>
+
+          <!-- Decorative bottom gradient -->
+          <div
+            class="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-amber-500/50 to-transparent"
+          ></div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Add custom breakpoint for extra small devices -->
+    <style>
+      @media (min-width: 480px) {
+        .xs\:flex-row {
+          flex-direction: row;
+        }
+      }
+
+      /* Smooth hover animations */
+      .group\/link:hover span {
+        width: 0.5rem;
+      }
+
+      /* Better touch targets on mobile */
+      @media (max-width: 640px) {
+        a,
+        button {
+          min-height: 44px;
+          display: inline-flex;
+          align-items: center;
+        }
+
+        .w-8.h-8 {
+          width: 44px;
+          height: 44px;
+        }
+      }
+    </style>
+
+    <!-- JavaScript -->
+    <script>
+      // Church library data with audio and e-book files - NO DUAL FORMAT BOOKS
+      const libraryData = {
+        featured_books: [
+          {
+            title: "The Spiritual Journey of Prophet John Mensah ",
+            author: "Unknown",
+            cover: "{% static 'img/Books/bookcover.png' %}",
+            type: "classic",
+            format: "E-book",
+            category: "Church History",
+            readers: 2156,
+            featured: true,
+            hasAudio: false,
+            hasEbook: true,
+            ebookFile: "{% static 'ebooks/pilgrims-progress.pdf' %}",
+            pages: 324,
+          },
+          {
+            title: "Systematic Theology",
+            author: "Wayne Grudem",
+            cover: "",
+            type: "theology",
+            format: "Audiobook",
+            category: "Theology",
+            readers: 1243,
+            featured: true,
+            hasAudio: true,
+            hasEbook: false,
+            audioFile: "{% static 'audio/systematic-theology.mp3' %}",
+            duration: "32h 15m",
+            narrator: "George Guidall",
+            description:
+              "An essential systematic theology textbook covering all major Christian doctrines.",
+          },
+          // {
+          //   title: "The Spiritual Journey of Prophet John Mensah ",
+          //   author: "Unknown",
+          //   cover: "{% static 'img/Books/bookcover.png' %}",
+          //   type: "classic",
+          //   format: "E-book",
+          //   category: "Church History",
+          //   readers: 2156,
+          //   featured: true,
+          //   hasAudio: false,
+          //   hasEbook: true,
+          //   ebookFile: "{% static 'ebooks/pilgrims-progress.pdf' %}",
+          //   pages: 324,
+          // },
+          {
+            title: "The Screwtape Letters",
+            author: "C.S. Lewis",
+            cover:
+              "https://images.unsplash.com/photo-1544947950-fa07a98d237f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+            type: "mystery",
+            format: "E-book",
+            category: "Christian Mystery",
+            readers: 1892,
+            featured: true,
+            hasAudio: false,
+            hasEbook: true,
+            ebookFile: "{% static 'ebooks/screwtape-letters.pdf' %}",
+            pages: 209,
+          },
+          {
+            title: "The Pursuit of God",
+            author: "A.W. Tozer",
+            cover:
+              "https://images.unsplash.com/photo-1512820790803-83ca734da794?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+            type: "devotional",
+            format: "Audiobook",
+            category: "Devotional",
+            readers: 967,
+            featured: true,
+            hasAudio: true,
+            hasEbook: false,
+            audioFile: "{% static 'audio/PRAYING.mp3' %}",
+            duration: "3h 20m",
+            narrator: "James Langton",
+          },
+        ],
+
+        audiobooks: [
+          {
+            title: "Mere Christianity (Audiobook)",
+            author: "C.S. Lewis",
+            cover:
+              "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+            type: "audiobook",
+            format: "Audiobook",
+            category: "Apologetics",
+            readers: 2341,
+            duration: "6h 45m",
+            narrator: "Julian Rhind-Tutt",
+            hasAudio: true,
+            hasEbook: false,
+            audioFile: "{% static 'audio/mere-christianity.mp3' %}",
+          },
+          {
+            title: "Confessions (Audiobook)",
+            author: "St. Augustine",
+            cover:
+              "https://images.unsplash.com/photo-1541963463532-d68292c34b19?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+            type: "audiobook",
+            format: "Audiobook",
+            category: "Classic",
+            readers: 1543,
+            duration: "12h 20m",
+            narrator: "Simon Vance",
+            hasAudio: true,
+            hasEbook: false,
+            audioFile: "{% static 'audio/confessions.mp3' %}",
+          },
+          {
+            title: "The Cost of Discipleship (Audiobook)",
+            author: "Dietrich Bonhoeffer",
+            cover:
+              "https://images.unsplash.com/photo-1516979187457-637abb4f9353?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+            type: "audiobook",
+            format: "Audiobook",
+            category: "Theology",
+            readers: 1876,
+            duration: "8h 15m",
+            narrator: "Paul Michael",
+            hasAudio: true,
+            hasEbook: false,
+            audioFile: "{% static 'audio/cost-of-discipleship.mp3' %}",
+          },
+          {
+            title: "Knowing God (Audiobook)",
+            author: "J.I. Packer",
+            cover:
+              "https://images.unsplash.com/photo-1531346688376-ab6275c4725e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+            type: "audiobook",
+            format: "Audiobook",
+            category: "Theology",
+            readers: 1654,
+            duration: "10h 30m",
+            narrator: "Simon Vance",
+            hasAudio: true,
+            hasEbook: false,
+            audioFile: "{% static 'audio/knowing-god.mp3' %}",
+          },
+          {
+            title: "PRAYING (Audiobook)",
+            author: "Prophet Isaac",
+            cover:
+              "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+            type: "audiobook",
+            format: "Audiobook",
+            category: "Prayer",
+            readers: 3456,
+            duration: "45:30",
+            narrator: "Prophet Isaac",
+            hasAudio: true,
+            hasEbook: false,
+            audioFile: "{% static 'audio/PRAYING.mp3' %}",
+          },
+        ],
+
+        ebooks: [
+          {
+            title: "The Art of Peace (E-book)",
+            author: "Master Author",
+            cover:
+              "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+            type: "ebook",
+            format: "E-book",
+            category: "Christian Living",
+            readers: 876,
+            hasAudio: false,
+            hasEbook: true,
+            ebookFile: "{% static 'ebooks/art-of-peace.pdf' %}",
+            pages: 245,
+            description: "A guide to finding peace through faith and prayer.",
+          },
+          {
+            title: "Men of Prayer",
+            author: "Prophet Isaac",
+            cover:
+              "https://images.unsplash.com/photo-1512820790803-83ca734da794?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+            type: "ebook",
+            format: "E-book",
+            category: "Prayer",
+            readers: 654,
+            hasAudio: false,
+            hasEbook: true,
+            ebookFile: "{% static 'ebooks/books.pdf' %}",
+            pages: 180,
+            description:
+              "Stories and teachings on the power of prayer from men of faith.",
+          },
+          {
+            title: "Love of God",
+            author: "Author Name",
+            cover:
+              "https://images.unsplash.com/photo-1541963463532-d68292c34b19?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+            type: "ebook",
+            format: "E-book",
+            category: "Theology",
+            readers: 543,
+            hasAudio: false,
+            hasEbook: true,
+            ebookFile: "{% static 'ebooks/love-of-god.pdf' %}",
+            pages: 320,
+            description: "Exploring the depths of God's love for humanity.",
+          },
+          {
+            title: "Meditations",
+            author: "Marcus Aurelius",
+            cover:
+              "https://images.unsplash.com/photo-1544947950-fa07a98d237f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+            type: "ebook",
+            format: "E-book",
+            category: "Classic",
+            readers: 1234,
+            hasAudio: false,
+            hasEbook: true,
+            ebookFile: "{% static 'ebooks/meditations.pdf' %}",
+            pages: 256,
+            description:
+              "Classic philosophical work with Christian applications.",
+          },
+          {
+            title: "Atomic Habits",
+            author: "James Clear",
+            cover:
+              "https://images.unsplash.com/photo-1544716278-e513176f20b5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+            type: "ebook",
+            format: "E-book",
+            category: "Christian Living",
+            readers: 987,
+            hasAudio: false,
+            hasEbook: true,
+            ebookFile: "{% static 'ebooks/atomic-habits.pdf' %}",
+            pages: 320,
+            description: "Building better habits for spiritual growth.",
+          },
+        ],
+
+        mysteries: [
+          {
+            title: "The Father Brown Mysteries",
+            author: "G.K. Chesterton",
+            cover:
+              "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+            type: "mystery",
+            format: "E-book",
+            category: "Christian Mystery",
+            readers: 1432,
+            hasAudio: false,
+            hasEbook: true,
+            ebookFile: "{% static 'ebooks/father-brown.pdf' %}",
+            pages: 450,
+          },
+          {
+            title: "The Chosen: A Novel",
+            author: "Chaim Potok",
+            cover:
+              "https://images.unsplash.com/photo-1516979187457-637abb4f9353?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+            type: "mystery",
+            format: "E-book",
+            category: "Faith-based Fiction",
+            readers: 987,
+            hasAudio: false,
+            hasEbook: true,
+            ebookFile: "{% static 'ebooks/chosen.pdf' %}",
+            pages: 288,
+          },
+          {
+            title: "The Shunning",
+            author: "Beverly Lewis",
+            cover:
+              "https://images.unsplash.com/photo-1589829085413-56de8ae18c73?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+            type: "mystery",
+            format: "E-book",
+            category: "Amish Mystery",
+            readers: 876,
+            hasAudio: false,
+            hasEbook: true,
+            ebookFile: "{% static 'ebooks/shunning.pdf' %}",
+            pages: 320,
+          },
+          {
+            title: "A Is for Alibi",
+            author: "Sue Grafton",
+            cover:
+              "https://images.unsplash.com/photo-1544947950-fa07a98d237f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+            type: "mystery",
+            format: "E-book",
+            category: "Mystery",
+            readers: 654,
+            hasAudio: false,
+            hasEbook: true,
+            ebookFile: "{% static 'ebooks/alibi.pdf' %}",
+            pages: 320,
+          },
+        ],
+
+        poetry: [
+          {
+            title: "The Complete Poems of John Donne",
+            author: "John Donne",
+            cover:
+              "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+            type: "poetry",
+            format: "E-book",
+            category: "Sacred Poetry",
+            readers: 765,
+            hasAudio: false,
+            hasEbook: true,
+            ebookFile: "{% static 'ebooks/john-donne.pdf' %}",
+            pages: 512,
+          },
+          {
+            title: "Paradise Lost",
+            author: "John Milton",
+            cover:
+              "https://images.unsplash.com/photo-1541963463532-d68292c34b19?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+            type: "poetry",
+            format: "E-book",
+            category: "Epic Poetry",
+            readers: 1234,
+            hasAudio: false,
+            hasEbook: true,
+            ebookFile: "{% static 'ebooks/paradise-lost.pdf' %}",
+            pages: 432,
+          },
+          {
+            title: "The Divine Comedy",
+            author: "Dante Alighieri",
+            cover:
+              "https://images.unsplash.com/photo-1516979187457-637abb4f9353?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+            type: "poetry",
+            format: "E-book",
+            category: "Christian Epic",
+            readers: 1456,
+            hasAudio: false,
+            hasEbook: true,
+            ebookFile: "{% static 'ebooks/divine-comedy.pdf' %}",
+            pages: 798,
+          },
+          {
+            title: "Collected Poems of T.S. Eliot",
+            author: "T.S. Eliot",
+            cover:
+              "https://images.unsplash.com/photo-1531346688376-ab6275c4725e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+            type: "poetry",
+            format: "E-book",
+            category: "Modern Poetry",
+            readers: 543,
+            hasAudio: false,
+            hasEbook: true,
+            ebookFile: "{% static 'ebooks/eliot-poems.pdf' %}",
+            pages: 688,
+          },
+        ],
+
+        commentaries: [
+          {
+            title: "Commentary on Romans",
+            author: "Martin Luther",
+            cover:
+              "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+            type: "commentary",
+            format: "E-book",
+            category: "New Testament",
+            readers: 876,
+            hasAudio: false,
+            hasEbook: true,
+            ebookFile: "{% static 'ebooks/romans-commentary.pdf' %}",
+            pages: 512,
+          },
+          {
+            title: "Calvin's Institutes",
+            author: "John Calvin",
+            cover:
+              "https://images.unsplash.com/photo-1541963463532-d68292c34b19?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+            type: "theology",
+            format: "Audiobook",
+            category: "Theology",
+            readers: 654,
+            hasAudio: true,
+            hasEbook: false,
+            audioFile: "{% static 'audio/calvins-institutes.mp3' %}",
+            duration: "42h 30m",
+            narrator: "David Cochran Heath",
+          },
+          {
+            title: "The Treasury of David",
+            author: "C.H. Spurgeon",
+            cover:
+              "https://images.unsplash.com/photo-1516979187457-637abb4f9353?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+            type: "commentary",
+            format: "E-book",
+            category: "Psalms",
+            readers: 543,
+            hasAudio: false,
+            hasEbook: true,
+            ebookFile: "{% static 'ebooks/treasury-of-david.pdf' %}",
+            pages: 1200,
+          },
+          {
+            title: "Commentary on John",
+            author: "F.F. Bruce",
+            cover:
+              "https://images.unsplash.com/photo-1531346688376-ab6275c4725e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+            type: "commentary",
+            format: "E-book",
+            category: "Gospels",
+            readers: 432,
+            hasAudio: false,
+            hasEbook: true,
+            ebookFile: "{% static 'ebooks/john-commentary.pdf' %}",
+            pages: 448,
+          },
+        ],
+
+        // Add sermons data - audio only
+        sermons: [
+          {
+            title: "The Power of Prayer",
+            author: "Prophet Isaac",
+            cover:
+              "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+            type: "sermon",
+            format: "Audiobook",
+            category: "Sermons",
+            readers: 1243,
+            hasAudio: true,
+            hasEbook: false,
+            audioFile: "{% static 'audio/power-of-prayer.mp3' %}",
+            duration: "1h 15m",
+            narrator: "Prophet Isaac",
+          },
+          {
+            title: "Walking in Faith",
+            author: "Pastor Michael",
+            cover:
+              "https://images.unsplash.com/photo-1544716278-e513176f20b5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+            type: "sermon",
+            format: "Audiobook",
+            category: "Sermons",
+            readers: 987,
+            hasAudio: true,
+            hasEbook: false,
+            audioFile: "{% static 'audio/walking-in-faith.mp3' %}",
+            duration: "45m",
+            narrator: "Pastor Michael",
+          },
+        ],
+
+        // Add church history data - separate audio and e-book versions
+        churchHistory: [
+          {
+            title: "The History of the Early Church (Audiobook)",
+            author: "Dr. James White",
+            cover:
+              "https://images.unsplash.com/photo-1544947950-fa07a98d237f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+            type: "church-history",
+            format: "Audiobook",
+            category: "Church History",
+            readers: 654,
+            hasAudio: true,
+            hasEbook: false,
+            audioFile: "{% static 'audio/early-church.mp3' %}",
+            duration: "8h 30m",
+            narrator: "David Cochran Heath",
+          },
+          {
+            title: "The History of the Early Church (E-book)",
+            author: "Dr. James White",
+            cover:
+              "https://images.unsplash.com/photo-1544947950-fa07a98d237f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+            type: "church-history",
+            format: "E-book",
+            category: "Church History",
+            readers: 432,
+            hasAudio: false,
+            hasEbook: true,
+            ebookFile: "{% static 'ebooks/early-church.pdf' %}",
+            pages: 320,
+          },
+          {
+            title: "The Reformation",
+            author: "Dr. Sarah Johnson",
+            cover:
+              "https://images.unsplash.com/photo-1512820790803-83ca734da794?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+            type: "church-history",
+            format: "E-book",
+            category: "Church History",
+            readers: 432,
+            hasAudio: false,
+            hasEbook: true,
+            ebookFile: "{% static 'ebooks/history.pdf' %}",
+            pages: 280,
+          },
+        ],
+      };
+
+      // ========== REAL-TIME STATISTICS FUNCTIONS ==========
+
+      // Function to calculate statistics from library data
+      function calculateLibraryStats() {
+        // Get all books from the library data
+        const allBooks = [
+          ...libraryData.featured_books,
+          ...libraryData.audiobooks,
+          ...libraryData.ebooks,
+          ...libraryData.mysteries,
+          ...libraryData.poetry,
+          ...libraryData.commentaries,
+          ...libraryData.sermons,
+          ...libraryData.churchHistory,
+        ];
+
+        // Calculate total resources (unique books)
+        const totalResources = allBooks.length;
+
+        // Calculate audiobooks (books with hasAudio = true)
+        const audiobooks = allBooks.filter(
+          (book) => book.hasAudio === true,
+        ).length;
+
+        // Calculate e-books (books with hasEbook = true)
+        const ebooks = allBooks.filter((book) => book.hasEbook === true).length;
+
+        return {
+          total: totalResources,
+          audiobooks: audiobooks,
+          ebooks: ebooks,
+        };
+      }
+
+      // Function to format numbers with commas (e.g., 1,200)
+      function formatNumber(num) {
+        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      }
+
+      // Function to animate counting up
+      function animateValue(element, start, end, duration, suffix = "+") {
+        const range = end - start;
+        const increment = range / (duration / 10); // Update every 10ms
+        let current = start;
+
+        const timer = setInterval(() => {
+          current += increment;
+
+          if (current >= end) {
+            element.textContent = formatNumber(Math.floor(end)) + suffix;
+            clearInterval(timer);
+          } else {
+            element.textContent = formatNumber(Math.floor(current)) + suffix;
+          }
+        }, 10);
+      }
+
+      // Function to update stats with animation
+      function updateLibraryStats(animate = true) {
+        const stats = calculateLibraryStats();
+
+        const totalElement = document.getElementById("total-resources");
+        const audioElement = document.getElementById("total-audiobooks");
+        const ebookElement = document.getElementById("total-ebooks");
+
+        if (!totalElement || !audioElement || !ebookElement) {
+          console.warn("Stats elements not found in DOM");
+          return;
+        }
+
+        if (animate) {
+          // Get current displayed values (remove commas and + sign)
+          const getCurrentValue = (element) => {
+            const text = element.textContent;
+            return parseInt(text.replace(/[+,]/g, "")) || 0;
+          };
+
+          const currentTotal = getCurrentValue(totalElement);
+          const currentAudio = getCurrentValue(audioElement);
+          const currentEbook = getCurrentValue(ebookElement);
+
+          // Animate to new values
+          animateValue(totalElement, currentTotal, stats.total, 1000);
+          animateValue(audioElement, currentAudio, stats.audiobooks, 1000);
+          animateValue(ebookElement, currentEbook, stats.ebooks, 1000);
+        } else {
+          // Set values directly without animation
+          totalElement.textContent = formatNumber(stats.total) + "+";
+          audioElement.textContent = formatNumber(stats.audiobooks) + "+";
+          ebookElement.textContent = formatNumber(stats.ebooks) + "+";
+        }
+
+        return stats;
+      }
+
+      // Function to get real-time stats (useful for debugging)
+      function getCurrentStats() {
+        const stats = calculateLibraryStats();
+        console.log("📊 Library Statistics:", {
+          "Total Resources": stats.total,
+          Audiobooks: stats.audiobooks,
+          "E-Books": stats.ebooks,
+          "Other Formats": stats.total - (stats.audiobooks + stats.ebooks),
+        });
+        return stats;
+      }
+
+      // ========== DYNAMIC AUDIO DURATION FUNCTIONS ==========
+
+      // Cache for audio durations to avoid repeated loading
+      const durationCache = new Map();
+
+      // Track loading state for each audio file
+      const loadingStates = new Map();
+
+      // Function to format duration in seconds to readable string
+      function formatDuration(seconds) {
+        const hours = Math.floor(seconds / 3600);
+        const minutes = Math.floor((seconds % 3600) / 60);
+        const remainingSeconds = Math.floor(seconds % 60);
+
+        if (hours > 0) {
+          return `${hours}h ${minutes}m`;
+        } else if (minutes > 0) {
+          return `${minutes}m ${remainingSeconds}s`;
+        } else {
+          return `${remainingSeconds}s`;
+        }
+      }
+
+      // Function to format time for display (MM:SS or HH:MM:SS)
+      function formatTime(seconds) {
+        if (isNaN(seconds) || !isFinite(seconds)) return "0:00";
+
+        const hours = Math.floor(seconds / 3600);
+        const minutes = Math.floor((seconds % 3600) / 60);
+        const secs = Math.floor(seconds % 60);
+
+        if (hours > 0) {
+          return `${hours}:${minutes.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+        } else {
+          return `${minutes}:${secs.toString().padStart(2, "0")}`;
+        }
+      }
+
+      // Function to get audio duration from MP3 file
+      async function getAudioDuration(audioFile) {
+        // Check cache first
+        if (durationCache.has(audioFile)) {
+          return durationCache.get(audioFile);
+        }
+
+        // Check if already loading
+        if (loadingStates.has(audioFile)) {
+          return loadingStates.get(audioFile);
+        }
+
+        return new Promise((resolve, reject) => {
+          const audio = new Audio();
+
+          // Set loading state
+          loadingStates.set(audioFile, true);
+
+          // Set timeout to prevent hanging
+          const timeout = setTimeout(() => {
+            audio.remove();
+            loadingStates.delete(audioFile);
+            reject("Timeout loading audio file");
+          }, 10000); // 10 second timeout
+
+          audio.addEventListener("loadedmetadata", () => {
+            clearTimeout(timeout);
+            const duration = audio.duration;
+
+            if (isFinite(duration) && duration > 0) {
+              const formattedDuration = formatDuration(duration);
+
+              // Store in cache
+              durationCache.set(audioFile, formattedDuration);
+
+              // Clean up
+              audio.remove();
+              loadingStates.delete(audioFile);
+
+              resolve(formattedDuration);
+            } else {
+              audio.remove();
+              loadingStates.delete(audioFile);
+              reject("Invalid duration");
+            }
+          });
+
+          audio.addEventListener("error", (e) => {
+            clearTimeout(timeout);
+            audio.remove();
+            loadingStates.delete(audioFile);
+            reject(e.target.error || "Could not load audio file");
+          });
+
+          audio.src = audioFile;
+          audio.preload = "metadata";
+
+          // Handle CORS if needed
+          audio.crossOrigin = "anonymous";
+        });
+      }
+
+      // Function to update a single book's duration in the UI
+      async function updateBookDuration(book, cardElement) {
+        if (!book.hasAudio || !book.audioFile) return;
+
+        try {
+          const duration = await getAudioDuration(book.audioFile);
+
+          // Update the book object
+          book.duration = duration;
+
+          // Update the UI if the card element is provided
+          if (cardElement) {
+            const durationElement = cardElement.querySelector(
+              ".metadata-item .fa-clock",
+            )?.parentElement;
+            if (durationElement) {
+              durationElement.innerHTML = `<i class="fas fa-clock"></i> ${duration}`;
+            }
+
+            // Remove loading indicator if present
+            const loadingSpinner = cardElement.querySelector(".fa-spinner");
+            if (loadingSpinner) {
+              loadingSpinner.remove();
+            }
+          }
+        } catch (error) {
+          console.error(`Failed to get duration for ${book.title}:`, error);
+
+          // Remove loading indicator on error
+          if (cardElement) {
+            const loadingSpinner = cardElement.querySelector(".fa-spinner");
+            if (loadingSpinner) {
+              loadingSpinner.remove();
+            }
+          }
+        }
+      }
+
+      // Function to show loading indicators on audio books
+      function showLoadingIndicators() {
+        document.querySelectorAll(".library-card").forEach((card) => {
+          const hasAudio = card.querySelector(".audio-indicator");
+          if (hasAudio) {
+            const durationElement = card.querySelector(
+              ".metadata-item .fa-clock",
+            )?.parentElement;
+            if (
+              durationElement &&
+              !durationElement.querySelector(".fa-spinner")
+            ) {
+              durationElement.innerHTML +=
+                ' <i class="fas fa-spinner fa-spin" style="color: #8b6b4d;"></i>';
+            }
+          }
+        });
+      }
+
+      // Function to update all audio book durations
+      async function updateAllAudioDurations() {
+        showLoadingIndicators();
+
+        const audioBooks = allBooks.filter((book) => book.hasAudio);
+        const updatePromises = [];
+
+        // Get all library cards
+        const cards = document.querySelectorAll(".library-card");
+
+        for (const book of audioBooks) {
+          // Find the corresponding card for this book
+          let card = null;
+          for (const c of cards) {
+            if (c.querySelector(".book-title")?.textContent === book.title) {
+              card = c;
+              break;
+            }
+          }
+
+          updatePromises.push(updateBookDuration(book, card));
+        }
+
+        // Wait for all updates to complete (or fail)
+        await Promise.allSettled(updatePromises);
+      }
+
+      // ========== DYNAMIC PDF PAGE COUNT FUNCTIONS ==========
+
+      // Cache for PDF page counts
+      const pdfPageCountCache = new Map();
+      const pdfLoadingStates = new Map();
+
+      // Function to get actual page count from PDF file using PDF.js
+      async function getPDFPageCount(pdfFile) {
+        // Check cache first
+        if (pdfPageCountCache.has(pdfFile)) {
+          console.log(
+            `Using cached page count for ${pdfFile}:`,
+            pdfPageCountCache.get(pdfFile),
+          );
+          return pdfPageCountCache.get(pdfFile);
+        }
+
+        // Check if already loading
+        if (pdfLoadingStates.has(pdfFile)) {
+          console.log(`Already loading ${pdfFile}, waiting...`);
+          return pdfLoadingStates.get(pdfFile);
+        }
+
+        console.log(`Loading PDF page count for: ${pdfFile}`);
+
+        // Create a promise for loading
+        const loadPromise = new Promise(async (resolve, reject) => {
+          // Set timeout to prevent hanging
+          const timeout = setTimeout(() => {
+            console.error(`Timeout loading PDF: ${pdfFile}`);
+            pdfLoadingStates.delete(pdfFile);
+            reject(new Error("Timeout loading PDF"));
+          }, 15000); // 15 second timeout
+
+          try {
+            // Check if PDF.js is available
+            if (typeof pdfjsLib === "undefined" || !pdfjsLib) {
+              console.error("PDF.js not loaded");
+              clearTimeout(timeout);
+              pdfLoadingStates.delete(pdfFile);
+              reject(new Error("PDF.js not loaded"));
+              return;
+            }
+
+            // Configure PDF.js worker
+            if (!pdfjsLib.GlobalWorkerOptions.workerSrc) {
+              pdfjsLib.GlobalWorkerOptions.workerSrc =
+                "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js";
+            }
+
+            console.log(`Fetching PDF document: ${pdfFile}`);
+
+            // Load the PDF document with CORS handling
+            const loadingTask = pdfjsLib.getDocument({
+              url: pdfFile,
+              withCredentials: false,
+              useSystemFonts: true,
+              disableRange: true,
+              disableStream: true,
+            });
+
+            const pdf = await loadingTask.promise;
+
+            clearTimeout(timeout);
+
+            const pageCount = pdf.numPages;
+            console.log(`PDF has ${pageCount} pages: ${pdfFile}`);
+
+            // Store in cache
+            pdfPageCountCache.set(pdfFile, pageCount);
+
+            // Clean up
+            pdf.destroy();
+
+            resolve(pageCount);
+          } catch (error) {
+            clearTimeout(timeout);
+            console.error("Error loading PDF:", error);
+
+            // Try alternative method with fetch if PDF.js fails
+            try {
+              console.log("Attempting alternative method with fetch...");
+              const response = await fetch(pdfFile, { method: "HEAD" });
+              if (response.ok) {
+                // If we can't get page count, return a placeholder
+                console.warn("Cannot determine page count, using default");
+                resolve(null);
+              } else {
+                reject(error);
+              }
+            } catch (fetchError) {
+              reject(error);
+            }
+          } finally {
+            pdfLoadingStates.delete(pdfFile);
+          }
+        });
+
+        pdfLoadingStates.set(pdfFile, loadPromise);
+        return loadPromise;
+      }
+
+      // Function to show loading indicators on e-books
+      function showEbookLoadingIndicators() {
+        document.querySelectorAll(".library-card").forEach((card) => {
+          const hasEbook = card.querySelector(".ebook-indicator");
+          if (hasEbook) {
+            const pagesElement = card.querySelector(
+              ".metadata-item .fa-file-alt",
+            )?.parentElement;
+            if (pagesElement && !pagesElement.querySelector(".fa-spinner")) {
+              // Store original page count
+              const originalText = pagesElement.innerText;
+              pagesElement.setAttribute("data-original-pages", originalText);
+              pagesElement.innerHTML = `<i class="fas fa-file-alt"></i> <i class="fas fa-spinner fa-spin" style="color: #2563eb;"></i> Loading...`;
+            }
+          }
+        });
+      }
+
+      // Function to update a single e-book's page count in the UI
+      async function updateEbookPageCount(book, cardElement) {
+        if (!book.hasEbook || !book.ebookFile) return;
+
+        try {
+          console.log(`Updating page count for: ${book.title}`);
+          const pageCount = await getPDFPageCount(book.ebookFile);
+
+          // Update the book object
+          if (pageCount) {
+            book.pages = pageCount;
+            console.log(`Updated ${book.title} to ${pageCount} pages`);
+          }
+
+          // Update the UI if the card element is provided
+          if (cardElement) {
+            const pagesElement = cardElement.querySelector(
+              ".metadata-item .fa-file-alt",
+            )?.parentElement;
+
+            if (pagesElement) {
+              if (pageCount) {
+                pagesElement.innerHTML = `<i class="fas fa-file-alt"></i> ${pageCount} pages`;
+              } else {
+                // Restore original text if available
+                const originalText = pagesElement.getAttribute(
+                  "data-original-pages",
+                );
+                if (originalText) {
+                  pagesElement.innerHTML = originalText;
+                } else {
+                  pagesElement.innerHTML = `<i class="fas fa-file-alt"></i> ${book.pages || "?"} pages`;
+                }
+              }
+            }
+
+            // Remove loading indicator if present
+            const loadingSpinner = cardElement.querySelector(".fa-spinner");
+            if (loadingSpinner) {
+              loadingSpinner.remove();
+            }
+          }
+        } catch (error) {
+          console.error(`Failed to get page count for ${book.title}:`, error);
+
+          // Use fallback page count
+          if (cardElement) {
+            const pagesElement = cardElement.querySelector(
+              ".metadata-item .fa-file-alt",
+            )?.parentElement;
+            if (pagesElement) {
+              // Restore original text if available
+              const originalText = pagesElement.getAttribute(
+                "data-original-pages",
+              );
+              if (originalText) {
+                pagesElement.innerHTML = originalText;
+              } else {
+                pagesElement.innerHTML = `<i class="fas fa-file-alt"></i> ${book.pages || "?"} pages`;
+              }
+            }
+
+            // Remove loading indicator on error
+            const loadingSpinner = cardElement.querySelector(".fa-spinner");
+            if (loadingSpinner) {
+              loadingSpinner.remove();
+            }
+          }
+        }
+      }
+
+      // Function to update all e-book page counts
+      async function updateAllEbookPageCounts() {
+        console.log("Starting to update all e-book page counts...");
+        showEbookLoadingIndicators();
+
+        const ebookBooks = allBooks.filter((book) => book.hasEbook);
+        console.log(`Found ${ebookBooks.length} e-books to update`);
+
+        const updatePromises = [];
+
+        // Get all library cards
+        const cards = document.querySelectorAll(".library-card");
+
+        for (const book of ebookBooks) {
+          // Find the corresponding card for this book
+          let card = null;
+          for (const c of cards) {
+            const titleElement = c.querySelector(".book-title");
+            if (titleElement && titleElement.textContent === book.title) {
+              card = c;
+              break;
+            }
+          }
+
+          if (card) {
+            updatePromises.push(updateEbookPageCount(book, card));
+          } else {
+            console.warn(`Could not find card for book: ${book.title}`);
+          }
+        }
+
+        // Wait for all updates to complete (or fail)
+        const results = await Promise.allSettled(updatePromises);
+        console.log("Finished updating e-book page counts:", results);
+      }
+
+      // ========== DRAGGABLE MODAL FUNCTIONS ==========
+
+      // Draggable functionality for audio modal
+      let isModalDragging = false;
+      let modalDragOffsetX, modalDragOffsetY;
+
+      function initDraggableModal() {
+        const modalContent = document.getElementById("modal-content");
+        if (!modalContent) return;
+
+        modalContent.addEventListener("mousedown", startModalDrag);
+        document.addEventListener("mousemove", modalDrag);
+        document.addEventListener("mouseup", endModalDrag);
+      }
+
+      function startModalDrag(e) {
+        // Don't start drag if clicking on close button or interactive elements
+        if (
+          e.target.closest(".modal-close-btn") ||
+          e.target.closest("audio") ||
+          e.target.closest("button") ||
+          e.target.closest("a")
+        ) {
+          return;
+        }
+
+        if (e.button !== 0) return; // Only left click
+
+        e.preventDefault();
+
+        const modalContent = document.getElementById("modal-content");
+        const rect = modalContent.getBoundingClientRect();
+        modalDragOffsetX = e.clientX - rect.left;
+        modalDragOffsetY = e.clientY - rect.top;
+
+        isModalDragging = true;
+        modalContent.classList.add("dragging");
+      }
+
+      function modalDrag(e) {
+        if (!isModalDragging) return;
+
+        e.preventDefault();
+
+        const modalContent = document.getElementById("modal-content");
+        const x = e.clientX - modalDragOffsetX;
+        const y = e.clientY - modalDragOffsetY;
+
+        // Constrain to window boundaries
+        const maxX = window.innerWidth - modalContent.offsetWidth;
+        const maxY = window.innerHeight - modalContent.offsetHeight;
+
+        const constrainedX = Math.max(0, Math.min(x, maxX));
+        const constrainedY = Math.max(0, Math.min(y, maxY));
+
+        modalContent.style.position = "absolute";
+        modalContent.style.left = constrainedX + "px";
+        modalContent.style.top = constrainedY + "px";
+        modalContent.style.margin = "0";
+      }
+
+      function endModalDrag() {
+        if (!isModalDragging) return;
+
+        isModalDragging = false;
+        const modalContent = document.getElementById("modal-content");
+        modalContent.classList.remove("dragging");
+      }
+
+      // ========== MINI PLAYER FUNCTIONS ==========
+
+      // Create mini player HTML
+      function createMiniPlayer() {
+        const miniPlayerHTML = `
+          <div id="mini-audio-player" class="mini-player hidden">
+            <div class="mini-player-drag-handle" id="mini-player-drag-handle">
+              <i class="fas fa-grip-lines"></i>
+            </div>
+            
+            <div class="mini-player-content">
+              <img id="mini-player-cover" src="" alt="Now playing" class="mini-player-cover">
+              
+              <div class="mini-player-info">
+                <div class="mini-player-title" id="mini-player-title"></div>
+                <div class="mini-player-author" id="mini-player-author"></div>
+              </div>
+              
+              <div class="mini-player-controls">
+                <button class="mini-player-control-btn" id="mini-player-prev" title="Previous">
+                  <i class="fas fa-step-backward"></i>
+                </button>
+                <button class="mini-player-control-btn play-pause-btn" id="mini-player-play-pause">
+                  <i class="fas fa-play" id="mini-player-play-icon"></i>
+                </button>
+                <button class="mini-player-control-btn" id="mini-player-next" title="Next">
+                  <i class="fas fa-step-forward"></i>
+                </button>
+              </div>
+              
+              <div class="mini-player-progress-container">
+                <div class="mini-player-time" id="mini-player-current-time">0:00</div>
+                <div class="mini-player-progress-bar" id="mini-player-progress-bar" title="Drag to seek">
+                  <div class="mini-player-progress-fill" id="mini-player-progress-fill"></div>
+                </div>
+                <div class="mini-player-time" id="mini-player-duration">0:00</div>
+              </div>
+              
+              <button class="mini-player-close-btn" id="mini-player-close" title="Close player">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+          </div>
+        `;
+
+        // Append to body
+        document.body.insertAdjacentHTML("beforeend", miniPlayerHTML);
+      }
+
+      // Initialize mini player elements
+      const miniPlayer = document.getElementById("mini-audio-player");
+      const miniPlayerCover = document.getElementById("mini-player-cover");
+      const miniPlayerTitle = document.getElementById("mini-player-title");
+      const miniPlayerAuthor = document.getElementById("mini-player-author");
+      const miniPlayerPlayPause = document.getElementById(
+        "mini-player-play-pause",
+      );
+      const miniPlayerPlayIcon = document.getElementById(
+        "mini-player-play-icon",
+      );
+      const miniPlayerPrev = document.getElementById("mini-player-prev");
+      const miniPlayerNext = document.getElementById("mini-player-next");
+      const miniPlayerClose = document.getElementById("mini-player-close");
+      const miniPlayerCurrentTime = document.getElementById(
+        "mini-player-current-time",
+      );
+      const miniPlayerDuration = document.getElementById(
+        "mini-player-duration",
+      );
+      const miniPlayerProgressBar = document.getElementById(
+        "mini-player-progress-bar",
+      );
+      const miniPlayerProgressFill = document.getElementById(
+        "mini-player-progress-fill",
+      );
+      const miniPlayerDragHandle = document.getElementById(
+        "mini-player-drag-handle",
+      );
+
+      // Current playlist and index
+      let currentPlaylist = [];
+      let currentPlaylistIndex = 0;
+      let isDraggingProgress = false;
+
+      // Draggable functionality for mini player
+      let isDragging = false;
+      let dragOffsetX, dragOffsetY;
+
+      function initDraggableMiniPlayer() {
+        if (!miniPlayer || !miniPlayerDragHandle) return;
+
+        miniPlayerDragHandle.addEventListener("mousedown", startMiniPlayerDrag);
+        document.addEventListener("mousemove", miniPlayerDrag);
+        document.addEventListener("mouseup", endMiniPlayerDrag);
+
+        // Load saved position
+        const savedPosition = localStorage.getItem("miniPlayerPosition");
+        if (savedPosition) {
+          const { left, top } = JSON.parse(savedPosition);
+          miniPlayer.style.left = left;
+          miniPlayer.style.top = top;
+          miniPlayer.style.right = "auto";
+          miniPlayer.style.bottom = "auto";
+        }
+      }
+
+      function startMiniPlayerDrag(e) {
+        if (e.button !== 0) return; // Only left click
+
+        e.preventDefault();
+
+        const rect = miniPlayer.getBoundingClientRect();
+        dragOffsetX = e.clientX - rect.left;
+        dragOffsetY = e.clientY - rect.top;
+
+        isDragging = true;
+        miniPlayer.classList.add("dragging");
+      }
+
+      function miniPlayerDrag(e) {
+        if (!isDragging) return;
+
+        e.preventDefault();
+
+        const x = e.clientX - dragOffsetX;
+        const y = e.clientY - dragOffsetY;
+
+        // Constrain to window boundaries
+        const maxX = window.innerWidth - miniPlayer.offsetWidth;
+        const maxY = window.innerHeight - miniPlayer.offsetHeight;
+
+        const constrainedX = Math.max(0, Math.min(x, maxX));
+        const constrainedY = Math.max(0, Math.min(y, maxY));
+
+        miniPlayer.style.left = constrainedX + "px";
+        miniPlayer.style.top = constrainedY + "px";
+        miniPlayer.style.right = "auto";
+        miniPlayer.style.bottom = "auto";
+      }
+
+      function endMiniPlayerDrag() {
+        if (!isDragging) return;
+
+        isDragging = false;
+        miniPlayer.classList.remove("dragging");
+
+        // Save position
+        localStorage.setItem(
+          "miniPlayerPosition",
+          JSON.stringify({
+            left: miniPlayer.style.left,
+            top: miniPlayer.style.top,
+          }),
+        );
+      }
+
+      // Progress bar seeking
+      function initProgressSeeking() {
+        if (!miniPlayerProgressBar) return;
+
+        miniPlayerProgressBar.addEventListener("mousedown", (e) => {
+          e.preventDefault();
+          isDraggingProgress = true;
+          updateProgressFromEvent(e);
+        });
+
+        document.addEventListener("mousemove", (e) => {
+          if (isDraggingProgress) {
+            e.preventDefault();
+            updateProgressFromEvent(e);
+          }
+        });
+
+        document.addEventListener("mouseup", () => {
+          isDraggingProgress = false;
+        });
+
+        miniPlayerProgressBar.addEventListener(
+          "click",
+          updateProgressFromEvent,
+        );
+      }
+
+      function updateProgressFromEvent(e) {
+        if (!audioPlayer || !miniPlayerProgressBar) return;
+
+        const rect = miniPlayerProgressBar.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const width = rect.width;
+        const percentage = Math.max(0, Math.min(1, x / width));
+
+        if (audioPlayer.duration && isFinite(audioPlayer.duration)) {
+          audioPlayer.currentTime = percentage * audioPlayer.duration;
+        }
+      }
+
+      // Update mini player progress
+      function updateMiniPlayerProgress() {
+        if (
+          !audioPlayer ||
+          !miniPlayerCurrentTime ||
+          !miniPlayerDuration ||
+          !miniPlayerProgressFill
+        )
+          return;
+
+        if (audioPlayer.duration && isFinite(audioPlayer.duration)) {
+          const currentTime = audioPlayer.currentTime;
+          const duration = audioPlayer.duration;
+          const percentage = (currentTime / duration) * 100;
+
+          miniPlayerProgressFill.style.width = percentage + "%";
+          miniPlayerCurrentTime.textContent = formatTime(currentTime);
+
+          if (!miniPlayerDuration.dataset.set) {
+            miniPlayerDuration.textContent = formatTime(duration);
+            miniPlayerDuration.dataset.set = "true";
+          }
+        }
+      }
+
+      // Update mini player with current book
+      function updateMiniPlayerWithBook(book) {
+        miniPlayerCover.src = book.cover;
+        miniPlayerTitle.textContent = book.title;
+        miniPlayerAuthor.textContent = book.author;
+
+        // Reset duration display
+        miniPlayerDuration.dataset.set = "";
+        miniPlayerDuration.textContent = "0:00";
+        miniPlayerCurrentTime.textContent = "0:00";
+        miniPlayerProgressFill.style.width = "0%";
+
+        // Update play/pause icon
+        if (audioPlayer.paused) {
+          miniPlayerPlayIcon.className = "fas fa-play";
+        } else {
+          miniPlayerPlayIcon.className = "fas fa-pause";
+        }
+      }
+
+      // Modified openAudioPlayer function
+      function openAudioPlayer(book) {
+        // Reset modal position
+        const modalContent = document.getElementById("modal-content");
+        modalContent.style.position = "";
+        modalContent.style.left = "";
+        modalContent.style.top = "";
+        modalContent.style.margin = "";
+
+        // Set modal content
+        document.getElementById("modal-cover").src = book.cover;
+        document.getElementById("modal-title").textContent = book.title;
+        document.getElementById("modal-author").textContent = book.author;
+
+        // Show loading state for duration
+        document.getElementById("modal-duration").innerHTML =
+          `<i class="fas fa-clock"></i> <i class="fas fa-spinner fa-spin"></i>`;
+
+        document.getElementById("modal-narrator").innerHTML =
+          `<i class="fas fa-microphone"></i> ${book.narrator || "Various"}`;
+        document.getElementById("modal-readers").textContent = book.readers;
+
+        // Set audio source
+        if (book.audioFile) {
+          audioPlayer.src = book.audioFile;
+          audioPlayer.load();
+        }
+
+        // Set download link
+        const downloadLink = document.getElementById("download-link");
+        if (book.audioFile) {
+          downloadLink.href = book.audioFile;
+          downloadLink.download = book.audioFile.split("/").pop();
+        }
+
+        // Update duration when metadata loads
+        audioPlayer.addEventListener(
+          "loadedmetadata",
+          () => {
+            const duration = audioPlayer.duration;
+            if (isFinite(duration) && duration > 0) {
+              const durationString = formatDuration(duration);
+              document.getElementById("modal-duration").innerHTML =
+                `<i class="fas fa-clock"></i> ${durationString}`;
+
+              // Update cache
+              durationCache.set(book.audioFile, durationString);
+
+              // Update book object
+              book.duration = durationString;
+            }
+          },
+          { once: true },
+        );
+
+        // Show modal with animation
+        audioModal.classList.remove("hidden");
+        document.body.style.overflow = "hidden";
+
+        setTimeout(() => {
+          audioBackdrop.classList.remove("opacity-0");
+          modalContent.classList.remove("opacity-0", "scale-95");
+          modalContent.classList.add("opacity-100", "scale-100");
+        }, 10);
+
+        // Update mini player
+        updateMiniPlayerWithBook(book);
+        miniPlayer.classList.remove("hidden");
+      }
+
+      // Modified closeAudioPlayer function
+      function closeAudioPlayer() {
+        // Pause audio when closing modal
+        audioPlayer.pause();
+
+        audioBackdrop.classList.add("opacity-0");
+        audioModalContent.classList.remove("opacity-100", "scale-100");
+        audioModalContent.classList.add("opacity-0", "scale-95");
+
+        setTimeout(() => {
+          audioModal.classList.add("hidden");
+          document.body.style.overflow = "";
+          // Clear audio source to stop any background playback
+          audioPlayer.src = "";
+          audioPlayer.load(); // This ensures the audio is fully stopped
+        }, 300);
+      }
+
+      // Close mini player
+      function closeMiniPlayer() {
+        audioPlayer.pause();
+        audioPlayer.src = "";
+        miniPlayer.classList.add("hidden");
+
+        // Clear playlist
+        currentPlaylist = [];
+        currentPlaylistIndex = 0;
+      }
+
+      // Audio Player Modal Functions
+      const audioModal = document.getElementById("audioPlayerModal");
+      const audioBackdrop = document.getElementById("modal-backdrop");
+      const audioModalContent = document.getElementById("modal-content");
+      const audioPlayer = document.getElementById("audioPlayer");
+      const ebookModal = document.getElementById("ebookReaderModal");
+      const ebookBackdrop = document.getElementById("ebook-modal-backdrop");
+      const ebookModalContent = document.getElementById("ebook-modal-content");
+      const ebookContent = document.getElementById("ebook-content");
+      const ebookHeader = document.getElementById("ebook-header");
+
+      // Font size control for e-book reader (not used for PDFs but kept for compatibility)
+      let currentFontSize = 100;
+
+      function adjustFontSize(delta) {
+        currentFontSize = Math.min(
+          150,
+          Math.max(70, currentFontSize + delta * 10),
+        );
+        // This won't affect PDFs but kept for any future text-based e-books
+      }
+
+      function toggleTheme() {
+        // Not applicable for PDFs
+      }
+
+      // ========== FULL-SCREEN FUNCTIONALITY ==========
+      let isFullScreen = false;
+
+      function toggleFullScreen() {
+        const modalContent = document.getElementById("ebook-modal-content");
+        const fullscreenIcon = document.getElementById("fullscreen-icon");
+        const ebookContent = document.getElementById("ebook-content");
+        const embed = document.getElementById("pdf-embed");
+
+        if (!isFullScreen) {
+          // Enter full screen
+          if (modalContent.requestFullscreen) {
+            modalContent.requestFullscreen();
+          } else if (modalContent.webkitRequestFullscreen) {
+            /* Safari */
+            modalContent.webkitRequestFullscreen();
+          } else if (modalContent.msRequestFullscreen) {
+            /* IE11 */
+            modalContent.msRequestFullscreen();
+          }
+
+          // Update icon
+          if (fullscreenIcon) {
+            fullscreenIcon.className = "fas fa-compress";
+          }
+
+          // Adjust styles for full screen
+          if (ebookContent) {
+            ebookContent.style.padding = "0";
+          }
+          if (embed) {
+            embed.style.borderRadius = "0";
+          }
+
+          isFullScreen = true;
+        } else {
+          // Exit full screen
+          if (document.exitFullscreen) {
+            document.exitFullscreen();
+          } else if (document.webkitExitFullscreen) {
+            /* Safari */
+            document.webkitExitFullscreen();
+          } else if (document.msExitFullscreen) {
+            /* IE11 */
+            document.msExitFullscreen();
+          }
+
+          // Update icon
+          if (fullscreenIcon) {
+            fullscreenIcon.className = "fas fa-expand";
+          }
+
+          // Restore styles
+          if (ebookContent) {
+            ebookContent.style.padding = "20px";
+          }
+          if (embed) {
+            embed.style.borderRadius = "4px";
+          }
+
+          isFullScreen = false;
+        }
+      }
+
+      // Listen for full-screen change events
+      document.addEventListener("fullscreenchange", handleFullScreenChange);
+      document.addEventListener(
+        "webkitfullscreenchange",
+        handleFullScreenChange,
+      );
+      document.addEventListener("mozfullscreenchange", handleFullScreenChange);
+      document.addEventListener("MSFullscreenChange", handleFullScreenChange);
+
+      function handleFullScreenChange() {
+        const fullscreenIcon = document.getElementById("fullscreen-icon");
+        const ebookContent = document.getElementById("ebook-content");
+        const embed = document.getElementById("pdf-embed");
+
+        // Check if we're in full-screen mode
+        const isCurrentlyFullScreen = !!(
+          document.fullscreenElement ||
+          document.webkitFullscreenElement ||
+          document.mozFullScreenElement ||
+          document.msFullscreenElement
+        );
+
+        if (isCurrentlyFullScreen) {
+          // Update icon to compress
+          if (fullscreenIcon) {
+            fullscreenIcon.className = "fas fa-compress";
+          }
+          // Adjust styles
+          if (ebookContent) {
+            ebookContent.style.padding = "0";
+          }
+          if (embed) {
+            embed.style.borderRadius = "0";
+          }
+          isFullScreen = true;
+        } else {
+          // Update icon to expand
+          if (fullscreenIcon) {
+            fullscreenIcon.className = "fas fa-expand";
+          }
+          // Restore styles
+          if (ebookContent) {
+            ebookContent.style.padding = "20px";
+          }
+          if (embed) {
+            embed.style.borderRadius = "4px";
+          }
+          isFullScreen = false;
+        }
+      }
+
+      // ========== RESPONSIVE EBOOK CONTAINER FUNCTION ==========
+      function adjustEbookContainerForScreenSize() {
+        const ebookModalContent = document.getElementById(
+          "ebook-modal-content",
+        );
+        const ebookHeader = document.getElementById("ebook-header");
+        const ebookContent = document.getElementById("ebook-content");
+
+        if (!ebookModalContent || !ebookHeader || !ebookContent) return;
+
+        // Get screen dimensions
+        const screenWidth = window.innerWidth;
+        const screenHeight = window.innerHeight;
+
+        // Apply responsive styles based on screen size
+        if (screenWidth <= 480) {
+          // Mobile phones
+          ebookModalContent.style.width = "95%";
+          ebookModalContent.style.maxWidth = "95%";
+          ebookModalContent.style.height = "85vh";
+          ebookModalContent.style.maxHeight = "85vh";
+
+          // Adjust header for mobile
+          const headerDivs = ebookHeader.querySelectorAll("div");
+          headerDivs.forEach((div) => {
+            if (div.style.display === "flex") {
+              div.style.flexDirection = "column";
+              div.style.alignItems = "flex-start";
+              div.style.gap = "8px";
+            }
+          });
+
+          // Adjust padding for mobile
+          if (!isFullScreen) {
+            ebookContent.style.padding = "10px";
+          }
+        } else if (screenWidth <= 768) {
+          // Tablets
+          ebookModalContent.style.width = "90%";
+          ebookModalContent.style.maxWidth = "90%";
+          ebookModalContent.style.height = "90vh";
+          ebookModalContent.style.maxHeight = "90vh";
+
+          // Adjust header for tablet
+          const headerDivs = ebookHeader.querySelectorAll("div");
+          headerDivs.forEach((div) => {
+            if (div.style.display === "flex") {
+              div.style.flexDirection = "row";
+              div.style.flexWrap = "wrap";
+              div.style.gap = "12px";
+            }
+          });
+
+          // Adjust padding for tablet
+          if (!isFullScreen) {
+            ebookContent.style.padding = "15px";
+          }
+        } else if (screenWidth <= 1024) {
+          // Small desktops
+          ebookModalContent.style.width = "85%";
+          ebookModalContent.style.maxWidth = "85%";
+          ebookModalContent.style.height = "90vh";
+          ebookModalContent.style.maxHeight = "90vh";
+
+          // Reset header for desktop
+          const headerDivs = ebookHeader.querySelectorAll("div");
+          headerDivs.forEach((div) => {
+            if (div.style.display === "flex") {
+              div.style.flexDirection = "row";
+              div.style.flexWrap = "nowrap";
+              div.style.gap = "16px";
+            }
+          });
+
+          // Adjust padding for desktop
+          if (!isFullScreen) {
+            ebookContent.style.padding = "20px";
+          }
+        } else {
+          // Large desktops
+          ebookModalContent.style.width = "80%";
+          ebookModalContent.style.maxWidth = "1200px";
+          ebookModalContent.style.height = "90vh";
+          ebookModalContent.style.maxHeight = "90vh";
+
+          // Reset header for large desktop
+          const headerDivs = ebookHeader.querySelectorAll("div");
+          headerDivs.forEach((div) => {
+            if (div.style.display === "flex") {
+              div.style.flexDirection = "row";
+              div.style.flexWrap = "nowrap";
+              div.style.gap = "16px";
+            }
+          });
+
+          // Adjust padding for large desktop
+          if (!isFullScreen) {
+            ebookContent.style.padding = "20px";
+          }
+        }
+
+        // Adjust embed size
+        const embed = document.getElementById("pdf-embed");
+        if (embed) {
+          embed.style.width = "100%";
+          embed.style.height = "100%";
+        }
+      }
+
+      // Updated openEbookReader function with full-screen button and responsive design
+      function openEbookReader(book) {
+        // Clear previous content
+        ebookHeader.innerHTML = "";
+        ebookContent.innerHTML = "";
+
+        // Get the actual page count (use cached value if available)
+        let pageCount = book.pages || "?";
+
+        // Check if we have a cached page count
+        if (book.ebookFile && pdfPageCountCache.has(book.ebookFile)) {
+          pageCount = pdfPageCountCache.get(book.ebookFile);
+        }
+
+        // Create book header with full-screen button and responsive classes
+        const headerHTML = `
+          <div class="ebook-header-container" style="display: flex; justify-content: space-between; align-items: center; padding: 0 8px; width: 100%; flex-wrap: wrap; gap: 10px;">
+            <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
+              <img src="${book.cover}" alt="${book.title}" style="width: 48px; height: 48px; border-radius: 8px; object-fit: cover; box-shadow: 0 2px 4px rgba(0,0,0,0.1);" class="ebook-cover-img">
+              <div>
+                <h3 style="font-size: 18px; font-weight: 600; margin: 0; color: #1e293b;" class="ebook-title">${book.title}</h3>
+                <p style="font-size: 14px; color: #64748b; margin: 4px 0 0 0;" class="ebook-author">by ${book.author}</p>
+              </div>
+            </div>
+            <div style="display: flex; gap: 16px; align-items: center; flex-wrap: wrap;" class="ebook-actions">
+              <span style="font-size: 13px; color: #64748b; display: flex; align-items: center; gap: 4px;" class="ebook-readers">
+                <i class="fas fa-users"></i> <span class="readers-count">${book.readers}</span> reading now
+              </span>
+              <span style="font-size: 12px; color: #8b6b4d; background: #f0e6d2; padding: 4px 12px; border-radius: 20px; display: flex; align-items: center; gap: 4px;" class="ebook-pages-badge">
+                <i class="fas fa-file-pdf"></i> PDF • <span class="page-count">${pageCount}</span> pages
+              </span>
+              <button
+                onclick="toggleFullScreen()"
+                class="fullscreen-btn"
+                style="
+                  background: none;
+                  border: none;
+                  color: #4b5563;
+                  cursor: pointer;
+                  font-size: 16px;
+                  width: 32px;
+                  height: 32px;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  border-radius: 50%;
+                  transition: all 0.2s ease;
+                  transform: translateX(-20px);
+                "
+                title="Toggle full screen"
+              >
+                <i class="fas fa-expand" id="fullscreen-icon"></i>
+              </button>
+            </div>
+          </div>
+        `;
+
+        ebookHeader.innerHTML = headerHTML;
+
+        // Create PDF viewer container with full-screen support
+        ebookContent.style.background = "#525659";
+        ebookContent.style.display = "flex";
+        ebookContent.style.justifyContent = "center";
+        ebookContent.style.alignItems = "flex-start";
+        ebookContent.style.overflow = "auto";
+        ebookContent.style.transition = "all 0.3s ease";
+
+        // Create PDF embed
+        const embed = document.createElement("embed");
+        embed.src = book.ebookFile;
+        embed.type = "application/pdf";
+        embed.style.width = "100%";
+        embed.style.height = "100%";
+        embed.style.border = "none";
+        embed.style.borderRadius = "4px";
+        embed.style.boxShadow = "0 4px 6px -1px rgba(0, 0, 0, 0.1)";
+        embed.style.backgroundColor = "white";
+        embed.id = "pdf-embed";
+
+        ebookContent.appendChild(embed);
+
+        // Show modal
+        ebookModal.classList.remove("hidden");
+        document.body.style.overflow = "hidden";
+
+        // Apply responsive sizing
+        adjustEbookContainerForScreenSize();
+
+        setTimeout(() => {
+          ebookBackdrop.classList.remove("opacity-0");
+          ebookModalContent.classList.remove("opacity-0", "scale-95");
+          ebookModalContent.classList.add("opacity-100", "scale-100");
+        }, 10);
+      }
+
+      function closeEbookReader() {
+        // Exit full screen if active
+        if (isFullScreen) {
+          if (document.exitFullscreen) {
+            document.exitFullscreen();
+          } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+          } else if (document.msExitFullscreen) {
+            document.msExitFullscreen();
+          }
+        }
+
+        ebookBackdrop.classList.add("opacity-0");
+        ebookModalContent.classList.remove("opacity-100", "scale-100");
+        ebookModalContent.classList.add("opacity-0", "scale-95");
+
+        setTimeout(() => {
+          ebookModal.classList.add("hidden");
+          document.body.style.overflow = "";
+          // Clear content
+          ebookHeader.innerHTML = "";
+          ebookContent.innerHTML = "";
+        }, 300);
+      }
+
+      if (ebookBackdrop)
+        ebookBackdrop.addEventListener("click", closeEbookReader);
+
+      // Listen for window resize to adjust ebook container
+      window.addEventListener("resize", function () {
+        if (!ebookModal.classList.contains("hidden")) {
+          adjustEbookContainerForScreenSize();
+        }
+      });
+
+      // Modified Escape key handler - only close modal, not mini player
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+          if (audioModal && !audioModal.classList.contains("hidden")) {
+            closeAudioPlayer(); // This only hides modal, keeps audio playing
+          }
+          if (ebookModal && !ebookModal.classList.contains("hidden")) {
+            closeEbookReader();
+          }
+        }
+      });
+
+      // Add CSS for full-screen button hover effect, full-screen styles, responsive design, and mobile book layout
+      const style = document.createElement("style");
+      style.textContent = `
+        .fullscreen-btn:hover {
+          background: #f3f4f6;
+          color: #8b6b4d;
+        }
+        
+        #ebook-modal-content:-webkit-full-screen {
+          width: 100vw !important;
+          height: 100vh !important;
+          max-width: none !important;
+          max-height: none !important;
+          border-radius: 0 !important;
+        }
+        
+        #ebook-modal-content:-moz-full-screen {
+          width: 100vw !important;
+          height: 100vh !important;
+          max-width: none !important;
+          max-height: none !important;
+          border-radius: 0 !important;
+        }
+        
+        #ebook-modal-content:fullscreen {
+          width: 100vw !important;
+          height: 100vh !important;
+          max-width: none !important;
+          max-height: none !important;
+          border-radius: 0 !important;
+        }
+        
+        #ebook-modal-content:fullscreen #ebook-content {
+          height: calc(100vh - 60px) !important;
+        }
+        
+        #ebook-modal-content:-webkit-full-screen #ebook-content {
+          height: calc(100vh - 60px) !important;
+        }
+        
+        #ebook-modal-content:-moz-full-screen #ebook-content {
+          height: calc(100vh - 60px) !important;
+        }
+        
+        /* Responsive styles for ebook container */
+        @media (max-width: 480px) {
+          .ebook-header-container {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+          }
+          
+          .ebook-actions {
+            width: 100%;
+            justify-content: space-between !important;
+          }
+          
+          .ebook-title {
+            font-size: 16px !important;
+          }
+          
+          .ebook-author {
+            font-size: 12px !important;
+          }
+          
+          .ebook-cover-img {
+            width: 87px !important;
+            height: 40px !important;
+          }
+          
+          .ebook-readers {
+            font-size: 11px !important;
+          }
+          
+          .ebook-pages-badge {
+            font-size: 11px !important;
+            padding: 3px 8px !important;
+          }
+        }
+        
+        @media (min-width: 481px) and (max-width: 768px) {
+          .ebook-header-container {
+            flex-direction: row !important;
+            flex-wrap: wrap !important;
+          }
+          
+          .ebook-actions {
+            flex-wrap: wrap !important;
+          }
+        }
+        
+        @media (min-width: 769px) and (max-width: 1024px) {
+          #ebook-modal-content {
+            width: 85% !important;
+          }
+        }
+        
+        @media (min-width: 1025px) {
+          #ebook-modal-content {
+            width: 80% !important;
+            max-width: 1200px !important;
+          }
+        }
+        
+        /* Mobile book layout - 3 books per row */
+        @media (max-width: 640px) {
+          .grid {
+            grid-template-columns: repeat(3, 1fr) !important;
+            gap: 0.5rem !important;
+          }
+          
+          .library-card {
+            transform: scale(0.9);
+            margin: -0.5rem;
+          }
+          
+          .book-title {
+            font-size: 12px !important;
+            -webkit-line-clamp: 2 !important;
+            line-height: 1.3 !important;
+          }
+          
+          .book-author {
+            font-size: 10px !important;
+            margin-bottom: 4px !important;
+          }
+          
+          .book-metadata {
+            gap: 6px !important;
+            margin: 6px 0 !important;
+            font-size: 9px !important;
+          }
+          
+          .metadata-item i {
+            font-size: 8px !important;
+          }
+          
+          .access-badge {
+            padding: 2px 6px !important;
+            font-size: 9px !important;
+            gap: 3px !important;
+          }
+          
+          .format-badge {
+            padding: 1px 4px !important;
+            font-size: 8px !important;
+          }
+          
+          .format-badge i {
+            font-size: 6px !important;
+          }
+          
+          .read-count {
+            font-size: 8px !important;
+            margin-top: 4px !important;
+          }
+          
+          .read-count i {
+            font-size: 7px !important;
+          }
+          
+          .now-reading {
+            padding: 2px 6px !important;
+            font-size: 8px !important;
+            bottom: 8px !important;
+            left: 8px !important;
+          }
+          
+          .now-reading i {
+            font-size: 7px !important;
+          }
+          
+          .audio-indicator, .ebook-indicator {
+            padding: 2px 6px !important;
+            font-size: 8px !important;
+            top: 8px !important;
+            left: 8px !important;
+          }
+          
+          .audio-indicator i, .ebook-indicator i {
+            font-size: 7px !important;
+          }
+          
+          .book-cover-wrapper {
+            aspect-ratio: 2/3;
+          }
+          
+          .book-info {
+            padding: 8px 6px !important;
+          }
+        }
+        
+        /* Ensure PDF embed scales properly */
+        #pdf-embed {
+          transition: all 0.3s ease;
+        }
+        
+        /* Improve touch scrolling on mobile */
+        #ebook-content {
+          -webkit-overflow-scrolling: touch;
+        }
+      `;
+      document.head.appendChild(style);
+
+      // Combine all books into one array for filtering
+      const allBooks = [
+        ...libraryData.featured_books,
+        ...libraryData.audiobooks,
+        ...libraryData.ebooks,
+        ...libraryData.mysteries,
+        ...libraryData.poetry,
+        ...libraryData.commentaries,
+        ...libraryData.sermons,
+        ...libraryData.churchHistory,
+      ];
+
+      // Store containers for dynamic updates
+      const containers = {
+        featured: document.getElementById("featured-container"),
+        audiobooks: document.getElementById("audiobooks-container"),
+        ebooks: document.getElementById("ebooks-container"),
+        mysteries: document.getElementById("mysteries-container"),
+        poetry: document.getElementById("poetry-container"),
+        commentaries: document.getElementById("commentaries-container"),
+      };
+
+      // Store original HTML for reset (will be populated after initial render)
+      const originalHTML = {
+        featured: "",
+        audiobooks: "",
+        ebooks: "",
+        mysteries: "",
+        poetry: "",
+        commentaries: "",
+      };
+
+      // Function to create library card HTML
+      function createLibraryCard(book, index) {
+        const audioIndicator = book.hasAudio
+          ? `<div class="audio-indicator"><i class="fas fa-headphones"></i> Audiobook</div>`
+          : "";
+        const ebookIndicator = book.hasEbook
+          ? `<div class="ebook-indicator"><i class="fas fa-tablet-alt"></i> E-book</div>`
+          : "";
+
+        return `
+          <div class="library-card ${book.featured ? "featured" : ""} ${book.is_new ? "new" : ""} animate-in" 
+               style="animation-delay: ${index * 0.05}s"
+               data-book-title="${book.title.replace(/"/g, "&quot;")}"
+               onclick="handleBookClick(${JSON.stringify(book).replace(/"/g, "&quot;")})">
+            
+            <div class="book-cover-wrapper">
+              <img src="${book.cover}" alt="${book.title}" class="book-cover" loading="lazy">
+              ${audioIndicator || ebookIndicator}
+              <div class="now-reading">
+                <i class="fas fa-users"></i> ${book.readers} reading now
+              </div>
+            </div>
+            
+            <div class="book-info">
+              <h3 class="book-title">${book.title}</h3>
+              <p class="book-author">${book.author}</p>
+              
+              <div class="book-metadata">
+                <span class="metadata-item">
+                  <i class="fas fa-tag"></i> ${book.category}
+                </span>
+                ${book.duration ? `<span class="metadata-item"><i class="fas fa-clock"></i> ${book.duration}</span>` : ""}
+                ${book.pages ? `<span class="metadata-item" id="pages-${index}"><i class="fas fa-file-alt"></i> ${book.pages} pages</span>` : ""}
+                ${book.narrator ? `<span class="metadata-item"><i class="fas fa-microphone"></i> ${book.narrator}</span>` : ""}
+              </div>
+              
+              
+              <div class="read-count mt-2">
+                <i class="fas fa-book-open"></i> Available in ${book.format}
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      // Function to render all books on initial load
+      function renderAllBooks() {
+        // Render featured books
+        if (containers.featured) {
+          containers.featured.innerHTML = libraryData.featured_books
+            .map((book, i) => createLibraryCard(book, i))
+            .join("");
+        }
+
+        // Render audiobooks
+        if (containers.audiobooks) {
+          containers.audiobooks.innerHTML = libraryData.audiobooks
+            .map((book, i) => createLibraryCard(book, i))
+            .join("");
+        }
+
+        // Render ebooks
+        if (containers.ebooks) {
+          containers.ebooks.innerHTML = libraryData.ebooks
+            .map((book, i) => createLibraryCard(book, i))
+            .join("");
+        }
+
+        // Render mysteries
+        if (containers.mysteries) {
+          containers.mysteries.innerHTML = libraryData.mysteries
+            .map((book, i) => createLibraryCard(book, i))
+            .join("");
+        }
+
+        // Render poetry
+        if (containers.poetry) {
+          containers.poetry.innerHTML = libraryData.poetry
+            .map((book, i) => createLibraryCard(book, i))
+            .join("");
+        }
+
+        // Render commentaries
+        if (containers.commentaries) {
+          containers.commentaries.innerHTML = libraryData.commentaries
+            .map((book, i) => createLibraryCard(book, i))
+            .join("");
+        }
+
+        // Update original HTML for reset functionality
+        originalHTML.featured = containers.featured
+          ? containers.featured.innerHTML
+          : "";
+        originalHTML.audiobooks = containers.audiobooks
+          ? containers.audiobooks.innerHTML
+          : "";
+        originalHTML.ebooks = containers.ebooks
+          ? containers.ebooks.innerHTML
+          : "";
+        originalHTML.mysteries = containers.mysteries
+          ? containers.mysteries.innerHTML
+          : "";
+        originalHTML.poetry = containers.poetry
+          ? containers.poetry.innerHTML
+          : "";
+        originalHTML.commentaries = containers.commentaries
+          ? containers.commentaries.innerHTML
+          : "";
+      }
+
+      // Handle book click - open appropriate player
+      function handleBookClick(book) {
+        if (book.hasAudio) {
+          openAudioPlayer(book);
+        } else if (book.hasEbook) {
+          openEbookReader(book);
+        } else {
+          alert(
+            `📖 "${book.title}" by ${book.author} - Available in ${book.format}`,
+          );
+        }
+      }
+
+      // Function to render books based on filter and search
+      function renderFilteredBooks(filterType, searchTerm = "") {
+        // Determine which books to show based on filter
+        let booksToShow;
+
+        switch (filterType) {
+          case "scripture":
+            booksToShow = allBooks.filter(
+              (book) =>
+                book.category.toLowerCase().includes("scripture") ||
+                book.category.toLowerCase().includes("bible") ||
+                book.category.toLowerCase().includes("testament"),
+            );
+            break;
+          case "commentary":
+            booksToShow = allBooks.filter(
+              (book) =>
+                book.type === "commentary" ||
+                book.category.toLowerCase().includes("commentary"),
+            );
+            break;
+          case "audiobook":
+            booksToShow = allBooks.filter((book) => book.hasAudio === true);
+            break;
+          case "ebook":
+            booksToShow = allBooks.filter((book) => book.hasEbook === true);
+            break;
+          case "poetry":
+            booksToShow = allBooks.filter(
+              (book) =>
+                book.type === "poetry" ||
+                book.category.toLowerCase().includes("poetry"),
+            );
+            break;
+          case "mystery":
+            booksToShow = allBooks.filter(
+              (book) =>
+                book.type === "mystery" ||
+                book.category.toLowerCase().includes("mystery"),
+            );
+            break;
+          case "sermons":
+            booksToShow = allBooks.filter(
+              (book) =>
+                book.type === "sermon" ||
+                book.category.toLowerCase().includes("sermon"),
+            );
+            break;
+          case "church-history":
+            booksToShow = allBooks.filter(
+              (book) =>
+                book.type === "church-history" ||
+                book.category.toLowerCase().includes("church history") ||
+                book.category.toLowerCase().includes("history"),
+            );
+            break;
+          case "devotional":
+            booksToShow = allBooks.filter(
+              (book) =>
+                book.type === "devotional" ||
+                book.category.toLowerCase().includes("devotional"),
+            );
+            break;
+          case "all":
+          default:
+            booksToShow = allBooks;
+        }
+
+        // Apply search filter if search term exists
+        if (searchTerm.trim() !== "") {
+          const term = searchTerm.toLowerCase();
+          booksToShow = booksToShow.filter(
+            (book) =>
+              book.title.toLowerCase().includes(term) ||
+              book.author.toLowerCase().includes(term) ||
+              book.category.toLowerCase().includes(term),
+          );
+        }
+
+        // Group books by their original sections for display
+        const featuredBooks = booksToShow.filter(
+          (book) => book.featured === true,
+        );
+        const audiobooksList = booksToShow.filter(
+          (book) => book.hasAudio === true && book.type !== "featured",
+        );
+        const ebooksList = booksToShow.filter(
+          (book) => book.hasEbook === true && book.type !== "featured",
+        );
+        const mysteriesList = booksToShow.filter(
+          (book) =>
+            (book.type === "mystery" ||
+              book.category.toLowerCase().includes("mystery")) &&
+            !book.featured,
+        );
+        const poetryList = booksToShow.filter(
+          (book) =>
+            (book.type === "poetry" ||
+              book.category.toLowerCase().includes("poetry")) &&
+            !book.featured,
+        );
+        const commentariesList = booksToShow.filter(
+          (book) =>
+            (book.type === "commentary" ||
+              book.category.toLowerCase().includes("commentary")) &&
+            !book.featured,
+        );
+
+        // Update containers with filtered books
+        if (containers.featured) {
+          containers.featured.innerHTML =
+            featuredBooks.length > 0
+              ? featuredBooks
+                  .map((book, i) => createLibraryCard(book, i))
+                  .join("")
+              : `<div class="col-span-full text-center py-8 text-gray-500">No featured books match your search</div>`;
+        }
+
+        if (containers.audiobooks) {
+          containers.audiobooks.innerHTML =
+            audiobooksList.length > 0
+              ? audiobooksList
+                  .map((book, i) => createLibraryCard(book, i))
+                  .join("")
+              : `<div class="col-span-full text-center py-8 text-gray-500">No audiobooks match your search</div>`;
+        }
+
+        if (containers.ebooks) {
+          containers.ebooks.innerHTML =
+            ebooksList.length > 0
+              ? ebooksList.map((book, i) => createLibraryCard(book, i)).join("")
+              : `<div class="col-span-full text-center py-8 text-gray-500">No e-books match your search</div>`;
+        }
+
+        if (containers.mysteries) {
+          containers.mysteries.innerHTML =
+            mysteriesList.length > 0
+              ? mysteriesList
+                  .map((book, i) => createLibraryCard(book, i))
+                  .join("")
+              : `<div class="col-span-full text-center py-8 text-gray-500">No mysteries match your search</div>`;
+        }
+
+        if (containers.poetry) {
+          containers.poetry.innerHTML =
+            poetryList.length > 0
+              ? poetryList.map((book, i) => createLibraryCard(book, i)).join("")
+              : `<div class="col-span-full text-center py-8 text-gray-500">No poetry matches your search</div>`;
+        }
+
+        if (containers.commentaries) {
+          containers.commentaries.innerHTML =
+            commentariesList.length > 0
+              ? commentariesList
+                  .map((book, i) => createLibraryCard(book, i))
+                  .join("")
+              : `<div class="col-span-full text-center py-8 text-gray-500">No commentaries match your search</div>`;
+        }
+
+        // Update section visibility
+        updateSectionVisibility();
+      }
+
+      // Function to update section visibility based on content
+      function updateSectionVisibility() {
+        const sections = [
+          {
+            container: containers.featured,
+            parent: document
+              .querySelector("#featured-container")
+              ?.closest(".mb-12"),
+          },
+          {
+            container: containers.audiobooks,
+            parent: document
+              .querySelector("#audiobooks-container")
+              ?.closest(".mb-12"),
+          },
+          {
+            container: containers.ebooks,
+            parent: document
+              .querySelector("#ebooks-container")
+              ?.closest(".mb-12"),
+          },
+          {
+            container: containers.mysteries,
+            parent: document
+              .querySelector("#mysteries-container")
+              ?.closest(".mb-12"),
+          },
+          {
+            container: containers.poetry,
+            parent: document
+              .querySelector("#poetry-container")
+              ?.closest(".mb-12"),
+          },
+          {
+            container: containers.commentaries,
+            parent: document
+              .querySelector("#commentaries-container")
+              ?.closest(".mb-12"),
+          },
+        ];
+
+        sections.forEach((section) => {
+          if (section.container && section.parent) {
+            const hasContent =
+              section.container.children.length > 0 &&
+              !section.container.innerHTML.includes(
+                "col-span-full text-center py-8",
+              );
+            section.parent.style.display = hasContent ? "block" : "none";
+          }
+        });
+      }
+
+      // Function to reset to original view
+      function resetToOriginal() {
+        if (containers.featured)
+          containers.featured.innerHTML = originalHTML.featured;
+        if (containers.audiobooks)
+          containers.audiobooks.innerHTML = originalHTML.audiobooks;
+        if (containers.ebooks)
+          containers.ebooks.innerHTML = originalHTML.ebooks;
+        if (containers.mysteries)
+          containers.mysteries.innerHTML = originalHTML.mysteries;
+        if (containers.poetry)
+          containers.poetry.innerHTML = originalHTML.poetry;
+        if (containers.commentaries)
+          containers.commentaries.innerHTML = originalHTML.commentaries;
+
+        // Show all sections
+        document.querySelectorAll(".mb-12").forEach((section) => {
+          section.style.display = "block";
+        });
+      }
+
+      // Load PDF.js and initialize
+      async function loadPDFJS() {
+        return new Promise((resolve, reject) => {
+          // Check if already loaded
+          if (typeof pdfjsLib !== "undefined") {
+            console.log("PDF.js already loaded");
+            resolve();
+            return;
+          }
+
+          console.log("Loading PDF.js...");
+
+          // Load PDF.js script
+          const script = document.createElement("script");
+          script.src =
+            "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js";
+
+          script.onload = () => {
+            console.log("PDF.js loaded successfully");
+            // Set worker source
+            pdfjsLib.GlobalWorkerOptions.workerSrc =
+              "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js";
+            resolve();
+          };
+
+          script.onerror = (error) => {
+            console.error("Failed to load PDF.js:", error);
+            reject(error);
+          };
+
+          document.head.appendChild(script);
+        });
+      }
+
+      // Modified initialization with real-time stats
+      document.addEventListener("DOMContentLoaded", async function () {
+        console.log("DOM loaded, initializing...");
+
+        try {
+          // Load PDF.js first
+          await loadPDFJS();
+
+          // First, create mini player
+          createMiniPlayer();
+
+          // Initialize mini player event listeners
+          if (miniPlayerPlayPause) {
+            miniPlayerPlayPause.addEventListener("click", () => {
+              if (audioPlayer.paused) {
+                audioPlayer.play();
+                miniPlayerPlayIcon.className = "fas fa-pause";
+              } else {
+                audioPlayer.pause();
+                miniPlayerPlayIcon.className = "fas fa-play";
+              }
+            });
+          }
+
+          if (miniPlayerClose) {
+            miniPlayerClose.addEventListener("click", closeMiniPlayer);
+          }
+
+          // Update progress periodically
+          setInterval(updateMiniPlayerProgress, 1000);
+
+          // Initialize draggable modal and mini player
+          initDraggableModal();
+          initDraggableMiniPlayer();
+          initProgressSeeking();
+
+          // Audio player event listeners for mini player
+          audioPlayer.addEventListener("play", () => {
+            miniPlayerPlayIcon.className = "fas fa-pause";
+          });
+
+          audioPlayer.addEventListener("pause", () => {
+            miniPlayerPlayIcon.className = "fas fa-play";
+          });
+
+          audioPlayer.addEventListener("ended", () => {
+            miniPlayerPlayIcon.className = "fas fa-play";
+            miniPlayerProgressFill.style.width = "0%";
+            miniPlayerCurrentTime.textContent = "0:00";
+          });
+
+          // First, render all books
+          renderAllBooks();
+
+          // Update library statistics with animation
+          updateLibraryStats(true);
+
+          // Log stats to console for debugging
+          getCurrentStats();
+
+          // Then update both audio durations and ebook page counts dynamically
+          console.log("Starting to update all book data...");
+          await Promise.allSettled([
+            updateAllAudioDurations(),
+            updateAllEbookPageCounts(),
+          ]);
+          console.log("Finished updating all book data");
+
+          // Filter functionality - real-time
+          const filterButtons = document.querySelectorAll(".category-tag");
+          let currentFilter = "all";
+          let currentSearch = "";
+
+          filterButtons.forEach((button) => {
+            button.addEventListener("click", function () {
+              filterButtons.forEach((btn) => btn.classList.remove("active"));
+              this.classList.add("active");
+
+              currentFilter = this.dataset.filter;
+
+              // Apply both filter and search
+              renderFilteredBooks(currentFilter, currentSearch);
+
+              // Update durations and page counts for newly rendered books
+              setTimeout(() => {
+                Promise.allSettled([
+                  updateAllAudioDurations(),
+                  updateAllEbookPageCounts(),
+                ]);
+              }, 100);
+            });
+          });
+
+          // Search functionality - real-time with debounce
+          const searchInput = document.getElementById("search-input");
+          let searchTimeout;
+
+          if (searchInput) {
+            searchInput.addEventListener("input", function (e) {
+              clearTimeout(searchTimeout);
+
+              searchTimeout = setTimeout(() => {
+                currentSearch = e.target.value;
+                renderFilteredBooks(currentFilter, currentSearch);
+
+                // Update durations and page counts for newly rendered books
+                setTimeout(() => {
+                  Promise.allSettled([
+                    updateAllAudioDurations(),
+                    updateAllEbookPageCounts(),
+                  ]);
+                }, 100);
+              }, 300); // Debounce for better performance
+            });
+          }
+
+          // Clear search function
+          window.clearSearch = function () {
+            if (searchInput) {
+              searchInput.value = "";
+              currentSearch = "";
+
+              // If "All" filter is active, show all books, otherwise apply current filter
+              if (currentFilter === "all") {
+                resetToOriginal();
+              } else {
+                renderFilteredBooks(currentFilter, "");
+              }
+
+              // Update durations and page counts
+              setTimeout(() => {
+                Promise.allSettled([
+                  updateAllAudioDurations(),
+                  updateAllEbookPageCounts(),
+                ]);
+              }, 100);
+            }
+          };
+
+          // Category chips
+          const categoryChips = document.querySelectorAll(".category-chip");
+          categoryChips.forEach((chip) => {
+            chip.addEventListener("click", function () {
+              const category =
+                this.querySelector(".category-name")?.textContent.trim() || "";
+
+              // Find and click the corresponding filter button
+              const filterMap = {
+                Scripture: "scripture",
+                Commentaries: "commentary",
+                Audiobooks: "audiobook",
+                "E-Books": "ebook",
+                "Christian Poetry": "poetry",
+                "Christian Mysteries": "mystery",
+                Sermons: "sermons",
+                "Church History": "church-history",
+                Devotionals: "devotional",
+              };
+
+              // Extract the main category name without icon text
+              let categoryKey = category;
+              for (const [key, value] of Object.entries(filterMap)) {
+                if (category.includes(key)) {
+                  categoryKey = key;
+                  break;
+                }
+              }
+
+              const filterValue = filterMap[categoryKey] || "all";
+              const targetButton = Array.from(filterButtons).find(
+                (btn) => btn.dataset.filter === filterValue,
+              );
+
+              if (targetButton) {
+                targetButton.click();
+              }
+            });
+          });
+
+          // Keyboard shortcut to clear search (Escape key)
+          document.addEventListener("keydown", function (e) {
+            if (e.key === "Escape" && document.activeElement === searchInput) {
+              clearSearch();
+            }
+          });
+
+          // Optional: Add manual refresh function (can be called from console for testing)
+          window.refreshStats = function (animate = true) {
+            updateLibraryStats(animate);
+            getCurrentStats();
+          };
+        } catch (error) {
+          console.error("Initialization error:", error);
+          // Still render books even if PDF.js fails
+          createMiniPlayer();
+          renderAllBooks();
+          updateAllAudioDurations();
+          // Still show stats even if PDF.js fails
+          updateLibraryStats(true);
+        }
+      });
+
+      // Smooth animations for reduced motion preference
+      const prefersReducedMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)",
+      );
+      if (prefersReducedMotion.matches) {
+        document.querySelectorAll(".library-card").forEach((card) => {
+          card.style.transition = "none";
+        });
+      }
+    </script>
+  </body>
+</html>

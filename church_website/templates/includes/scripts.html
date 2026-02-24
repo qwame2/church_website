@@ -1,0 +1,629 @@
+{% load static %}
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+  // Global calendar instance
+  let calendarInstance = null;
+
+  // Initialize AOS animations
+  AOS.init({
+    once: true,
+    offset: 100,
+    duration: 800,
+    easing: "ease-out-cubic",
+  });
+
+  // Typewriter Effect
+  const words = ["YOUTH.", "PASSION.", "FAMILY.", "FUTURE."];
+  let i = 0;
+
+  function typeWriter() {
+    const heading = document.getElementById("typewriter");
+    if (!heading) return;
+    let currentWord = words[i];
+    let j = 0;
+    heading.innerHTML = "";
+
+    function type() {
+      if (j < currentWord.length) {
+        heading.innerHTML += currentWord.charAt(j);
+        j++;
+        setTimeout(type, 150);
+      } else {
+        setTimeout(erase, 2000);
+      }
+    }
+
+    function erase() {
+      if (j > 0) {
+        heading.innerHTML = currentWord.substring(0, j - 1);
+        j--;
+        setTimeout(erase, 100);
+      } else {
+        i = (i + 1) % words.length;
+        typeWriter();
+      }
+    }
+    type();
+  }
+
+  // Counter Animation for Stats
+  const counters = document.querySelectorAll(".counter");
+  const speed = 200;
+
+  const animateCounters = () => {
+    counters.forEach((counter) => {
+      const target = +counter.getAttribute("data-target");
+      const count = +counter.innerText;
+      const inc = target / speed;
+
+      if (count < target) {
+        counter.innerText = Math.ceil(count + inc);
+        setTimeout(animateCounters, 20);
+      } else {
+        counter.innerText = target + "+";
+      }
+    });
+  };
+
+  // Background Slideshow
+  const slides = document.querySelectorAll(".slide");
+  let currentSlide = 0;
+  const slideInterval = 6000;
+
+  function nextSlide() {
+    if (slides.length === 0) return;
+    slides[currentSlide].classList.remove("opacity-100", "scale-110");
+    slides[currentSlide].classList.add("opacity-0", "scale-100");
+    currentSlide = (currentSlide + 1) % slides.length;
+    slides[currentSlide].classList.remove("opacity-0", "scale-100");
+    slides[currentSlide].classList.add("opacity-100", "scale-110");
+  }
+
+  // Function to check for upcoming events and show notification dot
+  function checkUpcomingEvents() {
+    const notificationDot = document.getElementById("calendarNotificationDot");
+    if (!notificationDot) return;
+
+    const currentDate = new Date();
+    const upcomingEvents = [
+      {
+        title: "Sunday Service",
+        start: new Date().toISOString().split("T")[0] + "T09:00:00",
+        end: new Date().toISOString().split("T")[0] + "T12:00:00",
+        color: "#7C3AED",
+        description: "Main Sunday worship service with communion",
+      },
+      {
+        title: "Youth Worship Night",
+        start: "2024-03-10T19:00:00",
+        color: "#C026D3",
+        description:
+          "A night of power and transformation for youth with special guest worship leaders",
+      },
+      {
+        title: "Bible Study",
+        start: "2024-03-15T18:30:00",
+        color: "#F59E0B",
+        description: 'Weekly Bible study fellowship - Topic: "Living by Faith"',
+      },
+      {
+        title: "Prayer Meeting",
+        start: "2024-03-20T18:00:00",
+        color: "#10B981",
+        description: "Corporate prayer gathering for the church and community",
+      },
+      {
+        title: "Community Outreach",
+        start: "2024-03-25T09:00:00",
+        end: "2024-03-25T14:00:00",
+        color: "#3B82F6",
+        description: "Community service and evangelism in local neighborhoods",
+      },
+      {
+        title: "Men's Fellowship",
+        start: "2024-03-28T19:00:00",
+        color: "#1E40AF",
+        description: "Monthly men's gathering for fellowship and discipleship",
+      },
+      {
+        title: "Women's Brunch",
+        start: "2024-04-06T10:00:00",
+        color: "#EC4899",
+        description: "Women's ministry brunch and fellowship",
+      },
+      {
+        title: "Children's Ministry",
+        start: "2026-01-25T10:30:00", // Future event
+        color: "#8B5CF6",
+        description: "Special children's church service with activities",
+      },
+    ];
+
+    // Check if any events are within the next 7 days
+    const sevenDaysFromNow = new Date();
+    sevenDaysFromNow.setDate(currentDate.getDate() + 7);
+
+    const upcomingCount = upcomingEvents.filter((event) => {
+      const eventDate = new Date(event.start);
+      return eventDate > currentDate && eventDate <= sevenDaysFromNow;
+    }).length;
+
+    // Update notification dot with count
+    if (upcomingCount > 0) {
+      notificationDot.style.display = "flex";
+      notificationDot.style.alignItems = "center";
+      notificationDot.style.justifyContent = "center";
+      notificationDot.style.width = "16px";
+      notificationDot.style.height = "16px";
+      notificationDot.style.fontSize = "10px";
+      notificationDot.style.fontWeight = "bold";
+      notificationDot.style.color = "white";
+      notificationDot.style.lineHeight = "1";
+      notificationDot.innerHTML = upcomingCount;
+
+      const calendarButton = notificationDot.closest("button");
+      calendarButton.title = `${upcomingCount} upcoming event${upcomingCount > 1 ? "s" : ""} in the next week!`;
+      calendarButton.setAttribute(
+        "aria-label",
+        `Calendar - ${upcomingCount} upcoming events`,
+      );
+    } else {
+      notificationDot.style.display = "none";
+    }
+  }
+
+  // Calendar Function
+  function renderCalendar() {
+    const calendarEl = document.getElementById("churchCalendar");
+
+    // Clear any existing calendar
+    if (calendarInstance) {
+      calendarInstance.destroy();
+    }
+
+    calendarInstance = new FullCalendar.Calendar(calendarEl, {
+      initialView: "dayGridMonth",
+      initialDate: new Date(),
+      themeSystem: "standard",
+      headerToolbar: {
+        left: "prev,next today",
+        center: "title",
+        right: "dayGridMonth,listMonth",
+      },
+      buttonText: {
+        today: "Today",
+        month: "Month",
+        list: "List",
+      },
+      events: [
+        {
+          title: "Sunday Service",
+          start: new Date().toISOString().split("T")[0] + "T09:00:00",
+          end: new Date().toISOString().split("T")[0] + "T12:00:00",
+          color: "#7C3AED",
+          description: "Main Sunday worship service with communion",
+          isUpcoming: true,
+        },
+        {
+          title: "Youth Worship Night",
+          start: "2024-03-10T19:00:00",
+          color: "#C026D3",
+          description:
+            "A night of power and transformation for youth with special guest worship leaders",
+        },
+        {
+          title: "Bible Study",
+          start: "2024-03-15T18:30:00",
+          color: "#F59E0B",
+          description:
+            'Weekly Bible study fellowship - Topic: "Living by Faith"',
+        },
+        {
+          title: "Prayer Meeting",
+          start: "2024-03-20T18:00:00",
+          color: "#10B981",
+          description:
+            "Corporate prayer gathering for the church and community",
+        },
+        {
+          title: "Community Outreach",
+          start: "2024-03-25T09:00:00",
+          end: "2024-03-25T14:00:00",
+          color: "#3B82F6",
+          description:
+            "Community service and evangelism in local neighborhoods",
+        },
+        {
+          title: "Men's Fellowship",
+          start: "2024-03-28T19:00:00",
+          color: "#1E40AF",
+          description:
+            "Monthly men's gathering for fellowship and discipleship",
+        },
+        {
+          title: "Women's Brunch",
+          start: "2024-04-06T10:00:00",
+          color: "#EC4899",
+          description: "Women's ministry brunch and fellowship",
+        },
+        {
+          title: "Children's Ministry",
+          start: "2026-01-25T10:30:00",
+          color: "#8B5CF6",
+          description: "Special children's church service with activities",
+        },
+      ],
+
+      // Custom event rendering to add notification dots
+      eventContent: function (arg) {
+        const event = arg.event;
+        const isUpcoming = event.extendedProps.isUpcoming;
+
+        // Check if event is happening soon (within next 24 hours)
+        const eventDate = event.start;
+        const now = new Date();
+        const twentyFourHoursFromNow = new Date(
+          now.getTime() + 24 * 60 * 60 * 1000,
+        );
+        const isHappeningSoon =
+          eventDate && eventDate > now && eventDate <= twentyFourHoursFromNow;
+
+        return {
+          html: `
+            <div style="position: relative; padding-right: ${isUpcoming || isHappeningSoon ? "12px" : "0"};">
+              ${isUpcoming || isHappeningSoon ? '<div class="event-notification-dot"></div>' : ""}
+              <div class="fc-event-title">${event.title}</div>
+            </div>
+          `,
+        };
+      },
+
+      eventDidMount: function (arg) {
+        // Add hover effect for events with notification dots
+        const event = arg.event;
+        const isUpcoming = event.extendedProps.isUpcoming;
+
+        if (isUpcoming) {
+          arg.el.style.borderLeft = "3px solid #10B981";
+          arg.el.style.boxShadow = "0 2px 4px rgba(16, 185, 129, 0.1)";
+
+          // Add tooltip
+          arg.el.title = "Upcoming event - Happening soon!";
+        }
+      },
+
+      eventClick: function (info) {
+        const event = info.event;
+        const description =
+          event.extendedProps.description || "No description available";
+        const startTime = event.start
+          ? event.start.toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            })
+          : "";
+        const endTime = event.end
+          ? event.end.toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            })
+          : "";
+
+        Swal.fire({
+          title: event.title,
+          html: `
+            <div class="text-left">
+              <p class="mb-2"><strong>Description:</strong> ${description}</p>
+              <p class="mb-2"><strong>Date:</strong> ${event.start.toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}</p>
+              <p class="mb-2"><strong>Time:</strong> ${startTime} ${endTime ? `to ${endTime}` : ""}</p>
+              <p class="mb-2"><strong>Location:</strong> Main Sanctuary</p>
+            </div>
+          `,
+          icon: "info",
+          confirmButtonColor: "#7C3AED",
+          confirmButtonText: "Close",
+          showCancelButton: true,
+          cancelButtonText: "Add to Calendar",
+          cancelButtonColor: "#10B981",
+        }).then((result) => {
+          if (result.dismiss === Swal.DismissReason.cancel) {
+            // Add to calendar functionality
+            Swal.fire({
+              title: "Added to Calendar!",
+              text: "Event has been added to your calendar",
+              icon: "success",
+              confirmButtonColor: "#7C3AED",
+            });
+          }
+        });
+      },
+      eventDisplay: "block",
+      eventTimeFormat: {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+      },
+      dayMaxEventRows: 3,
+      views: {
+        dayGridMonth: {
+          dayMaxEventRows: 3,
+        },
+      },
+    });
+
+    calendarInstance.render();
+
+    // Hide notification dot when calendar is opened
+    const notificationDot = document.getElementById("calendarNotificationDot");
+    if (notificationDot) {
+      notificationDot.style.display = "none";
+    }
+
+    // Update calendar button title
+    const calendarButton = document.getElementById("calendarButton");
+    if (calendarButton) {
+      calendarButton.title = "View Calendar";
+    }
+  }
+
+  // Event Configuration
+  const eventConfig = {
+    date: "2024-03-10T19:00:00",
+    title: "Youth Worship Night",
+    description:
+      "Join us for a night of power and transformation through worship, prayer, and fellowship with special guest worship leaders from across the region.",
+    media: [
+      { type: "video", url: "{% static 'img/710830b.mp4' %}" },
+      { type: "image", url: "{% static 'img/Youth.png' %}" },
+      { type: "image", url: "{% static 'img/Summer.jpg' %}" },
+    ],
+  };
+
+  // Event mode toggle function
+  function toggleEventMode(show) {
+    const defaultMode = document.getElementById("hero-default-mode");
+    const eventMode = document.getElementById("hero-event-mode");
+
+    if (show) {
+      defaultMode.style.opacity = "0";
+      eventMode.classList.remove(
+        "transform",
+        "-translate-y-full",
+        "opacity-0",
+        "pointer-events-none",
+      );
+      eventMode.classList.add("opacity-100", "pointer-events-auto");
+
+      // Start video if it's the first slide
+      const video = document.getElementById("event-video");
+      if (video) {
+        video.currentTime = 0;
+        video.play().catch((e) => console.log("Video autoplay prevented:", e));
+      }
+    } else {
+      defaultMode.style.opacity = "1";
+      eventMode.classList.add(
+        "transform",
+        "-translate-y-full",
+        "opacity-0",
+        "pointer-events-none",
+      );
+      eventMode.classList.remove("opacity-100", "pointer-events-auto");
+
+      // Stop video
+      const video = document.getElementById("event-video");
+      if (video) {
+        video.pause();
+        video.currentTime = 0;
+      }
+    }
+  }
+
+  // Initialize Countdown
+  function initCountdown() {
+    const activeSection = document.getElementById("active-event-content");
+    const emptySection = document.getElementById("empty-event-content");
+    const cardInner = document.getElementById("event-card-inner");
+
+    // VALIDATION: Check if event exists
+    const hasEvent = eventConfig && eventConfig.title && eventConfig.date;
+    const eventDate = new Date(eventConfig.date).getTime();
+    const now = new Date().getTime();
+
+    if (!hasEvent || eventDate < now - 86400000) {
+      // If no event or date passed by 1 day
+      activeSection.classList.add("hidden");
+      emptySection.classList.remove("hidden");
+      cardInner.classList.remove("cursor-pointer", "group-hover:bg-black/40");
+      cardInner.classList.add("cursor-default");
+      return; // Stop execution
+    }
+
+    // If event exists, proceed with normal logic
+    const dayCircle = document.getElementById("event-day-circle");
+    const titleDisplay = document.getElementById("event-title-display");
+
+    if (titleDisplay) titleDisplay.innerText = eventConfig.title;
+    const dateObj = new Date(eventConfig.date);
+    if (dayCircle) dayCircle.innerText = dateObj.getDate();
+
+    document.getElementById("preview-title").innerText = eventConfig.title;
+    document.getElementById("preview-desc").innerText = eventConfig.description;
+
+    // Start countdown
+    const interval = setInterval(() => {
+      const currentTime = new Date().getTime();
+      const gap = eventDate - currentTime;
+
+      const second = 1000,
+        minute = second * 60,
+        hour = minute * 60,
+        day = hour * 24;
+
+      if (gap < 0) {
+        clearInterval(interval);
+        document.getElementById("countdown-container").innerHTML =
+          "<span class='text-white font-bold animate-pulse tracking-widest'>HAPPENING NOW</span>";
+        document.getElementById("preview-btn-container").style.display = "none";
+      } else {
+        document.getElementById("cd-days").innerText = String(
+          Math.floor(gap / day),
+        ).padStart(2, "0");
+        document.getElementById("cd-hours").innerText = String(
+          Math.floor((gap % day) / hour),
+        ).padStart(2, "0");
+        document.getElementById("cd-minutes").innerText = String(
+          Math.floor((gap % hour) / minute),
+        ).padStart(2, "0");
+        document.getElementById("cd-seconds").innerText = String(
+          Math.floor((gap % minute) / second),
+        ).padStart(2, "0");
+      }
+    }, 1000);
+  }
+
+  // Handle Event Click
+  function handleEventClick() {
+    const hasEvent = eventConfig && eventConfig.title && eventConfig.date;
+    const eventDate = new Date(eventConfig.date).getTime();
+    const now = new Date().getTime();
+
+    if (hasEvent && eventDate > now - 86400000) {
+      toggleEventMode(true);
+    } else {
+      Swal.fire({
+        title: "No Upcoming Events",
+        text: "Check back soon for upcoming events!",
+        icon: "info",
+        confirmButtonColor: "#7C3AED",
+      });
+    }
+  }
+
+  // Modal Functions
+  function openNewsModal() {
+    document
+      .getElementById("newsModal")
+      .classList.remove("opacity-0", "pointer-events-none");
+  }
+
+  function closeNewsModal() {
+    document
+      .getElementById("newsModal")
+      .classList.add("opacity-0", "pointer-events-none");
+  }
+
+  function openImageModal(src) {
+    const modal = document.getElementById("imageModal");
+    const img = document.getElementById("lightboxImage");
+    img.src = src;
+    modal.classList.remove("opacity-0", "pointer-events-none");
+    setTimeout(() => img.classList.remove("scale-90"), 50);
+  }
+
+  function closeImageModal() {
+    const modal = document.getElementById("imageModal");
+    const img = document.getElementById("lightboxImage");
+    img.classList.add("scale-90");
+    modal.classList.add("opacity-0", "pointer-events-none");
+  }
+
+  // Stats Animation
+  const statsSection = document.getElementById("stats-section");
+  const statCounters = document.querySelectorAll(".counter");
+  let hasAnimatedStats = false;
+
+  const animateStats = () => {
+    statCounters.forEach((counter) => {
+      const target = +counter.getAttribute("data-target");
+      const duration = 2000;
+      const increment = target / (duration / 20);
+      let current = 0;
+      const update = () => {
+        current += increment;
+        if (current < target) {
+          counter.innerText = Math.ceil(current);
+          setTimeout(update, 20);
+        } else {
+          counter.innerText = target + "+";
+        }
+      };
+      update();
+    });
+  };
+
+  const statObserver = new IntersectionObserver(
+    (entries) => {
+      if (entries[0].isIntersecting && !hasAnimatedStats) {
+        animateStats();
+        hasAnimatedStats = true;
+      }
+    },
+    { threshold: 0.5 },
+  );
+
+  // Initialize everything when DOM is loaded
+  document.addEventListener("DOMContentLoaded", function () {
+    // Start typewriter
+    typeWriter();
+
+    // Start background slideshow if slides exist
+    if (slides.length > 0) {
+      setInterval(nextSlide, slideInterval);
+    }
+
+    // Initialize countdown
+    initCountdown();
+
+    // Check for upcoming events and show notification dot
+    checkUpcomingEvents();
+
+    // Observe stats section
+    if (statsSection) statObserver.observe(statsSection);
+
+    // Set current year
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    // Add event listener for calendar button
+    const calendarButton = document.querySelector(
+      '[x-on\\:click*="calendarOpen = true"]',
+    );
+    if (calendarButton) {
+      calendarButton.addEventListener("click", function () {
+        setTimeout(renderCalendar, 100);
+      });
+    }
+
+    // Newsletter form submission
+    const newsletterForm = document.getElementById("newsletterForm");
+    if (newsletterForm) {
+      newsletterForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+        const email = document.getElementById("emailInput").value;
+        const successMessage = document.getElementById("successMessage");
+
+        // Simple validation
+        if (email && email.includes("@")) {
+          successMessage.classList.remove("hidden");
+          newsletterForm.reset();
+          setTimeout(() => {
+            successMessage.classList.add("hidden");
+          }, 3000);
+        }
+      });
+    }
+
+    // Re-check for upcoming events every hour
+    setInterval(checkUpcomingEvents, 3600000); // 1 hour
+
+    // Also check when page becomes visible again (user returns to tab)
+    document.addEventListener("visibilitychange", function () {
+      if (!document.hidden) {
+        checkUpcomingEvents();
+      }
+    });
+  });
+</script>

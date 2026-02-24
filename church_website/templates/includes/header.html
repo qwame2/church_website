@@ -1,0 +1,246 @@
+{% load static %}
+<header class="sticky top-0 z-50 w-full">
+  <!-- Top Marquee -->
+  <div
+    class="bg-gradient-to-r from-primary to-secondary text-white text-xs font-bold py-2 overflow-hidden relative border-b border-white/10"
+  >
+    <div class="whitespace-nowrap animate-marquee flex gap-10 items-center">
+      <span class="flex items-center gap-2"
+        ><i class="ri-fire-fill text-yellow-300"></i> UPCOMING: Youth Worship
+        Night - March 10th @ 7PM</span
+      >
+      <span class="flex items-center gap-2"
+        ><i class="ri-sparkling-fill text-yellow-300"></i> NEW SERIES: "Finding
+        Purpose" starts this Sunday</span
+      >
+      <span class="flex items-center gap-2"
+        ><i class="ri-megaphone-fill text-yellow-300"></i> VOLUNTEERS NEEDED:
+        Summer Camp 2025 Registration is Open!</span
+      >
+      <span class="flex items-center gap-2"
+        ><i class="ri-fire-fill text-yellow-300"></i> UPCOMING: Youth Worship
+        Night - March 10th @ 7PM</span
+      >
+      <span class="flex items-center gap-2"
+        ><i class="ri-sparkling-fill text-yellow-300"></i> NEW SERIES: "Finding
+        Purpose" starts this Sunday</span
+      >
+    </div>
+  </div>
+
+  <!-- Main Navigation -->
+  <nav class="w-full glass shadow-sm" x-data="{ activeTab: '#home' }">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-16">
+        <!-- Logo -->
+        <a
+          href="#"
+          class="flex items-center gap-2 group"
+          @click="activeTab = '#home'"
+        >
+          <div class="relative w-10 h-10">
+            <div
+              class="absolute inset-0 bg-primary rounded-lg rotate-6 group-hover:rotate-12 transition-transform"
+            ></div>
+            <img
+              src="{% static 'img/logo.png' %}"
+              class="absolute inset-0 w-full h-full object-contain rounded-lg bg-white p-1"
+              alt="Logo"
+            />
+          </div>
+          <div class="block leading-none">
+            <h1
+              class="font-extrabold text-base sm:text-lg tracking-tight uppercase bg-clip-text text-transparent bg-gradient-to-r from-gray-900 via-primary to-secondary"
+            >
+              The Church Of Christ
+            </h1>
+            <div class="flex items-center gap-2 mt-1">
+              <span class="h-[1px] w-4 bg-primary/30"></span>
+              <p
+                class="text-[8px] sm:text-[9px] text-primary font-bold tracking-[0.3em] uppercase italic"
+              >
+                Spiritual Movement
+              </p>
+              <span class="h-[1px] w-4 bg-primary/30"></span>
+            </div>
+          </div>
+        </a>
+
+        <!-- Desktop Navigation -->
+        <div
+          class="hidden lg:flex items-center space-x-1 bg-gray-100/50 p-1 rounded-full border border-gray-200"
+        >
+          <a
+            href="#home"
+            @click="activeTab = '#home'"
+            :class="activeTab === '#home' ? 'bg-white text-primary shadow-sm' : 'text-gray-700 hover:bg-white/50'"
+            class="px-4 py-1.5 rounded-full text-sm font-semibold transition-all duration-300"
+          >
+            Home
+          </a>
+
+          <a
+            href="#about"
+            @click="activeTab = '#about'"
+            :class="activeTab === '#about' ? 'bg-white text-primary shadow-sm' : 'text-gray-700 hover:bg-white/50'"
+            class="px-4 py-1.5 rounded-full text-sm font-semibold transition-all duration-300"
+          >
+            About
+          </a>
+
+          <a
+            href="#news-events"
+            @click="activeTab = '#events'"
+            :class="activeTab === '#events' ? 'bg-white text-primary shadow-sm' : 'text-gray-700 hover:bg-white/50'"
+            class="px-4 py-1.5 rounded-full text-sm font-semibold transition-all duration-300"
+          >
+            Events
+          </a>
+
+          <a
+            href="#gallery"
+            @click="activeTab = '#gallery'"
+            :class="activeTab === '#gallery' ? 'bg-white text-primary shadow-sm' : 'text-gray-700 hover:bg-white/50'"
+            class="px-4 py-1.5 rounded-full text-sm font-semibold transition-all duration-300"
+          >
+            Gallery
+          </a>
+
+          <!-- Fellowships Dropdown -->
+          <div class="relative" x-data="{ open: false }">
+            <button
+              @click="open = !open"
+              @click.away="open = false"
+              :class="['#map', '#book', '#podcast', '#game'].includes(activeTab) ? 'bg-white text-primary shadow-sm' : 'text-gray-700 hover:bg-white/50'"
+              class="px-4 py-1.5 rounded-full text-sm font-semibold transition-all flex items-center gap-1"
+            >
+              Fellowships
+              <i
+                class="ri-arrow-down-s-line transition-transform"
+                :class="{'rotate-180': open}"
+              ></i>
+            </button>
+
+            <div
+              x-show="open"
+              x-transition
+              class="absolute top-full right-0 mt-2 w-52 bg-white rounded-2xl shadow-xl border border-gray-100 py-2 overflow-hidden z-50"
+            >
+              <a
+                href="{% url 'menfellow' %}"
+                @click="activeTab = '#menfellow'; open = false"
+                class="flex items-center gap-3 px-4 py-3 hover:bg-purple-50 text-sm transition-colors"
+                :class="activeTab === '#menfellow' ? 'text-primary font-bold' : 'text-gray-700'"
+              >
+                Men Fellowship
+              </a>
+              <a
+                href="{% url 'wemenfellow' %}"
+                @click="activeTab = '#wemenfellow'; open = false"
+                class="flex items-center gap-3 px-4 py-3 hover:bg-purple-50 text-sm transition-colors"
+                :class="activeTab === '#wemenfellow' ? 'text-primary font-bold' : 'text-gray-700'"
+              >
+                Women Fellowship
+              </a>
+              <a
+                href="{% url 'youth' %}"
+                @click="activeTab = '#youth'; open = false"
+                class="flex items-center gap-3 px-4 py-3 hover:bg-purple-50 text-sm transition-colors"
+                :class="activeTab === '#youth' ? 'text-primary font-bold' : 'text-gray-700'"
+              >
+                Youth Fellowship
+              </a>
+              <a
+                href="{% url 'child' %}"
+                @click="activeTab = '#game'; open = false"
+                class="flex items-center gap-3 px-4 py-3 hover:bg-purple-50 text-sm transition-colors"
+                :class="activeTab === '#game' ? 'text-primary font-bold' : 'text-gray-700'"
+              >
+                Children Fellowship
+              </a>
+            </div>
+          </div>
+
+          <!-- More Dropdown -->
+          <div class="relative" x-data="{ open: false }">
+            <button
+              @click="open = !open"
+              @click.away="open = false"
+              :class="['#map', '#book', '#podcast', '#game'].includes(activeTab) ? 'bg-white text-primary shadow-sm' : 'text-gray-700 hover:bg-white/50'"
+              class="px-4 py-1.5 rounded-full text-sm font-semibold transition-all flex items-center gap-1"
+            >
+              More
+              <i
+                class="ri-arrow-down-s-line transition-transform"
+                :class="{'rotate-180': open}"
+              ></i>
+            </button>
+
+            <div
+              x-show="open"
+              x-transition
+              class="absolute top-full right-0 mt-2 w-52 bg-white rounded-2xl shadow-xl border border-gray-100 py-2 overflow-hidden z-50"
+            >
+              <a
+                href="{% url 'map' %}"
+                @click="activeTab = '#map'; open = false"
+                class="flex items-center gap-3 px-4 py-3 hover:bg-purple-50 text-sm transition-colors"
+                :class="activeTab === '#map' ? 'text-primary font-bold' : 'text-gray-700'"
+              >
+                <i class="ri-compass-3-line"></i> Church Map
+              </a>
+              <a
+                href="{% url 'book' %}"
+                @click="activeTab = '#book'; open = false"
+                class="flex items-center gap-3 px-4 py-3 hover:bg-purple-50 text-sm transition-colors"
+                :class="activeTab === '#book' ? 'text-primary font-bold' : 'text-gray-700'"
+              >
+                <i class="ri-book-shelf-line"></i> Library
+              </a>
+              <a
+                href="{%url 'podcast' %}"
+                @click="activeTab = '#podcast'; open = false"
+                class="flex items-center gap-3 px-4 py-3 hover:bg-purple-50 text-sm transition-colors"
+                :class="activeTab === '#podcast' ? 'text-primary font-bold' : 'text-gray-700'"
+              >
+                <i class="ri-mic-line"></i> Podcast
+              </a>
+              <a
+                href="#game"
+                @click="activeTab = '#game'; open = false"
+                class="flex items-center gap-3 px-4 py-3 hover:bg-purple-50 text-sm transition-colors"
+                :class="activeTab === '#game' ? 'text-primary font-bold' : 'text-gray-700'"
+              >
+                <i class="ri-gamepad-line"></i> Fun Zone
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mobile Menu Button & Calendar Button -->
+        <div class="flex items-center gap-3">
+          <div class="calendar-notification">
+            <button
+              @click="calendarOpen = true; $nextTick(() => { renderCalendar() })"
+              class="hidden md:flex w-10 h-10 items-center justify-center rounded-full bg-gray-100 text-gray-600 hover:bg-primary hover:text-white transition-all relative"
+              id="calendarButton"
+            >
+              <i class="ri-calendar-line"></i>
+              <div
+                id="calendarNotificationDot"
+                class="calendar-notification-dot"
+              ></div>
+            </button>
+          </div>
+
+          <button
+            @click="mobileMenu = true"
+            class="lg:hidden w-12 h-10 flex items-center justify-center rounded-xl bg-gray-900 text-white hover:bg-primary transition-all shadow-lg"
+          >
+            <i class="ri-menu-4-fill text-2xl"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>

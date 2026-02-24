@@ -1,0 +1,390 @@
+{% load static %}
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Media Gallery</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ["Inter", "sans-serif"],
+            },
+            colors: {
+              brand: {
+                50: "#f0f9ff",
+                100: "#e0f2fe",
+                500: "#0ea5e9",
+                600: "#0284c7",
+                900: "#0c4a6e",
+              },
+            },
+            animation: {
+              "fade-in": "fadeIn 0.5s ease-out forwards",
+              "slide-up": "slideUp 0.5s ease-out forwards",
+              blob: "blob 10s infinite",
+            },
+            keyframes: {
+              fadeIn: {
+                "0%": { opacity: "0" },
+                "100%": { opacity: "1" },
+              },
+              slideUp: {
+                "0%": { opacity: "0", transform: "translateY(20px)" },
+                "100%": { opacity: "1", transform: "translateY(0)" },
+              },
+              blob: {
+                "0%": { transform: "translate(0px, 0px) scale(1)" },
+                "33%": { transform: "translate(30px, -50px) scale(1.1)" },
+                "66%": { transform: "translate(-20px, 20px) scale(0.9)" },
+                "100%": { transform: "translate(0px, 0px) scale(1)" },
+              },
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+      }
+      .masonry-item {
+        break-inside: avoid;
+        margin-bottom: 1.5rem;
+      }
+
+      .animation-delay-2000 {
+        animation-delay: 2s;
+      }
+      .animation-delay-4000 {
+        animation-delay: 4s;
+      }
+    </style>
+  </head>
+
+  <body
+    class="bg-white text-slate-900 antialiased selection:bg-brand-500 selection:text-white relative min-h-screen"
+  >
+    <div class="fixed inset-0 -z-10 overflow-hidden bg-slate-50">
+      <div
+        class="absolute top-0 left-[-10%] w-[30rem] h-[30rem] bg-purple-300/30 rounded-full mix-blend-multiply filter blur-[80px] opacity-70 animate-blob"
+      ></div>
+      <div
+        class="absolute top-0 right-[-10%] w-[30rem] h-[30rem] bg-sky-300/30 rounded-full mix-blend-multiply filter blur-[80px] opacity-70 animate-blob animation-delay-2000"
+      ></div>
+      <div
+        class="absolute -bottom-32 left-[20%] w-[35rem] h-[35rem] bg-pink-300/30 rounded-full mix-blend-multiply filter blur-[80px] opacity-70 animate-blob animation-delay-4000"
+      ></div>
+
+      <div
+        class="absolute inset-0 opacity-[0.4]"
+        style="
+          background-image: url(&quot;data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22 opacity=%220.1%22/%3E%3C/svg%3E&quot;);
+        "
+      ></div>
+    </div>
+
+    <nav
+      class="fixed top-0 left-0 right-0 z-40 border-b border-white/40 bg-white/60 backdrop-blur-xl transition-all duration-300"
+    >
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-20">
+          <div class="flex items-center gap-3">
+            <div
+              class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500 to-purple-600 flex items-center justify-center text-white shadow-lg shadow-brand-500/30"
+            >
+              <div class="relative w-10 h-10">
+                <div
+                  class="absolute inset-0 bg-primary rounded-lg rotate-6 group-hover:rotate-12 transition-transform"
+                ></div>
+                <img
+                  src="{% static 'img/logo.png' %}"
+                  class="absolute inset-0 w-full h-full object-contain rounded-lg bg-white p-1"
+                  alt="Logo"
+                />
+              </div>
+            </div>
+            <div>
+              <h1 class="text-xl font-bold tracking-tight text-slate-900">
+                Gallery
+              </h1>
+              <p class="text-xs text-slate-500 font-medium">Captured Moments</p>
+            </div>
+          </div>
+          <button
+            onclick="window.history.back()"
+            class="group flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium text-slate-600 hover:bg-white/80 hover:text-slate-900 hover:shadow-sm transition-all border border-transparent hover:border-slate-200"
+          >
+            <i
+              class="ri-arrow-left-line transition-transform group-hover:-translate-x-1"
+            ></i>
+            <span>Back</span>
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <main
+      class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-20 relative z-10"
+    >
+      <div
+        class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12 animate-fade-in"
+      >
+        <div class="flex flex-wrap gap-2" id="filter-container">
+          <button
+            data-filter="all"
+            class="filter-btn active px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 bg-slate-900 text-white shadow-lg shadow-slate-900/20 ring-2 ring-transparent ring-offset-2 transform hover:-translate-y-0.5"
+          >
+            All Photos
+          </button>
+          <button
+            data-filter="anagkazo"
+            class="filter-btn px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 bg-white/80 backdrop-blur text-slate-600 hover:bg-white shadow-sm border border-slate-200 hover:border-brand-200 hover:text-brand-600 transform hover:-translate-y-0.5"
+          >
+            Anagkazo (2025)
+          </button>
+          <button
+            data-filter="youthInPraise"
+            class="filter-btn px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 bg-white/80 backdrop-blur text-slate-600 hover:bg-white shadow-sm border border-slate-200 hover:border-brand-200 hover:text-brand-600 transform hover:-translate-y-0.5"
+          >
+            YouthInPraise (2024)
+          </button>
+          <button
+            data-filter="events"
+            class="filter-btn px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 bg-white/80 backdrop-blur text-slate-600 hover:bg-white shadow-sm border border-slate-200 hover:border-brand-200 hover:text-brand-600 transform hover:-translate-y-0.5"
+          >
+            Events
+          </button>
+        </div>
+        <div
+          class="text-sm text-slate-500 font-medium bg-white/50 px-3 py-1 rounded-full backdrop-blur-sm border border-white/20"
+        >
+          Showing
+          <span id="count-display" class="text-slate-900 font-bold">All</span>
+          items
+        </div>
+      </div>
+
+      <div
+        class="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6"
+        id="gallery-grid"
+      >
+        <!-- Include all category files -->
+        {% include 'gallery_event.html' %} 
+        {% include 'gallery_youthInPraise.html' %} 
+        {% include 'gallery_anagkazo.html' %}
+      </div>
+
+      <div
+        id="empty-state"
+        class="hidden flex flex-col items-center justify-center py-20 text-center animate-fade-in"
+      >
+        <div
+          class="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mb-4"
+        >
+          <i class="ri-image-line text-3xl text-slate-400"></i>
+        </div>
+        <h3 class="text-lg font-semibold text-slate-900">No media found</h3>
+        <p class="text-slate-500 max-w-xs mx-auto">
+          Try selecting a different category filter.
+        </p>
+      </div>
+    </main>
+
+    <div id="lightbox" class="fixed inset-0 z-[100] hidden" aria-hidden="true">
+      <div
+        class="absolute inset-0 bg-black/95 backdrop-blur-sm transition-opacity duration-300 opacity-0"
+        id="lightbox-backdrop"
+      ></div>
+      <button
+        onclick="closeModal()"
+        class="absolute top-6 right-6 z-[102] p-3 text-white/70 hover:text-white hover:bg-white/10 rounded-full transition-all"
+      >
+        <i class="ri-close-line text-3xl"></i>
+      </button>
+      <div
+        class="absolute inset-0 z-[101] flex items-center justify-center p-4 md:p-10 modal-scroll overflow-y-auto"
+      >
+        <div
+          class="relative w-full max-w-6xl max-h-screen flex flex-col items-center justify-center opacity-0 scale-95 transition-all duration-300"
+          id="lightbox-content-wrapper"
+        >
+          <div
+            id="lightbox-media-container"
+            class="rounded-lg overflow-hidden shadow-2xl ring-1 ring-white/10"
+          ></div>
+          <div class="mt-6 flex items-center gap-4">
+            <button
+              id="lightbox-download"
+              class="flex items-center gap-2 px-6 py-2.5 bg-brand-600 hover:bg-brand-500 text-white rounded-full font-medium transition-all shadow-lg shadow-brand-500/20"
+            >
+              <i class="ri-download-line"></i><span>Download Original</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Filters
+      const filterBtns = document.querySelectorAll(".filter-btn");
+      const galleryItems = document.querySelectorAll(".masonry-item");
+      const emptyState = document.getElementById("empty-state");
+      const countDisplay = document.getElementById("count-display");
+
+      filterBtns.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          filterBtns.forEach((b) => {
+            b.classList.remove("bg-slate-900", "text-white", "shadow-lg");
+            b.classList.add(
+              "bg-white/80",
+              "backdrop-blur",
+              "text-slate-600",
+              "hover:bg-white",
+              "border",
+              "border-slate-200",
+            );
+          });
+          btn.classList.remove(
+            "bg-white/80",
+            "backdrop-blur",
+            "text-slate-600",
+            "hover:bg-white",
+            "border",
+            "border-slate-200",
+          );
+          btn.classList.add("bg-slate-900", "text-white", "shadow-lg");
+
+          const category = btn.getAttribute("data-filter");
+          let visibleCount = 0;
+
+          galleryItems.forEach((item) => {
+            if (
+              category === "all" ||
+              item.getAttribute("data-category") === category
+            ) {
+              item.style.display = "block";
+              item.classList.remove("animate-slide-up");
+              void item.offsetWidth;
+              item.classList.add("animate-slide-up");
+              visibleCount++;
+            } else {
+              item.style.display = "none";
+            }
+          });
+
+          countDisplay.textContent =
+            category === "all"
+              ? "All"
+              : category.charAt(0).toUpperCase() + category.slice(1);
+          if (visibleCount === 0) emptyState.classList.remove("hidden");
+          else emptyState.classList.add("hidden");
+        });
+      });
+
+      // Lightbox
+      const lightbox = document.getElementById("lightbox");
+      const backdrop = document.getElementById("lightbox-backdrop");
+      const wrapper = document.getElementById("lightbox-content-wrapper");
+      const container = document.getElementById("lightbox-media-container");
+      const downloadBtn = document.getElementById("lightbox-download");
+
+      function openModal(triggerElement) {
+        const parent =
+          triggerElement.closest(".masonry-item") ||
+          triggerElement.closest(".group");
+        const media = parent.querySelector("img, video");
+        const src = media.getAttribute("data-full") || media.src;
+        const isVideo = media.tagName === "VIDEO";
+
+        container.innerHTML = "";
+
+        if (isVideo) {
+          const video = document.createElement("video");
+          video.src = src;
+          video.controls = true;
+          video.autoplay = true;
+          video.className = "max-h-[80vh] w-auto max-w-full rounded-lg";
+          container.appendChild(video);
+        } else {
+          const img = document.createElement("img");
+          img.src = src;
+          img.className =
+            "max-h-[80vh] w-auto max-w-full rounded-lg object-contain";
+          container.appendChild(img);
+        }
+
+        downloadBtn.onclick = () => downloadFile(src);
+
+        lightbox.classList.remove("hidden");
+        document.body.style.overflow = "hidden";
+
+        setTimeout(() => {
+          backdrop.classList.remove("opacity-0");
+          wrapper.classList.remove("opacity-0", "scale-95");
+          wrapper.classList.add("opacity-100", "scale-100");
+        }, 10);
+      }
+
+      function closeModal() {
+        backdrop.classList.add("opacity-0");
+        wrapper.classList.remove("opacity-100", "scale-100");
+        wrapper.classList.add("opacity-0", "scale-95");
+
+        setTimeout(() => {
+          lightbox.classList.add("hidden");
+          container.innerHTML = "";
+          document.body.style.overflow = "";
+        }, 300);
+      }
+
+      lightbox.addEventListener("click", (e) => {
+        if (e.target === backdrop || e.target === wrapper) closeModal();
+      });
+
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") closeModal();
+      });
+
+      function downloadMedia(triggerElement) {
+        const parent =
+          triggerElement.closest(".masonry-item") ||
+          triggerElement.closest(".group");
+        const media = parent.querySelector("img, video");
+        const src = media.getAttribute("data-full") || media.src;
+        downloadFile(src);
+      }
+
+      function downloadFile(url) {
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = url.split("/").pop();
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+    </script>
+  </body>
+</html>

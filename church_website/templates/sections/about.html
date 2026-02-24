@@ -1,0 +1,69 @@
+{% load static %}
+<section id="about" class="py-16 md:py-24 relative overflow-hidden">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
+      <div class="lg:w-1/2 relative" data-aos="fade-right">
+        <div class="grid grid-cols-2 gap-4">
+          <img
+            src="{% static 'img/New folder/church.jpg' %}"
+            class="rounded-2xl shadow-xl transform translate-y-8 hover:-translate-y-2 transition-transform duration-500"
+            alt="About 1"
+          />
+          <img
+            src="{% static 'img/New folder/group.jpg' %}"
+            class="rounded-2xl shadow-xl transform -translate-y-8 hover:-translate-y-12 transition-transform duration-500"
+            alt="About 2"
+          />
+        </div>
+        <div
+          class="absolute -z-10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-primary/5 rounded-full border border-primary/10 animate-spin-slow"
+        ></div>
+      </div>
+
+      <div class="lg:w-1/2" data-aos="fade-left">
+        <span class="text-primary font-bold tracking-wider uppercase text-sm"
+          >Our Essence</span
+        >
+        <h2 class="text-4xl md:text-5xl font-black text-gray-900 mt-2 mb-6">
+          More Than Just a <br /><span
+            class="text-primary underline decoration-wavy decoration-accent"
+            >Sunday Gathering</span
+          >
+        </h2>
+        <p class="text-gray-600 text-lg leading-relaxed mb-6">
+          We are a vibrant ecosystem of young believers. From late-night worship
+          sessions to community cleanups, we believe faith is an action verb.
+        </p>
+
+        <div class="space-y-4">
+          <div
+            class="flex items-start gap-4 p-4 bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow"
+          >
+            <div class="bg-purple-100 p-3 rounded-lg text-primary">
+              <i class="ri-heart-pulse-fill text-xl"></i>
+            </div>
+            <div>
+              <h4 class="font-bold text-gray-900">Passionate Worship</h4>
+              <p class="text-sm text-gray-500">
+                Connecting with God through authentic expression.
+              </p>
+            </div>
+          </div>
+          <div
+            class="flex items-start gap-4 p-4 bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow"
+          >
+            <div class="bg-pink-100 p-3 rounded-lg text-secondary">
+              <i class="ri-team-fill text-xl"></i>
+            </div>
+            <div>
+              <h4 class="font-bold text-gray-900">Deep Community</h4>
+              <p class="text-sm text-gray-500">
+                Building friendships that withstand the test of time.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

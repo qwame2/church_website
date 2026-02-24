@@ -1,0 +1,711 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Church News Archive</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: "#8E6FF7",
+              secondary: "#F3F4F6",
+            },
+            borderRadius: {
+              none: "0px",
+              sm: "4px",
+              DEFAULT: "8px",
+              md: "12px",
+              lg: "16px",
+              xl: "20px",
+              "2xl": "24px",
+              "3xl": "32px",
+              full: "9999px",
+              button: "8px",
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      :where([class^="ri-"])::before {
+        content: "\f3c2";
+      }
+      .modal {
+        transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+      }
+      #newsGrid {
+        transition: opacity 0.3s ease;
+      }
+      #sortDropdown {
+        transform-origin: top;
+        transition: all 0.2s ease-out;
+        opacity: 1;
+        transform: scaleY(1);
+      }
+      #sortDropdown.hidden {
+        opacity: 0;
+        transform: scaleY(0);
+      }
+      .suggestion-item {
+        transition: background-color 0.2s ease;
+      }
+      .suggestion-item:not(:last-child) {
+        border-bottom: 1px solid #f3f4f6;
+      }
+      .news-card {
+        transition: transform 0.2s ease;
+      }
+      .news-card:hover {
+        transform: scale(1.02);
+      }
+      #categoryDropdown {
+        transform-origin: top;
+        transition: all 0.2s ease-out;
+      }
+      #categoryDropdown.hidden {
+        transform: scaleY(0);
+        opacity: 0;
+      }
+      #categoryDropdown:not(.hidden) {
+        transform: scaleY(1);
+        opacity: 1;
+      }
+      .category-tooltip {
+        position: absolute;
+        background: white;
+        padding: 0.5rem;
+        border-radius: 0.5rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        z-index: 20;
+        width: max-content;
+        max-width: 250px;
+        display: none;
+      }
+      .category-item:hover .category-tooltip {
+        display: block;
+      }
+    </style>
+  </head>
+  <body class="bg-white min-h-screen">
+    <!-- Navbar -->
+    <nav class="bg-white shadow-sm">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-16">
+          <div class="flex items-center">
+            <img
+              src="{% static 'img/logo.png' %}"
+              class="w-auto h-[50px]"
+              alt="Worship Night"
+            />
+          </div>
+          <div class="flex items-center space-x-4">
+            <!-- Search Input -->
+            <div class="relative">
+              <input
+                type="text"
+                id="searchInput"
+                placeholder="Search news..."
+                class="pl-10 pr-4 py-2 w-48 sm:w-64 rounded-button border border-gray-200 focus:outline-none focus:border-primary text-sm"
+              />
+              <div
+                class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 flex items-center justify-center"
+              >
+                <i class="ri-search-line text-gray-400"></i>
+              </div>
+              <div
+                id="searchSuggestions"
+                class="absolute w-full bg-white mt-1 rounded-lg shadow-lg border border-gray-200 hidden z-20"
+              ></div>
+            </div>
+          </div>
+          <!-- Back Button -->
+          <div class="flex items-center">
+            <a
+              href="{% url 'youth_church_landing' %}"
+              class="flex items-center space-x-2 px-3 py-2 bg-gray-200 rounded-lg text-gray-600 hover:bg-gray-300 transition"
+            >
+              <i class="ri-arrow-left-line text-lg"></i>
+              <span class="hidden sm:inline">Back</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div class="flex justify-between items-center mb-8">
+        <h1 class="text-2xl sm:text-3xl font-semibold text-gray-900">
+          Church News Archive
+        </h1>
+        <div class="flex items-center space-x-4">
+          <!-- Category Filter -->
+          <div class="relative">
+            <button
+              id="categoryFilter"
+              class="px-4 py-2 bg-white border border-gray-200 rounded-button text-sm flex items-center space-x-2 cursor-pointer"
+            >
+              <span id="selectedCategories">All Categories</span>
+              <i class="ri-arrow-down-s-line"></i>
+            </button>
+            <div
+              id="categoryDropdown"
+              class="hidden absolute top-full mt-1 w-48 sm:w-64 bg-white border border-gray-200 rounded shadow-lg z-10"
+            >
+              <div class="py-1">
+                <label
+                  class="category-item flex items-center px-4 py-2 hover:bg-gray-50 cursor-pointer relative"
+                >
+                  <input
+                    type="checkbox"
+                    class="form-checkbox h-4 w-4 text-primary rounded border-gray-300"
+                    value="all"
+                    checked
+                  />
+                  <span class="ml-2 text-sm">All Categories</span>
+                  <div class="category-tooltip left-full ml-2">
+                    All articles from all categories
+                  </div>
+                </label>
+                <label
+                  class="category-item flex items-center px-4 py-2 hover:bg-gray-50 cursor-pointer relative"
+                  data-category="Events"
+                >
+                  <input
+                    type="checkbox"
+                    class="form-checkbox h-4 w-4 text-primary rounded border-gray-300"
+                    value="Events"
+                  />
+                  <span class="ml-2 text-sm">Events (1)</span>
+                  <div class="category-tooltip left-full ml-2">
+                    Recent: Easter Sunday Service 2025
+                  </div>
+                </label>
+                <label
+                  class="category-item flex items-center px-4 py-2 hover:bg-gray-50 cursor-pointer relative"
+                  data-category="Announcements"
+                >
+                  <input
+                    type="checkbox"
+                    class="form-checkbox h-4 w-4 text-primary rounded border-gray-300"
+                    value="Announcements"
+                  />
+                  <span class="ml-2 text-sm">Announcements (1)</span>
+                  <div class="category-tooltip left-full ml-2">
+                    Recent: Youth Group Mission Trip Announcement
+                  </div>
+                </label>
+                <label
+                  class="category-item flex items-center px-4 py-2 hover:bg-gray-50 cursor-pointer relative"
+                  data-category="Community"
+                >
+                  <input
+                    type="checkbox"
+                    class="form-checkbox h-4 w-4 text-primary rounded border-gray-300"
+                    value="Community"
+                  />
+                  <span class="ml-2 text-sm">Community (1)</span>
+                  <div class="category-tooltip left-full ml-2">
+                    Recent: Spring Food Drive Success
+                  </div>
+                </label>
+              </div>
+            </div>
+          </div>
+          <!-- Sort Filter -->
+          <div class="relative">
+            <button
+              id="sortFilter"
+              class="px-4 py-2 bg-white border border-gray-200 rounded-button text-sm flex items-center space-x-2 cursor-pointer"
+            >
+              <span id="currentSort">Latest First</span>
+              <i class="ri-arrow-down-s-line"></i>
+            </button>
+            <ul
+              id="sortFilterDropdown"
+              class="hidden absolute mt-1 w-40 bg-white shadow-md border rounded-md"
+            >
+              <li class="px-4 py-2 cursor-pointer hover:bg-gray-200">
+                Latest First
+              </li>
+              <li class="px-4 py-2 cursor-pointer hover:bg-gray-200">
+                Oldest First
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- News Grid -->
+      <div
+        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+        id="newsGrid"
+      ></div>
+
+      <!-- Pagination -->
+      <div id="pagination" class="mt-8 flex justify-center hidden">
+        <nav class="flex items-center space-x-2">
+          <button
+            class="px-3 py-2 rounded-button border border-gray-200 text-sm hover:bg-gray-50 cursor-pointer"
+          >
+            Previous
+          </button>
+          <button
+            class="px-3 py-2 rounded-button bg-primary text-white text-sm cursor-pointer"
+          >
+            1
+          </button>
+          <button
+            class="px-3 py-2 rounded-button border border-gray-200 text-sm hover:bg-gray-50 cursor-pointer"
+          >
+            2
+          </button>
+          <button
+            class="px-3 py-2 rounded-button border border-gray-200 text-sm hover:bg-gray-50 cursor-pointer"
+          >
+            3
+          </button>
+          <button
+            class="px-3 py-2 rounded-button border border-gray-200 text-sm hover:bg-gray-50 cursor-pointer"
+          >
+            Next
+          </button>
+        </nav>
+      </div>
+    </div>
+
+    <!-- Modal -->
+    <div
+      id="newsModal"
+      class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50"
+    >
+      <div
+        class="modal bg-white rounded-lg max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto transform scale-95 opacity-0"
+      >
+        <div class="p-4 sm:p-6">
+          <div class="flex justify-between items-start mb-4">
+            <div>
+              <span
+                id="modalCategory"
+                class="inline-block px-3 py-1 rounded-full text-xs font-medium bg-primary text-white mb-2"
+                >Category</span
+              >
+              <h2
+                id="modalTitle"
+                class="text-xl sm:text-2xl font-semibold text-gray-900"
+              ></h2>
+              <p id="modalDate" class="text-sm text-gray-500 mt-1"></p>
+            </div>
+            <button id="closeModal" class="text-gray-400 hover:text-gray-500">
+              <i class="ri-close-line text-2xl"></i>
+            </button>
+          </div>
+          <img
+            id="modalImage"
+            class="w-full h-48 sm:h-[400px] object-cover rounded-lg mb-6"
+          />
+          <div id="modalContent" class="prose max-w-none"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    {% load static %}
+    <script>
+      function getExpirationDate() {
+        const now = new Date();
+        now.setMonth(now.getMonth() + 9);
+        return now.toLocaleDateString();
+      }
+
+      const staticUrl = "{{ STATIC_URL }}";
+
+      // Sample news data
+      let mockNews = [
+        {
+          id: 1,
+          title:
+            "Easter Sunday Service 2025: A Celebration of Hope and Renewal",
+          excerpt:
+            "Join us for a special Easter Sunday service filled with worship...",
+          content:
+            "Join us for a special Easter Sunday service filled with worship, fellowship...",
+          category: "Events",
+          date: new Date().toLocaleDateString(), // Show only the date
+          expirationDate: getExpirationDate(),
+          image: "/static/img/easter.jpg",
+        },
+        {
+          id: 2,
+          title: "Community Outreach: Spring Food Drive Success",
+          excerpt:
+            "Thanks to your generous donations, we provided meals to 200 families...",
+          content:
+            "Our Spring Food Drive has concluded with overwhelming success!",
+          category: "Community",
+          date: new Date().toLocaleDateString(), // Show only the date
+          expirationDate: getExpirationDate(),
+          image: "/static/img/Community.jpg",
+        },
+        {
+          id: 3,
+          title: "Youth Group Mission Trip Announcement",
+          excerpt:
+            "This summer, our youth group will embark on a mission trip...",
+          content:
+            "This summer, our youth group will be traveling to Guatemala...",
+          category: "Announcements",
+          date: new Date().toLocaleDateString(), // Show only the date
+          expirationDate: getExpirationDate(),
+          image: "/static/img/43.jpg",
+        },
+        {
+          id: 4,
+          title: "Youth Group Summer Camp Registration Open",
+          excerpt: "Don't miss out on our exciting summer camp for youth...",
+          content: "Registration for our summer youth camp is now open...",
+          category: "Announcements",
+          date: new Date().toLocaleDateString(), // Show only the date
+          expirationDate: getExpirationDate(),
+          image: "/static/img/43.jpg",
+        },
+      ];
+
+      console.log(mockNews);
+
+      document.getElementById("closeModal").addEventListener("click", () => {
+        const modal = document.getElementById("newsModal");
+        modal
+          .querySelector(".modal")
+          .classList.remove("opacity-100", "scale-100");
+        setTimeout(() => {
+          modal.classList.add("hidden");
+          modal.classList.remove("flex");
+        }, 300);
+      });
+
+      // Function to render news dynamically
+      function renderNews() {
+        const newsContainer = document.getElementById("news-container");
+        newsContainer.innerHTML = ""; // Clear existing content
+
+        mockNews.forEach((news) => {
+          const newsItem = document.createElement("div");
+          newsItem.className = "news-item";
+          newsItem.id = `news-${news.id}`;
+          newsItem.innerHTML = `
+            <div class="news-card">
+              <img src="${news.image}" alt="${news.title}">
+              <h3>${news.title}</h3>
+              <p>${news.excerpt}</p>
+              <small><strong>Category:</strong> ${news.category}</small>
+              <br>
+              <small><strong>Date:</strong> ${news.date}</small>
+            </div>
+          `;
+          newsContainer.appendChild(newsItem);
+        });
+      }
+
+      // Function to remove expired news items from both the array and UI
+      function removeExpiredNews() {
+        const now = new Date();
+
+        // Filter out expired news
+        mockNews = mockNews.filter(
+          (news) => new Date(news.expirationDate) > now
+        );
+
+        // Update UI
+        renderNews();
+      }
+
+      // Run the cleanup function every 24 hours
+      setInterval(removeExpiredNews, 24 * 60 * 60 * 1000);
+
+      // Initial render
+      document.addEventListener("DOMContentLoaded", () => {
+        renderNews();
+        removeExpiredNews(); // Cleanup on page load
+      });
+
+      console.log(mockNews);
+
+      let selectedCategories = ["all"];
+      function updateSelectedCategories() {
+        const checkboxes = document.querySelectorAll(
+          '#categoryDropdown input[type="checkbox"]'
+        );
+        const allCategoriesCheckbox = document.querySelector(
+          '#categoryDropdown input[value="all"]'
+        );
+        const selectedCategoriesSpan =
+          document.getElementById("selectedCategories");
+        selectedCategories = Array.from(checkboxes)
+          .filter((cb) => cb.checked && cb.value !== "all")
+          .map((cb) => cb.value);
+        if (allCategoriesCheckbox.checked || selectedCategories.length === 0) {
+          selectedCategories = ["all"];
+          selectedCategoriesSpan.textContent = "All Categories";
+        } else {
+          selectedCategoriesSpan.textContent =
+            selectedCategories.length === 1
+              ? selectedCategories[0]
+              : `${selectedCategories.length} Categories`;
+        }
+        renderNews();
+      }
+      let currentSort = "latest";
+      let searchTerm = "";
+      document.getElementById("searchInput").addEventListener("input", (e) => {
+        searchTerm = e.target.value.toLowerCase();
+        const suggestionsContainer =
+          document.getElementById("searchSuggestions");
+        if (searchTerm.length > 0) {
+          const suggestions = mockNews
+            .filter(
+              (news) =>
+                news.title.toLowerCase().includes(searchTerm) ||
+                news.content.toLowerCase().includes(searchTerm) ||
+                news.category.toLowerCase().includes(searchTerm)
+            )
+            .slice(0, 5);
+          if (suggestions.length > 0) {
+            suggestionsContainer.innerHTML = suggestions
+              .map(
+                (news) => `
+      <div class="suggestion-item rounded p-3 hover:border-[2px] cursor-pointer flex items-center">
+      <div class="w-12 h-12 rounded overflow-hidden mr-3 flex-shrink-0">
+      <img src="${news.image}" class="w-full h-full object-cover">
+      </div>
+      <div class="flex-grow">
+      <div class="text-sm font-medium text-gray-900">${news.title}</div>
+      <div class="text-xs text-gray-500">${news.category}</div>
+      </div>
+      </div>
+      `
+              )
+              .join("");
+            suggestionsContainer.classList.remove("hidden");
+            document
+              .querySelectorAll(".suggestion-item")
+              .forEach((item, index) => {
+                item.addEventListener("click", () => {
+                  document.getElementById("searchInput").value =
+                    suggestions[index].title;
+                  searchTerm = suggestions[index].title.toLowerCase();
+                  suggestionsContainer.classList.add("hidden");
+                  renderNews();
+                });
+              });
+          } else {
+            suggestionsContainer.classList.add("hidden");
+          }
+        } else {
+          suggestionsContainer.classList.add("hidden");
+        }
+        renderNews();
+      });
+      document.addEventListener("click", (e) => {
+        const suggestionsContainer =
+          document.getElementById("searchSuggestions");
+        const searchInput = document.getElementById("searchInput");
+        if (
+          !searchInput.contains(e.target) &&
+          !suggestionsContainer.contains(e.target)
+        ) {
+          suggestionsContainer.classList.add("hidden");
+        }
+      });
+      function renderNews() {
+        const newsGrid = document.getElementById("newsGrid");
+        const pagination = document.getElementById("pagination");
+        newsGrid.innerHTML = "";
+        let filteredNews = selectedCategories.includes("all")
+          ? [...mockNews]
+          : mockNews.filter((news) =>
+              selectedCategories.includes(news.category)
+            );
+        if (searchTerm) {
+          filteredNews = filteredNews.filter(
+            (news) =>
+              news.title.toLowerCase().includes(searchTerm) ||
+              news.content.toLowerCase().includes(searchTerm) ||
+              news.excerpt.toLowerCase().includes(searchTerm) ||
+              news.category.toLowerCase().includes(searchTerm)
+          );
+        }
+        filteredNews.sort((a, b) => {
+          const dateA = new Date(a.date);
+          const dateB = new Date(b.date);
+          return currentSort === "latest" ? dateB - dateA : dateA - dateB;
+        });
+        filteredNews.forEach((news) => {
+          const card = document.createElement("div");
+          card.className =
+            "news-card bg-white rounded-lg shadow-sm overflow-hidden cursor-pointer";
+          card.innerHTML = `
+      <img src="${news.image}" class="w-full h-48 object-cover">
+      <div class="p-4">
+      <span class="inline-block px-3 py-1 rounded-full text-xs font-medium bg-primary text-white mb-2">${news.category}</span>
+      <h3 class="text-lg font-semibold text-gray-900 mb-2">${news.title}</h3>
+      <p class="text-sm text-gray-500 mb-4">${news.excerpt}</p>
+      <div class="flex justify-between items-center">
+      <span class="text-sm text-gray-400">${news.date}</span>
+      <button class="text-primary text-sm font-medium hover:text-primary-dark">Read More</button>
+      </div>
+      </div>
+      `;
+          card.addEventListener("click", () => showModal(news));
+          newsGrid.appendChild(card);
+        });
+        const itemsPerPage = 6;
+        const totalPages = Math.ceil(filteredNews.length / itemsPerPage);
+        pagination.classList.toggle(
+          "hidden",
+          filteredNews.length <= itemsPerPage
+        );
+        if (filteredNews.length > itemsPerPage) {
+          const paginationNav = pagination.querySelector("nav");
+          paginationNav.innerHTML = "";
+          // Previous button
+          const prevButton = document.createElement("button");
+          prevButton.className =
+            "px-3 py-2 rounded-button border border-gray-200 text-sm hover:bg-gray-50 cursor-pointer";
+          prevButton.textContent = "Previous";
+          paginationNav.appendChild(prevButton);
+          // Page numbers
+          for (let i = 1; i <= totalPages; i++) {
+            const pageButton = document.createElement("button");
+            pageButton.className = `px-3 py-2 rounded-button text-sm cursor-pointer ${
+              i === 1
+                ? "bg-primary text-white"
+                : "border border-gray-200 hover:bg-gray-50"
+            }`;
+            pageButton.textContent = i;
+            paginationNav.appendChild(pageButton);
+          }
+          // Next button
+          const nextButton = document.createElement("button");
+          nextButton.className =
+            "px-3 py-2 rounded-button border border-gray-200 text-sm hover:bg-gray-50 cursor-pointer";
+          nextButton.textContent = "Next";
+          paginationNav.appendChild(nextButton);
+        }
+        // Only show first page items
+        filteredNews = filteredNews.slice(0, itemsPerPage);
+      }
+      function showModal(news) {
+        const modal = document.getElementById("newsModal");
+        const modalContent = {
+          title: document.getElementById("modalTitle"),
+          category: document.getElementById("modalCategory"),
+          date: document.getElementById("modalDate"),
+          image: document.getElementById("modalImage"),
+          content: document.getElementById("modalContent"),
+        };
+        modalContent.title.textContent = news.title;
+        modalContent.category.textContent = news.category;
+        modalContent.date.textContent = news.date;
+        modalContent.image.src = news.image;
+        modalContent.content.innerHTML = `<p>${news.content}</p>`;
+        modal.classList.remove("hidden");
+        modal.classList.add("flex");
+        setTimeout(() => {
+          modal
+            .querySelector(".modal")
+            .classList.add("opacity-100", "scale-100");
+        }, 10);
+      }
+      // Function to sort news articles
+      function sortNews(order) {
+        if (order === "Latest First") {
+          mockNews.sort((a, b) => new Date(b.date) - new Date(a.date)); // Newest first
+        } else if (order === "Oldest First") {
+          mockNews.sort((a, b) => new Date(a.date) - new Date(b.date)); // Oldest first
+        }
+        renderNews(); // Update UI
+      }
+
+      // Dropdown selection event
+      document.getElementById("sortFilter").addEventListener("click", () => {
+        const dropdown = document.getElementById("sortFilterDropdown");
+        dropdown.classList.toggle("hidden");
+      });
+
+      // Handle sorting selection
+      document.querySelectorAll("#sortFilterDropdown li").forEach((item) => {
+        item.addEventListener("click", () => {
+          const selectedSort = item.textContent.trim();
+          document.getElementById("currentSort").textContent = selectedSort;
+          sortNews(selectedSort); // Call sorting function
+        });
+      });
+
+      // Add click handlers for sort options
+      document.querySelectorAll(".sort-option").forEach((option) => {
+        option.addEventListener("click", () => {
+          updateSort(option.dataset.sort);
+        });
+      });
+      document
+        .querySelectorAll('#categoryDropdown input[type="checkbox"]')
+        .forEach((checkbox) => {
+          checkbox.addEventListener("change", (e) => {
+            const allCategoriesCheckbox = document.querySelector(
+              '#categoryDropdown input[value="all"]'
+            );
+            const categoryCheckboxes = document.querySelectorAll(
+              '#categoryDropdown input[type="checkbox"]:not([value="all"])'
+            );
+            const categoryLabel = e.target.closest("label");
+            if (e.target.value === "all") {
+              categoryCheckboxes.forEach((cb) => {
+                cb.checked = false;
+                cb.disabled = e.target.checked;
+                cb.closest("label").classList.toggle(
+                  "opacity-50",
+                  e.target.checked
+                );
+              });
+            } else {
+              const checkedCategories = Array.from(categoryCheckboxes).filter(
+                (cb) => cb.checked
+              );
+              allCategoriesCheckbox.checked = checkedCategories.length === 0;
+            }
+            if (e.target.checked) {
+              categoryLabel.classList.add("bg-primary", "bg-opacity-10");
+            } else {
+              categoryLabel.classList.remove("bg-primary", "bg-opacity-10");
+            }
+            updateSelectedCategories();
+          });
+        });
+      document
+        .getElementById("categoryFilter")
+        .addEventListener("click", () => {
+          const dropdown = document.getElementById("categoryDropdown");
+          dropdown.classList.toggle("hidden");
+          if (!dropdown.classList.contains("hidden")) {
+            dropdown.style.display = "block";
+          }
+        });
+      renderNews();
+    </script>
+  </body>
+</html>

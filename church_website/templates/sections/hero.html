@@ -1,0 +1,373 @@
+{% load static %}
+<section
+  id="home"
+  class="relative min-h-[90vh] flex items-center overflow-hidden bg-dark"
+>
+  <div
+    id="hero-default-mode"
+    class="absolute inset-0 w-full h-full transition-all duration-700"
+  >
+    <div class="absolute inset-0 z-0 bg-black">
+      <div class="slides h-full w-full relative">
+        <div
+          class="slide absolute inset-0 w-full h-full opacity-100 scale-110 transition-all duration-[3000ms]"
+        >
+          <img
+            src="{% static 'img/IMG-20241217-WA0009.jpg' %}"
+            class="w-full h-full object-cover"
+          />
+        </div>
+        <div
+          class="slide absolute inset-0 w-full h-full opacity-100 scale-110 transition-all duration-[3000ms]"
+        >
+          <img
+            src="{% static 'img/TCOCSM/YIP/600488668_122154092360648706_7422894456708999272_n.jpg' %}"
+            class="w-full h-full object-cover"
+          />
+        </div>
+        <div
+          class="slide absolute inset-0 w-full h-full opacity-0 scale-100 transition-all duration-[3000ms]"
+        >
+          <img
+            src="{% static 'img/TCOCSM/YIP/600442314_122154092852648706_1735970942348286911_n.jpg' %}"
+            class="w-full h-full object-cover"
+          />
+        </div>
+        <div
+          class="slide absolute inset-0 w-full h-full opacity-0 scale-100 transition-all duration-[3000ms]"
+        >
+          <img
+            src="{% static 'img/New folder/604609287_1437296178397650_345601218222422596_n.jpg' %}"
+            class="w-full h-full object-cover"
+          />
+        </div>
+        <div
+          class="slide absolute inset-0 w-full h-full opacity-0 scale-100 transition-all duration-[3000ms]"
+        >
+          <img
+            src="{% static 'img/New folder/603862415_1437295651731036_4848518937106885449_n.jpg' %}"
+            class="w-full h-full object-cover"
+          />
+        </div>
+      </div>
+      <div
+        class="absolute inset-0 bg-gradient-to-r from-black/90 via-black/60 to-black/20 z-10"
+      ></div>
+    </div>
+
+    <div
+      class="relative z-10 max-w-7xl mx-auto px-6 w-full h-full flex items-center py-24 lg:py-0"
+    >
+      <div class="grid lg:grid-cols-2 gap-16 items-center w-full">
+        <div class="space-y-8 mb-10 lg:mb-0" data-aos="fade-right">
+          <div
+            class="inline-block px-4 py-2 rounded-full border border-white/30 bg-white/10 backdrop-blur-md text-white text-xs font-semibold animate-bounce"
+          >
+            👋 Welcome to the Family
+          </div>
+          <h1
+            class="text-5xl sm:text-7xl lg:text-8xl font-black text-white leading-tight"
+          >
+            WE ARE <br /><span
+              class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary"
+              id="typewriter"
+              >YOUTH.</span
+            >
+          </h1>
+          <p class="text-base md:text-xl text-gray-200 max-w-lg font-light">
+            Join us in creating meaningful connections and growing in faith.
+          </p>
+          <div class="pt-6">
+            <a
+              href="#about"
+              class="px-10 py-4 bg-primary text-white font-bold rounded-full shadow-lg hover:bg-purple-700 transition-colors"
+              >Start Here</a
+            >
+          </div>
+        </div>
+
+        <!-- Event Countdown Card -->
+        <div
+          id="event-card-container"
+          class="relative w-full max-w-sm mx-auto lg:mx-0 group px-2 transition-all duration-500"
+          onclick="handleEventClick()"
+          data-aos="fade-up"
+        >
+          <div
+            id="event-card-inner"
+            class="w-full bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-8 shadow-2xl group-hover:bg-black/40 transition-all cursor-pointer"
+          >
+            <div id="active-event-content">
+              <div class="flex items-center gap-5 mb-6">
+                <div
+                  id="event-day-circle"
+                  class="w-14 h-14 rounded-full bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center text-white font-bold text-2xl shadow-lg"
+                >
+                  10
+                </div>
+                <div>
+                  <p class="text-gray-300 text-xs uppercase font-bold">
+                    Next Event
+                  </p>
+                  <h3
+                    class="text-white font-bold text-xl"
+                    id="event-title-display"
+                  >
+                    Worship Night
+                  </h3>
+                </div>
+              </div>
+
+              <div
+                class="flex justify-between text-center border-t border-white/10 pt-6"
+                id="countdown-container"
+              >
+                <div>
+                  <span id="cd-days" class="block text-2xl font-bold text-white"
+                    >00</span
+                  >
+                  <span class="text-[10px] text-gray-400 uppercase">Days</span>
+                </div>
+                <div>
+                  <span
+                    id="cd-hours"
+                    class="block text-2xl font-bold text-white"
+                    >00</span
+                  >
+                  <span class="text-[10px] text-gray-400 uppercase">Hrs</span>
+                </div>
+                <div>
+                  <span
+                    id="cd-minutes"
+                    class="block text-2xl font-bold text-white"
+                    >00</span
+                  >
+                  <span class="text-[10px] text-gray-400 uppercase">Mins</span>
+                </div>
+                <div>
+                  <span
+                    id="cd-seconds"
+                    class="block text-2xl font-bold text-accent"
+                    >00</span
+                  >
+                  <span class="text-[10px] text-gray-400 uppercase">Secs</span>
+                </div>
+              </div>
+
+              <div class="mt-6 text-center" id="preview-btn-container">
+                <span
+                  id="preview-badge"
+                  class="text-[10px] text-primary font-bold uppercase border border-primary/30 px-5 py-2 rounded-full group-hover:bg-primary group-hover:text-white transition-all inline-block"
+                >
+                  Watch Preview
+                </span>
+              </div>
+            </div>
+
+            <div id="empty-event-content" class="hidden py-4 text-center">
+              <div
+                class="w-16 h-16 mx-auto mb-4 bg-white/5 rounded-full flex items-center justify-center"
+              >
+                <i class="ri-notification-3-line text-2xl text-gray-400"></i>
+              </div>
+              <h3 class="text-white font-bold text-lg mb-2">
+                No Upcoming Events
+              </h3>
+              <p class="text-gray-400 text-xs leading-relaxed">
+                We're planning something amazing. <br />Follow us to stay
+                updated!
+              </p>
+              <div class="mt-6">
+                <span
+                  class="text-[10px] text-white font-bold uppercase border border-white px-5 py-2 rounded-full"
+                >
+                  Stay Tuned
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Event Preview Overlay -->
+  <div
+    id="hero-event-mode"
+    class="fixed inset-0 w-full h-full z-[150] bg-black transition-all duration-1000 ease-in-out transform -translate-y-full opacity-0 pointer-events-none"
+    x-data="{ 
+    activeSlide: 0, 
+    totalSlides: 3,
+    autoSlideInterval: null,
+    
+    startAutoSlide() {
+        this.stopAutoSlide();
+        let delay = (this.activeSlide === 0) ? 12000 : 5000;
+        this.autoSlideInterval = setInterval(() => {
+            this.activeSlide = (this.activeSlide + 1) % this.totalSlides;
+            this.startAutoSlide();
+        }, delay);
+    },
+    
+    stopAutoSlide() {
+        if(this.autoSlideInterval) clearInterval(this.autoSlideInterval);
+    }
+  }"
+    x-init="startAutoSlide()"
+  >
+    <div
+      class="absolute top-0 left-0 w-full z-[170] p-8 flex justify-between items-start pointer-events-none"
+    >
+      <div
+        class="pointer-events-auto"
+        x-transition:enter="transition duration-1000 delay-700"
+        x-transition:enter-start="opacity-0 -translate-y-4"
+        x-transition:enter-end="opacity-100 translate-y-0"
+      >
+        <span
+          class="inline-flex items-center gap-3 px-5 py-2 bg-primary/20 backdrop-blur-xl border border-white/20 text-white text-[10px] font-black rounded-full tracking-[0.3em] uppercase shadow-2xl"
+        >
+          <span class="relative flex h-2 w-2">
+            <span
+              class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"
+            ></span>
+            <span
+              class="relative inline-flex rounded-full h-2 w-2 bg-primary"
+            ></span>
+          </span>
+          Upcoming Event Preview
+        </span>
+      </div>
+
+      <button
+        @click="toggleEventMode(false); activeSlide = 0; stopAutoSlide()"
+        class="pointer-events-auto bg-white/10 hover:bg-white text-white hover:text-black w-12 h-12 rounded-full backdrop-blur-md border border-white/20 flex items-center justify-center transition-all group"
+      >
+        <i
+          class="ri-close-line text-2xl group-hover:rotate-90 transition-transform duration-300"
+        ></i>
+      </button>
+    </div>
+
+    <div
+      class="relative w-full h-full flex items-center justify-center overflow-hidden"
+    >
+      <div class="absolute inset-0 w-full h-full">
+        <div
+          x-show="activeSlide === 0"
+          x-transition:enter="transition duration-[1500ms] ease-out"
+          x-transition:enter-start="opacity-0 scale-105"
+          x-transition:enter-end="opacity-100 scale-100"
+          x-transition:leave="transition duration-[1500ms] ease-in"
+          class="absolute inset-0 w-full h-full"
+        >
+          <video
+            id="event-video"
+            class="w-full h-full object-cover"
+            loop
+            muted
+            playsinline
+          >
+            <source src="{% static 'img/710830b.mp4' %}" type="video/mp4" />
+          </video>
+        </div>
+
+        <div
+          x-show="activeSlide === 1"
+          x-transition:enter="transition duration-[1500ms] ease-out"
+          x-transition:enter-start="opacity-0 scale-105"
+          x-transition:enter-end="opacity-100 scale-100"
+          class="absolute inset-0 w-full h-full"
+        >
+          <img
+            src="{% static 'img/Youth.png' %}"
+            class="w-full h-full object-cover"
+            alt="Event Image 1"
+          />
+        </div>
+
+        <div
+          x-show="activeSlide === 2"
+          x-transition:enter="transition duration-[1500ms] ease-out"
+          x-transition:enter-start="opacity-0 scale-105"
+          x-transition:enter-end="opacity-100 scale-100"
+          class="absolute inset-0 w-full h-full"
+        >
+          <img
+            src="{% static 'img/Summer.jpg' %}"
+            class="w-full h-full object-cover"
+            alt="Event Image 2"
+          />
+        </div>
+      </div>
+
+      <div
+        class="absolute inset-0 flex items-center justify-between px-6 md:px-12 z-20 pointer-events-none"
+      >
+        <button
+          @click="activeSlide = activeSlide === 0 ? totalSlides - 1 : activeSlide - 1; startAutoSlide()"
+          class="pointer-events-auto w-14 h-14 rounded-full bg-white/5 border border-white/10 text-white flex items-center justify-center hover:bg-primary transition-all duration-500"
+        >
+          <i class="ri-arrow-left-s-line text-3xl"></i>
+        </button>
+        <button
+          @click="activeSlide = (activeSlide + 1) % totalSlides; startAutoSlide()"
+          class="pointer-events-auto w-14 h-14 rounded-full bg-white/5 border border-white/10 text-white flex items-center justify-center hover:bg-primary transition-all duration-500"
+        >
+          <i class="ri-arrow-right-s-line text-3xl"></i>
+        </button>
+      </div>
+
+      <div
+        class="absolute bottom-0 left-0 w-full p-10 md:p-20 z-30 pointer-events-none bg-gradient-to-t from-black/80 via-black/20 to-transparent"
+      >
+        <div class="max-w-4xl pointer-events-auto">
+          <h2
+            class="text-5xl md:text-8xl font-black text-white mb-6 tracking-tighter"
+            id="preview-title"
+          >
+            Worship Night
+          </h2>
+          <p
+            class="text-xl md:text-2xl text-gray-300 mb-10 font-light leading-relaxed max-w-2xl"
+            id="preview-desc"
+          >
+            Join us for a night of power and transformation.
+          </p>
+
+          <div class="flex gap-3 mb-12">
+            <template x-for="(item, index) in totalSlides">
+              <div
+                @click="activeSlide = index; startAutoSlide()"
+                class="h-1 rounded-full transition-all duration-700 cursor-pointer overflow-hidden bg-white/20"
+                :class="activeSlide === index ? 'w-16' : 'w-6'"
+              >
+                <div
+                  x-show="activeSlide === index"
+                  class="h-full bg-primary"
+                  style="
+                    width: 100%;
+                    transform-origin: left;
+                    animation: progressFill linear forwards;
+                  "
+                  :style="activeSlide === 0 ? 'animation-duration: 12s' : 'animation-duration: 5s'"
+                ></div>
+              </div>
+            </template>
+          </div>
+
+          <a
+            href="#contact"
+            @click="toggleEventMode(false)"
+            class="group inline-flex items-center gap-4 bg-white text-black px-10 py-5 rounded-2xl font-black hover:bg-primary hover:text-white transition-all shadow-2xl"
+          >
+            SECURE YOUR SPOT
+            <i
+              class="ri-arrow-right-line group-hover:translate-x-2 transition-transform"
+            ></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

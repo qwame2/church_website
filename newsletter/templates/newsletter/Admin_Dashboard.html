@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-gray-100 font-sans">
+    <div class="container mx-auto p-6">
+      <!-- Header -->
+      <h1 class="text-3xl font-bold text-gray-800 mb-8">Admin Dashboard</h1>
+
+      <!-- Subscribers Section -->
+      <div class="bg-white shadow-md rounded-lg p-6 mb-8">
+        <h2 class="text-2xl font-semibold text-gray-700 mb-4">Subscribers</h2>
+        <div class="overflow-x-auto">
+          <table class="min-w-full bg-white">
+            <thead>
+              <tr
+                class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal"
+              >
+                <th class="py-3 px-6 text-left">Email</th>
+                <th class="py-3 px-6 text-left">Subscribed Date</th>
+              </tr>
+            </thead>
+            <tbody class="text-gray-600 text-sm font-light">
+              {% for subscriber in subscribers %}
+              <tr class="border-b border-gray-200 hover:bg-gray-100">
+                <td class="py-3 px-6 text-left whitespace-nowrap">
+                  {{ subscriber.email }}
+                </td>
+                <td class="py-3 px-6 text-left">
+                  {{ subscriber.date_subscribed }}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          <!-- Clear All Subscriptions Button -->
+          <hr class="my-6 border-gray-300" />
+          <form
+            method="POST"
+            action="{% url 'clear_subscriptions' %}"
+            class="mb-6"
+          >
+            {% csrf_token %}
+            <button
+              type="submit"
+              onclick="return confirm('Are you sure you want to clear all subscriptions?');"
+              class="w-70 mt-0 bg-red-500 text-white px-6 py-2 rounded-lg hover:bg-red-600 transition-colors"
+            >
+              Clear All Subscriptions
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Website Content Section 
+      <div class="bg-white shadow-md rounded-lg p-6">
+        <h2 class="text-2xl font-semibold text-gray-700 mb-4">
+          Website Content
+        </h2>
+        <ul class="space-y-4">
+          {% for page in content %}
+          <li>
+            <a
+              href="{% url 'update_content' page_name=page.page_name %}"
+              class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors"
+            >
+              Edit {{ page.page_name }}
+            </a>
+          </li>
+          {% endfor %}
+        </ul>
+        <div class="overflow-x-auto">
+          <table class="min-w-full bg-white">
+            <thead>
+              <tr
+                class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal"
+              >
+                <th class="py-3 px-6 text-left">Page Name</th>
+                <th class="py-3 px-6 text-left">Action</th>
+              </tr>
+            </thead>
+            <tbody class="text-gray-600 text-sm font-light">
+              {% for page in content %}
+              <tr class="border-b border-gray-200 hover:bg-gray-100">
+                <td class="py-3 px-6 text-left">{{ page.page_name }}</td>
+                <td class="py-3 px-6 text-left">
+                  <a
+                    href="{% url 'update_content' page.page_name %}"
+                    class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors"
+                    >Edit</a
+                  >
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>-->
+
+      <!-- Logout Button -->
+      <hr class="my-6 border-gray-300" />
+      <p class="text-center">
+        <a
+          href="{% url 'admin_login' %}"
+          class="inline-block bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600 transition-colors"
+        >
+          Log out
+        </a>
+      </p>
+    </div>
+    <script>
+      // Refresh the page every 10 seconds
+      setTimeout(function () {
+        location.reload();
+      }, 10000); // 10000 milliseconds = 10 seconds
+    </script>
+  </body>
+</html>

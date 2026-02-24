@@ -1,0 +1,97 @@
+{% load static %}
+<div
+  class="bg-dark text-white py-12 md:py-16 relative overflow-hidden"
+  id="stats-section"
+>
+  <div class="absolute top-0 right-0 opacity-5 pointer-events-none">
+    <i class="ri-double-quotes-r text-9xl"></i>
+  </div>
+  <div
+    class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-primary via-secondary to-primary animate-pulse"
+  ></div>
+
+  <div
+    class="max-w-7xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 text-center relative z-10"
+  >
+    <div
+      class="p-4 md:p-6 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 hover:-translate-y-2 transition-all duration-300 group cursor-default"
+      data-aos="zoom-in"
+    >
+      <div
+        class="w-10 h-10 md:w-12 md:h-12 mx-auto bg-primary/20 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform"
+      >
+        <i class="ri-user-heart-line text-xl md:text-2xl text-primary"></i>
+      </div>
+      <h3 class="text-3xl md:text-5xl font-black mb-1">
+        <span class="counter" data-target="15000">0</span>
+      </h3>
+      <p
+        class="text-gray-400 uppercase text-[10px] md:text-xs font-bold tracking-widest"
+      >
+        Active Members
+      </p>
+    </div>
+
+    <div
+      class="p-4 md:p-6 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 hover:-translate-y-2 transition-all duration-300 group cursor-default"
+      data-aos="zoom-in"
+      data-aos-delay="100"
+    >
+      <div
+        class="w-10 h-10 md:w-12 md:h-12 mx-auto bg-secondary/20 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform"
+      >
+        <i
+          class="ri-calendar-check-line text-xl md:text-2xl text-secondary"
+        ></i>
+      </div>
+      <h3 class="text-3xl md:text-5xl font-black mb-1">
+        <span class="counter" data-target="52">0</span>
+      </h3>
+      <p
+        class="text-gray-400 uppercase text-[10px] md:text-xs font-bold tracking-widest"
+      >
+        Events Yearly
+      </p>
+    </div>
+
+    <div
+      class="p-4 md:p-6 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 hover:-translate-y-2 transition-all duration-300 group cursor-default"
+      data-aos="zoom-in"
+      data-aos-delay="200"
+    >
+      <div
+        class="w-10 h-10 md:w-12 md:h-12 mx-auto bg-orange-500/20 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform"
+      >
+        <i class="ri-hand-heart-line text-xl md:text-2xl text-orange-500"></i>
+      </div>
+      <h3 class="text-3xl md:text-5xl font-black mb-1">
+        <span class="counter" data-target="20">0</span>
+      </h3>
+      <p
+        class="text-gray-400 uppercase text-[10px] md:text-xs font-bold tracking-widest"
+      >
+        Outreach Projects
+      </p>
+    </div>
+
+    <div
+      class="p-4 md:p-6 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 hover:-translate-y-2 transition-all duration-300 group cursor-default"
+      data-aos="zoom-in"
+      data-aos-delay="300"
+    >
+      <div
+        class="w-10 h-10 md:w-12 md:h-12 mx-auto bg-green-500/20 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform"
+      >
+        <i class="ri-group-line text-xl md:text-2xl text-green-500"></i>
+      </div>
+      <h3 class="text-3xl md:text-5xl font-black mb-1">
+        <span class="counter" data-target="15">0</span>
+      </h3>
+      <p
+        class="text-gray-400 uppercase text-[10px] md:text-xs font-bold tracking-widest"
+      >
+        Ministries
+      </p>
+    </div>
+  </div>
+</div>

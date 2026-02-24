@@ -1,0 +1,1302 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes"
+    />
+    <title>Church Map - Mobile Optimized with Dropdown</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Leaflet CSS -->
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
+    <!-- Font Awesome for icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      body,
+      html {
+        height: 100%;
+        width: 100%;
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu,
+          Cantarell, sans-serif;
+        overscroll-behavior: none;
+      }
+
+      #map {
+        height: 100vh;
+        width: 100%;
+        background: #cad2d9;
+        z-index: 1;
+      }
+
+      /* Search Container - Mobile First */
+      .search-container {
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        right: 12px;
+        z-index: 1000;
+        max-width: none;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+        overflow: hidden;
+        transition: all 0.3s ease;
+        margin: 0 auto;
+      }
+
+      @media (min-width: 640px) {
+        .search-container {
+          left: 20px;
+          right: auto;
+          width: 380px;
+        }
+      }
+
+      .search-box {
+        display: flex;
+        align-items: center;
+        padding: 14px 16px;
+        background: white;
+        border-bottom: 1px solid #e5e7eb;
+      }
+
+      .search-box i {
+        color: #6b7280;
+        font-size: 1.1rem;
+        margin-right: 12px;
+      }
+
+      #searchInput {
+        flex: 1;
+        border: none;
+        outline: none;
+        font-size: 16px; /* Prevents zoom on iOS */
+        padding: 4px 0;
+        background: transparent;
+      }
+
+      #searchInput::placeholder {
+        color: #9ca3af;
+      }
+
+      #clearSearch {
+        background: none;
+        border: none;
+        color: #6b7280;
+        cursor: pointer;
+        padding: 8px 12px;
+        font-size: 1rem;
+        display: none;
+        min-width: 44px; /* Touch target size */
+        min-height: 44px;
+      }
+
+      #clearSearch:hover {
+        color: #374151;
+      }
+
+      #suggestions {
+        max-height: 40vh;
+        overflow-y: auto;
+        background: white;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .suggestion-item {
+        padding: 16px 16px;
+        cursor: pointer;
+        border-bottom: 1px solid #f3f4f6;
+        transition: background 0.2s;
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        min-height: 60px; /* Touch target */
+      }
+
+      .suggestion-item:hover {
+        background: #f3f4f6;
+      }
+
+      .suggestion-item i {
+        color: #6b7280;
+        width: 24px;
+        margin-right: 16px;
+        font-size: 1.2rem;
+      }
+
+      /* Layer Controls - Desktop Style */
+      .layer-controls-desktop {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        z-index: 1000;
+        background: white;
+        border-radius: 40px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+        display: flex;
+        padding: 4px;
+        gap: 2px;
+        backdrop-filter: blur(10px);
+        background: rgba(255, 255, 255, 0.95);
+      }
+
+      @media (max-width: 640px) {
+        .layer-controls-desktop {
+          display: none;
+        }
+      }
+
+      /* Layer Controls - Mobile Dropdown */
+      .layer-controls-mobile {
+        position: absolute;
+        top: 80px;
+        right: 12px;
+        z-index: 1000;
+        display: none;
+      }
+
+      @media (max-width: 640px) {
+        .layer-controls-mobile {
+          display: block;
+        }
+      }
+
+      .dropdown-btn {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: white;
+        border: none;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.3rem;
+        color: #2563eb;
+        transition: all 0.2s;
+        touch-action: manipulation;
+        backdrop-filter: blur(10px);
+        background: rgba(255, 255, 255, 0.95);
+      }
+
+      .dropdown-btn:hover {
+        transform: scale(1.05);
+      }
+
+      .dropdown-btn.active {
+        background: #2563eb;
+        color: white;
+      }
+
+      .dropdown-menu {
+        position: absolute;
+        top: 65px;
+        right: 0;
+        background: white;
+        border-radius: 24px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        overflow: hidden;
+        min-width: 160px;
+        transform: scale(0);
+        opacity: 0;
+        transform-origin: top right;
+        transition: all 0.2s ease;
+        backdrop-filter: blur(10px);
+        background: rgba(255, 255, 255, 0.98);
+        z-index: 1001;
+      }
+
+      .dropdown-menu.show {
+        transform: scale(1);
+        opacity: 1;
+      }
+
+      .dropdown-item {
+        padding: 16px 20px;
+        cursor: pointer;
+        transition: background 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 1rem;
+        font-weight: 500;
+        color: #1e293b;
+        border-bottom: 1px solid #f1f5f9;
+        min-width: 180px;
+      }
+
+      .dropdown-item:last-child {
+        border-bottom: none;
+      }
+
+      .dropdown-item:hover {
+        background: #f1f5f9;
+      }
+
+      .dropdown-item.active {
+        background: #2563eb;
+        color: white;
+      }
+
+      .dropdown-item.active i {
+        color: white;
+      }
+
+      .dropdown-item i {
+        width: 24px;
+        color: #64748b;
+        font-size: 1.2rem;
+      }
+
+      .dropdown-item.active i {
+        color: white;
+      }
+
+      /* Desktop Layer Buttons */
+      .layer-btn {
+        padding: 10px 20px;
+        border: none;
+        background: transparent;
+        border-radius: 32px;
+        font-size: 0.95rem;
+        font-weight: 500;
+        color: #4b5563;
+        cursor: pointer;
+        transition: all 0.2s;
+        white-space: nowrap;
+      }
+
+      .layer-btn:hover {
+        background: #f3f4f6;
+      }
+
+      .layer-btn.active {
+        background: #2563eb;
+        color: white;
+      }
+
+      /* Route Panel - Mobile Optimized */
+      #routePanel {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        background: white;
+        border-radius: 24px 24px 0 0;
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+        transform: translateY(0);
+        transition: transform 0.3s ease;
+        max-height: 70vh;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        margin: 0;
+        border-top: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      @media (min-width: 640px) {
+        #routePanel {
+          bottom: 30px;
+          left: 20px;
+          right: 20px;
+          max-width: 400px;
+          margin: 0 auto;
+          border-radius: 16px;
+        }
+      }
+
+      #routePanel.hidden {
+        transform: translateY(100%);
+      }
+
+      .route-header {
+        padding: 16px 20px;
+        background: #2563eb;
+        color: white;
+        border-radius: 24px 24px 0 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+      }
+
+      @media (min-width: 640px) {
+        .route-header {
+          border-radius: 16px 16px 0 0;
+        }
+      }
+
+      .route-header h3 {
+        font-size: 1.1rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      #closePanel {
+        background: rgba(255, 255, 255, 0.2);
+        border: none;
+        color: white;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.2s;
+        touch-action: manipulation;
+      }
+
+      #closePanel:hover {
+        background: rgba(255, 255, 255, 0.3);
+      }
+
+      .route-summary {
+        padding: 16px 20px;
+        background: #f8fafc;
+        border-bottom: 1px solid #e2e8f0;
+        display: flex;
+        gap: 24px;
+        flex-wrap: wrap;
+      }
+
+      .route-summary-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #1e293b;
+        font-weight: 500;
+        font-size: 1rem;
+      }
+
+      .route-summary-item i {
+        color: #2563eb;
+        width: 20px;
+        font-size: 1.1rem;
+      }
+
+      .instructions-container {
+        padding: 16px 20px;
+      }
+
+      .instruction-step {
+        display: flex;
+        gap: 16px;
+        padding: 16px 0;
+        border-bottom: 1px solid #f1f5f9;
+        min-height: 70px;
+      }
+
+      .instruction-step:last-child {
+        border-bottom: none;
+      }
+
+      .instruction-icon {
+        color: #2563eb;
+        width: 28px;
+        text-align: center;
+        font-size: 1.2rem;
+      }
+
+      .instruction-text {
+        flex: 1;
+        font-size: 0.95rem;
+        line-height: 1.5;
+        color: #334155;
+        word-break: break-word;
+      }
+
+      /* Back Button - Mobile Optimized */
+      #back-button {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 1000;
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: #1e293b;
+        color: white;
+        border: none;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        transition: all 0.2s;
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      #back-button:hover {
+        background: #0f172a;
+        transform: scale(1.05);
+      }
+
+      #back-button:active {
+        transform: scale(0.95);
+      }
+
+      /* Custom Marker Styles */
+      .custom-church-marker {
+        background: transparent;
+        border: none;
+      }
+
+      .church-pin {
+        width: 36px;
+        height: 36px;
+        background: #2563eb;
+        border: 3px solid white;
+        border-radius: 50%;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        cursor: pointer;
+        transition: transform 0.2s;
+        touch-action: manipulation;
+      }
+
+      @media (min-width: 640px) {
+        .church-pin {
+          width: 30px;
+          height: 30px;
+        }
+      }
+
+      .church-pin:hover {
+        transform: scale(1.1);
+      }
+
+      .church-pin:active {
+        transform: scale(0.95);
+      }
+
+      .user-location-pin {
+        width: 24px;
+        height: 24px;
+        background: #10b981;
+        border: 3px solid white;
+        border-radius: 50%;
+        box-shadow: 0 0 20px #10b981;
+        animation: pulse 2s infinite;
+      }
+
+      @media (min-width: 640px) {
+        .user-location-pin {
+          width: 20px;
+          height: 20px;
+        }
+      }
+
+      @keyframes pulse {
+        0% {
+          box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+        }
+        70% {
+          box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
+        }
+        100% {
+          box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+        }
+      }
+
+      .start-pin,
+      .end-pin {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        border: 3px solid white;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      }
+
+      @media (min-width: 640px) {
+        .start-pin,
+        .end-pin {
+          width: 24px;
+          height: 24px;
+        }
+      }
+
+      .start-pin {
+        background: #22c55e;
+      }
+      .end-pin {
+        background: #ef4444;
+      }
+
+      /* Loading Spinner */
+      .loading-spinner {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 3px solid #f3f3f3;
+        border-top: 3px solid #2563eb;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-right: 8px;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Leaflet Popup Mobile Optimization */
+      .leaflet-popup-content {
+        margin: 15px 20px;
+        font-size: 14px;
+        min-width: 200px;
+      }
+
+      @media (max-width: 640px) {
+        .leaflet-popup-content {
+          font-size: 16px;
+          min-width: 180px;
+        }
+
+        .leaflet-popup-close-button {
+          padding: 8px !important;
+          width: 30px !important;
+          height: 30px !important;
+        }
+      }
+
+      /* Zoom Controls Position */
+      .leaflet-control-zoom {
+        border: none !important;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1) !important;
+      }
+
+      .leaflet-control-zoom a {
+        width: 40px !important;
+        height: 40px !important;
+        line-height: 40px !important;
+        font-size: 20px !important;
+      }
+
+      @media (max-width: 640px) {
+        .leaflet-control-zoom a {
+          width: 44px !important;
+          height: 44px !important;
+          line-height: 44px !important;
+        }
+      }
+
+      /* Bottom padding for mobile */
+      @media (max-width: 640px) {
+        .leaflet-control-attribution {
+          font-size: 8px;
+          padding: 0 5px;
+        }
+      }
+
+      /* Overlay for dropdown */
+      .dropdown-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: transparent;
+        z-index: 999;
+        display: none;
+      }
+
+      .dropdown-overlay.show {
+        display: block;
+      }
+    </style>
+  </head>
+  <body class="overflow-hidden">
+    <!-- Search Container -->
+    <div class="search-container">
+      <div class="search-box">
+        <i class="fas fa-search"></i>
+        <input
+          type="text"
+          id="searchInput"
+          placeholder="Search for a church..."
+          autocomplete="off"
+        />
+        <button id="clearSearch"><i class="fas fa-times"></i></button>
+      </div>
+      <div id="suggestions"></div>
+    </div>
+
+    <!-- Layer Controls - Desktop Version -->
+    <div class="layer-controls-desktop">
+      <button class="layer-btn active" id="map-street">Street</button>
+      <button class="layer-btn" id="map-satellite">Satellite</button>
+      <button class="layer-btn" id="map-terrain">Terrain</button>
+    </div>
+
+    <!-- Layer Controls - Mobile Dropdown -->
+    <div class="layer-controls-mobile">
+      <button class="dropdown-btn" id="dropdownToggle">
+        <i class="fa-solid fa-layer-group"></i>
+      </button>
+      <div class="dropdown-menu" id="dropdownMenu">
+        <div class="dropdown-item active" data-layer="street">
+          <i class="fas fa-map"></i>
+          <span>Street</span>
+        </div>
+        <div class="dropdown-item" data-layer="satellite">
+          <i class="fas fa-satellite"></i>
+          <span>Satellite</span>
+        </div>
+        <div class="dropdown-item" data-layer="terrain">
+          <i class="fas fa-mountain"></i>
+          <span>Terrain</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dropdown Overlay -->
+    <div class="dropdown-overlay" id="dropdownOverlay"></div>
+
+    <!-- Route Panel -->
+    <div id="routePanel" class="hidden">
+      <div class="route-header">
+        <h3>
+          <i class="fas fa-directions"></i>
+          Route Details
+        </h3>
+        <button id="closePanel">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="route-summary" id="routeSummary"></div>
+      <div class="instructions-container" id="instructions"></div>
+    </div>
+
+    <!-- Back Button -->
+    <button id="back-button" onclick="window.history.back()">
+      <i class="fas fa-arrow-left"></i>
+    </button>
+
+    <!-- Map Container -->
+    <div id="map"></div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script>
+      // Initialize map with detailed base layers
+      const map = L.map("map", {
+        center: [5.6037, -0.187],
+        zoom: 12,
+        zoomControl: true,
+        fadeAnimation: true,
+        zoomAnimation: true,
+        tap: true, // Better mobile touch support
+        touchZoom: true,
+        scrollWheelZoom: true,
+      });
+
+      // Define detailed tile layers (Google-like quality)
+      const streetLayer = L.tileLayer(
+        "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
+        {
+          attribution: "© OpenStreetMap, © CartoDB",
+          subdomains: "abcd",
+          maxZoom: 20,
+          name: "Street",
+        },
+      ).addTo(map);
+
+      const satelliteLayer = L.tileLayer(
+        "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+        {
+          attribution: "© Esri, Maxar, Earthstar Geographics",
+          maxZoom: 19,
+          name: "Satellite",
+        },
+      );
+
+      const terrainLayer = L.tileLayer(
+        "https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",
+        {
+          attribution: "© OpenTopoMap contributors",
+          maxZoom: 17,
+          name: "Terrain",
+        },
+      );
+
+      // Add labels layer for satellite view (hybrid feel)
+      const satelliteLabels = L.tileLayer(
+        "https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png",
+        {
+          attribution: "© OpenStreetMap, © CartoDB",
+          subdomains: "abcd",
+          maxZoom: 20,
+        },
+      );
+
+      // Layer switching functionality
+      function setActiveLayer(layerName) {
+        map.eachLayer((layer) => {
+          if (
+            layer === streetLayer ||
+            layer === satelliteLayer ||
+            layer === terrainLayer ||
+            layer === satelliteLabels
+          ) {
+            map.removeLayer(layer);
+          }
+        });
+
+        switch (layerName) {
+          case "street":
+            map.addLayer(streetLayer);
+            break;
+          case "satellite":
+            map.addLayer(satelliteLayer);
+            map.addLayer(satelliteLabels); // Add labels for hybrid feel
+            break;
+          case "terrain":
+            map.addLayer(terrainLayer);
+            break;
+        }
+
+        // Update active states for desktop buttons
+        document.querySelectorAll(".layer-btn").forEach((btn) => {
+          btn.classList.remove("active");
+        });
+        document.getElementById(`map-${layerName}`)?.classList.add("active");
+
+        // Update active states for mobile dropdown items
+        document.querySelectorAll(".dropdown-item").forEach((item) => {
+          item.classList.remove("active");
+        });
+        document
+          .querySelector(`.dropdown-item[data-layer="${layerName}"]`)
+          ?.classList.add("active");
+
+        // Update dropdown button icon color based on active layer
+        const dropdownBtn = document.getElementById("dropdownToggle");
+        if (dropdownBtn) {
+          dropdownBtn.innerHTML =
+            layerName === "street"
+              ? '<i class="fas fa-map"></i>'
+              : layerName === "satellite"
+                ? '<i class="fas fa-satellite"></i>'
+                : '<i class="fas fa-mountain"></i>';
+        }
+      }
+
+      // Desktop layer buttons
+      document.getElementById("map-street").addEventListener("click", () => {
+        setActiveLayer("street");
+      });
+
+      document.getElementById("map-satellite").addEventListener("click", () => {
+        setActiveLayer("satellite");
+      });
+
+      document.getElementById("map-terrain").addEventListener("click", () => {
+        setActiveLayer("terrain");
+      });
+
+      // Mobile dropdown functionality
+      const dropdownToggle = document.getElementById("dropdownToggle");
+      const dropdownMenu = document.getElementById("dropdownMenu");
+      const dropdownOverlay = document.getElementById("dropdownOverlay");
+
+      function toggleDropdown(show) {
+        if (show) {
+          dropdownMenu.classList.add("show");
+          dropdownOverlay.classList.add("show");
+          dropdownToggle.classList.add("active");
+        } else {
+          dropdownMenu.classList.remove("show");
+          dropdownOverlay.classList.remove("show");
+          dropdownToggle.classList.remove("active");
+        }
+      }
+
+      dropdownToggle.addEventListener("click", (e) => {
+        e.stopPropagation();
+        toggleDropdown(!dropdownMenu.classList.contains("show"));
+      });
+
+      // Close dropdown when clicking overlay
+      dropdownOverlay.addEventListener("click", () => {
+        toggleDropdown(false);
+      });
+
+      // Handle dropdown item clicks
+      document.querySelectorAll(".dropdown-item").forEach((item) => {
+        item.addEventListener("click", () => {
+          const layer = item.dataset.layer;
+          setActiveLayer(layer);
+          toggleDropdown(false);
+        });
+      });
+
+      // Close dropdown on escape key
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && dropdownMenu.classList.contains("show")) {
+          toggleDropdown(false);
+        }
+      });
+
+      // Add scale control
+      L.control.scale({ imperial: false, metric: true }).addTo(map);
+
+      // Church locations data
+      const locations = [
+        {
+          lat: 5.5976287,
+          lng: -0.218407,
+          label: "The Church of Christ SM - Cast House",
+        },
+        {
+          lat: 5.6779148,
+          lng: -0.2779952,
+          label: "The Church of Christ(SM) OFANKOR",
+        },
+        {
+          lat: 5.6808576,
+          lng: -0.0523925,
+          label: "The Church of Christ SM - Adjei Kojo",
+        },
+        {
+          lat: 5.6890749,
+          lng: -0.0422039,
+          label: "The Church of Christ SM - Ashaiman Central",
+        },
+        {
+          lat: 5.6380164,
+          lng: -0.0259552,
+          label: "The Church of Christ SM - Tema Bethel Assembly",
+        },
+        {
+          lat: 5.8809813,
+          lng: -0.0970178,
+          label: "The Church of Christ SM - Dodowa",
+        },
+        {
+          lat: 5.6866573,
+          lng: -0.1194893,
+          label: "The Church of Christ SM - Faith Temple",
+        },
+        {
+          lat: 6.862348887171255,
+          lng: -1.4720455007276718,
+          label: "The Church of Christ SM - Effiduasi-Ejusu",
+        },
+        {
+          lat: 5.5916579,
+          lng: -0.1947289,
+          label: "The Church of Christ SM - Maamobi Assembly",
+        },
+        {
+          lat: 5.7066374,
+          lng: -0.0408344,
+          label: "The Church of Christ SM - The Naos",
+        },
+        {
+          lat: 5.5872576,
+          lng: -0.1964204,
+          label: "The Church of Christ SM - Nima",
+        },
+        {
+          lat: 5.5466187,
+          lng: -0.2176189,
+          label: "The Church of Christ SM - PJMT",
+        },
+        {
+          lat: 5.7130163,
+          lng: 0.105187,
+          label: "The Church of Christ SM - Prampram",
+        },
+        {
+          lat: 5.6939642,
+          lng: -0.0458711,
+          label: "The Church of Christ SM - Jericho Assembly",
+        },
+      ];
+
+      // Create custom markers for churches
+      const markers = [];
+
+      locations.forEach((loc) => {
+        // Create custom div icon
+        const churchIcon = L.divIcon({
+          html: '<div class="church-pin"></div>',
+          className: "custom-church-marker",
+          iconSize: [36, 36],
+          iconAnchor: [18, 18],
+          popupAnchor: [0, -18],
+        });
+
+        const marker = L.marker([loc.lat, loc.lng], { icon: churchIcon }).addTo(
+          map,
+        );
+        marker.bindPopup(`
+                <div style="font-weight: 600; color: #1e293b; padding: 4px;">
+                    <i class="fas fa-church" style="color: #2563eb; margin-right: 6px;"></i>
+                    ${loc.label}
+                </div>
+            `);
+
+        markers.push({
+          ...loc,
+          marker,
+        });
+      });
+
+      // User location tracking
+      let userMarker = null;
+      let userLocation = null;
+      let currentRoute = null;
+      let routeMarkers = [];
+
+      // Clear existing route
+      function clearRoute() {
+        if (currentRoute) {
+          map.removeLayer(currentRoute);
+          currentRoute = null;
+        }
+        routeMarkers.forEach((m) => map.removeLayer(m));
+        routeMarkers = [];
+        document.getElementById("routePanel").classList.add("hidden");
+      }
+
+      // Geolocation
+      if (navigator.geolocation) {
+        navigator.geolocation.watchPosition(
+          (position) => {
+            const { latitude, longitude } = position.coords;
+            userLocation = { lat: latitude, lng: longitude };
+
+            // Create or update user marker
+            if (!userMarker) {
+              const userIcon = L.divIcon({
+                html: '<div class="user-location-pin"></div>',
+                className: "user-marker",
+                iconSize: [24, 24],
+                iconAnchor: [12, 12],
+              });
+              userMarker = L.marker([latitude, longitude], {
+                icon: userIcon,
+              }).addTo(map);
+              userMarker.bindPopup("Your current location").openPopup();
+
+              // Only center on first location if not already centered
+              if (map.getZoom() < 10) {
+                map.setView([latitude, longitude], 13);
+              }
+            } else {
+              userMarker.setLatLng([latitude, longitude]);
+            }
+          },
+          (error) => {
+            console.error("Geolocation error:", error);
+            // Silent fail on mobile to avoid annoying alerts
+            if (!/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+              alert("Please enable location access to use routing features.");
+            }
+          },
+          {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 30000,
+          },
+        );
+      }
+
+      // Route fetching with OSRM
+      async function fetchRoute(start, end) {
+        const url = `https://router.project-osrm.org/route/v1/driving/${start.lng},${start.lat};${end.lng},${end.lat}?overview=full&geometries=geojson&steps=true&annotations=true`;
+
+        try {
+          const response = await fetch(url);
+          const data = await response.json();
+
+          if (data.routes && data.routes[0]) {
+            return data.routes[0];
+          } else {
+            throw new Error("No route found");
+          }
+        } catch (error) {
+          console.error("Route fetch error:", error);
+          throw error;
+        }
+      }
+
+      // Display route on map
+      async function showRoute(destination) {
+        if (!userLocation) {
+          alert("Waiting for your location...");
+          return;
+        }
+
+        clearRoute();
+
+        try {
+          // Show loading in panel
+          document.getElementById("routeSummary").innerHTML =
+            '<div style="display: flex; align-items: center;"><div class="loading-spinner"></div> Calculating route...</div>';
+          document.getElementById("instructions").innerHTML = "";
+          document.getElementById("routePanel").classList.remove("hidden");
+
+          const route = await fetchRoute(userLocation, destination);
+
+          // Draw route line
+          currentRoute = L.geoJSON(route.geometry, {
+            style: {
+              color: "#2563eb",
+              weight: 8,
+              opacity: 0.8,
+              lineJoin: "round",
+              lineCap: "round",
+            },
+          }).addTo(map);
+
+          // Add start and end markers
+          const startIcon = L.divIcon({
+            html: '<div class="start-pin"></div>',
+            className: "start-marker",
+            iconSize: [28, 28],
+            iconAnchor: [14, 14],
+          });
+
+          const endIcon = L.divIcon({
+            html: '<div class="end-pin"></div>',
+            className: "end-marker",
+            iconSize: [28, 28],
+            iconAnchor: [14, 14],
+          });
+
+          const startMarker = L.marker([userLocation.lat, userLocation.lng], {
+            icon: startIcon,
+          }).addTo(map);
+          const endMarker = L.marker([destination.lat, destination.lng], {
+            icon: endIcon,
+          }).addTo(map);
+
+          routeMarkers = [startMarker, endMarker];
+
+          // Add maneuver markers for turns (simplified for mobile)
+          const steps = route.legs[0].steps;
+
+          // Update route panel with details
+          const distance = (route.distance / 1000).toFixed(1);
+          const duration = Math.round(route.duration / 60);
+
+          document.getElementById("routeSummary").innerHTML = `
+                    <div class="route-summary-item">
+                        <i class="fas fa-road"></i>
+                        <span>${distance} km</span>
+                    </div>
+                    <div class="route-summary-item">
+                        <i class="far fa-clock"></i>
+                        <span>${duration} min</span>
+                    </div>
+                `;
+
+          // Generate simplified turn-by-turn instructions for mobile
+          let instructionsHtml =
+            '<div style="font-weight: 600; margin-bottom: 12px; color: #1e293b;">Turn-by-turn directions</div>';
+
+          steps.forEach((step, index) => {
+            let icon = "fa-arrow-right";
+            const type = step.maneuver.type;
+
+            if (type.includes("left")) icon = "fa-arrow-left";
+            else if (type.includes("right")) icon = "fa-arrow-right";
+            else if (type.includes("straight")) icon = "fa-arrow-up";
+            else if (type.includes("roundabout")) icon = "fa-sync-alt";
+            else if (type.includes("destination")) icon = "fa-flag-checkered";
+
+            instructionsHtml += `
+                        <div class="instruction-step">
+                            <div class="instruction-icon">
+                                <i class="fas ${icon}"></i>
+                            </div>
+                            <div class="instruction-text">
+                                ${step.maneuver.instruction}
+                                ${step.distance ? `<span style="color: #64748b; font-size: 0.85rem; display: block; margin-top: 4px;">${(step.distance / 1000).toFixed(2)} km</span>` : ""}
+                            </div>
+                        </div>
+                    `;
+          });
+
+          document.getElementById("instructions").innerHTML = instructionsHtml;
+
+          // Fit map to show entire route with padding for mobile
+          const bounds = L.latLngBounds([userLocation, destination]);
+          map.fitBounds(bounds, {
+            padding: [80, 80],
+            maxZoom: 16,
+          });
+        } catch (error) {
+          alert("Failed to fetch route. Please try again.");
+          document.getElementById("routePanel").classList.add("hidden");
+        }
+      }
+
+      // Add click handlers to markers
+      markers.forEach((item) => {
+        item.marker.on("click", () => {
+          showRoute({ lat: item.lat, lng: item.lng });
+        });
+      });
+
+      // Search functionality
+      const searchInput = document.getElementById("searchInput");
+      const suggestionsDiv = document.getElementById("suggestions");
+      const clearBtn = document.getElementById("clearSearch");
+
+      function filterLocations(query) {
+        if (!query) return [];
+        return locations
+          .filter((loc) =>
+            loc.label.toLowerCase().includes(query.toLowerCase()),
+          )
+          .slice(0, 8);
+      }
+
+      function displaySuggestions() {
+        const query = searchInput.value.trim();
+
+        if (query.length < 2) {
+          suggestionsDiv.innerHTML = "";
+          clearBtn.style.display = "none";
+          return;
+        }
+
+        clearBtn.style.display = "block";
+
+        const filtered = filterLocations(query);
+
+        if (filtered.length === 0) {
+          suggestionsDiv.innerHTML =
+            '<div class="suggestion-item" style="color: #6b7280;">No matches found</div>';
+          return;
+        }
+
+        suggestionsDiv.innerHTML = filtered
+          .map(
+            (loc) => `
+                <div class="suggestion-item" data-lat="${loc.lat}" data-lng="${loc.lng}" data-label="${loc.label}">
+                    <i class="fas fa-church" style="color: #2563eb;"></i>
+                    ${loc.label}
+                </div>
+            `,
+          )
+          .join("");
+
+        // Add click handlers to suggestions
+        document
+          .querySelectorAll(".suggestion-item[data-lat]")
+          .forEach((item) => {
+            item.addEventListener("click", (e) => {
+              e.preventDefault();
+              const lat = parseFloat(item.dataset.lat);
+              const lng = parseFloat(item.dataset.lng);
+              const label = item.dataset.label;
+
+              searchInput.value = label;
+              suggestionsDiv.innerHTML = "";
+              clearBtn.style.display = "none";
+
+              map.setView([lat, lng], 16);
+
+              // Find and open corresponding marker
+              const marker = markers.find((m) => m.label === label);
+              if (marker) {
+                marker.marker.openPopup();
+              }
+            });
+          });
+      }
+
+      searchInput.addEventListener("input", displaySuggestions);
+      searchInput.addEventListener("touchstart", displaySuggestions);
+
+      clearBtn.addEventListener("click", () => {
+        searchInput.value = "";
+        suggestionsDiv.innerHTML = "";
+        clearBtn.style.display = "none";
+        searchInput.focus();
+      });
+
+      // Close suggestions when clicking outside
+      document.addEventListener("click", (e) => {
+        if (
+          !searchInput.contains(e.target) &&
+          !suggestionsDiv.contains(e.target)
+        ) {
+          suggestionsDiv.innerHTML = "";
+          clearBtn.style.display = searchInput.value ? "block" : "none";
+        }
+      });
+
+      // Close panel button
+      document.getElementById("closePanel").addEventListener("click", () => {
+        document.getElementById("routePanel").classList.add("hidden");
+      });
+
+      // Add zoom controls to bottom right
+      map.zoomControl.setPosition("bottomright");
+
+      // Handle touch events for panel close on mobile
+      let touchStartY = 0;
+      const panel = document.getElementById("routePanel");
+
+      panel.addEventListener(
+        "touchstart",
+        (e) => {
+          touchStartY = e.touches[0].clientY;
+        },
+        { passive: true },
+      );
+
+      panel.addEventListener(
+        "touchmove",
+        (e) => {
+          const touchY = e.touches[0].clientY;
+          const deltaY = touchY - touchStartY;
+
+          if (deltaY > 50 && !panel.classList.contains("hidden")) {
+            panel.classList.add("hidden");
+          }
+        },
+        { passive: true },
+      );
+
+      console.log(
+        "Map initialized successfully with",
+        markers.length,
+        "churches",
+      );
+    </script>
+  </body>
+</html>

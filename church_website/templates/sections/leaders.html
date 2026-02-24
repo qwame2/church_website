@@ -1,0 +1,1051 @@
+{% load static %}
+<section
+  id="leaders"
+  class="py-20 md:py-28 bg-gradient-to-b from-gray-50 to-white relative overflow-hidden"
+>
+  <!-- Background Pattern -->
+  <div class="absolute inset-0 opacity-5 pointer-events-none">
+    <div
+      class="absolute top-0 left-0 w-64 h-64 bg-primary rounded-full filter blur-3xl"
+    ></div>
+    <div
+      class="absolute bottom-0 right-0 w-80 h-80 bg-secondary rounded-full filter blur-3xl"
+    ></div>
+  </div>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+    <!-- Section Header -->
+    <div class="text-center mb-16" data-aos="fade-up">
+      <span
+        class="text-primary font-bold tracking-wider uppercase text-sm bg-primary/10 px-4 py-2 rounded-full"
+      >
+        Spiritual Leaders
+      </span>
+      <h2 class="text-4xl md:text-5xl font-black text-gray-900 mt-4 mb-4">
+        Meet Our
+        <span
+          class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary"
+        >
+          Church Leaders
+        </span>
+      </h2>
+      <p class="text-gray-600 max-w-2xl mx-auto">
+        Guided by faith, led by example. Swipe to scroll • Tap cards for details
+      </p>
+    </div>
+
+    <!-- Auto-scrolling Marquee with Slider Buttons -->
+    <div class="relative w-full py-8" x-data="leadersMarquee()" x-init="init()">
+      <!-- Progress Indicators -->
+      <div class="flex justify-center gap-2 mb-8">
+        <template x-for="(_, index) in leaders" :key="index">
+          <button
+            @click="goToSlide(index)"
+            class="h-2 rounded-full transition-all duration-300"
+            :class="currentSlide === index ? 'w-8 bg-primary' : 'w-2 bg-gray-300 hover:bg-primary/50'"
+          ></button>
+        </template>
+      </div>
+
+      <!-- Slider Navigation Buttons - Hide on mobile -->
+      <div
+        class="absolute top-1/2 -translate-y-1/2 left-0 right-0 flex justify-between px-2 md:px-4 z-20 pointer-events-none hidden sm:flex"
+      >
+        <button
+          @click="slideLeft"
+          class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-white shadow-lg flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-all duration-300 transform hover:scale-110 pointer-events-auto border border-primary/20 hover:border-transparent group opacity-80 hover:opacity-100"
+        >
+          <i
+            class="ri-arrow-left-s-line text-2xl md:text-3xl group-hover:-translate-x-1 transition-transform"
+          ></i>
+        </button>
+        <button
+          @click="slideRight"
+          class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-white shadow-lg flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-all duration-300 transform hover:scale-110 pointer-events-auto border border-primary/20 hover:border-transparent group opacity-80 hover:opacity-100"
+        >
+          <i
+            class="ri-arrow-right-s-line text-2xl md:text-3xl group-hover:translate-x-1 transition-transform"
+          ></i>
+        </button>
+      </div>
+
+      <!-- Cards Marquee Container -->
+      <div
+        class="w-full overflow-hidden px-2 relative"
+        @mouseenter="pauseMarquee"
+        @mouseleave="resumeMarquee"
+      >
+        <!-- Drag Progress Indicator -->
+        <div
+          class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary/20 via-primary to-primary/20 transform scale-x-0 transition-transform duration-150 z-10"
+          :style="{ transform: `scaleX(${dragProgress})` }"
+          x-show="isDragging"
+          x-cloak
+        ></div>
+
+        <div
+          class="flex gap-6 transition-transform duration-500 ease-out will-change-transform py-4"
+          :style="{ transform: `translateX(-${scrollPosition}px)` }"
+          x-ref="carousel"
+          @mousedown="startDrag"
+          @mousemove="onDrag"
+          @mouseup="endDrag"
+          @mouseleave="endDrag"
+          @touchstart="startTouch"
+          @touchmove="onTouchMove"
+          @touchend="endTouch"
+          @touchcancel="endTouch"
+        >
+          <!-- Duplicate cards for seamless infinite scroll -->
+          <template
+            x-for="(leader, index) in [...leaders, ...leaders]"
+            :key="index"
+          >
+            <div
+              class="flex-shrink-0 w-[280px] sm:w-[300px] group cursor-pointer transform hover:-translate-y-4 transition-all duration-300 hover:z-10"
+              :style="{ width: cardWidth + 'px' }"
+              @click="handleCardClick(leader, $event)"
+            >
+              <div
+                class="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 hover:border-primary/30 relative floating-card"
+              >
+                <!-- Floating shadow effect -->
+                <div
+                  class="absolute inset-0 bg-gradient-to-t from-transparent via-white/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+                ></div>
+
+                <!-- Image Container -->
+                <div
+                  class="relative h-64 sm:h-72 overflow-hidden bg-gradient-to-br from-primary/10 to-secondary/10"
+                >
+                  <img
+                    :src="leader.image"
+                    :alt="leader.name"
+                    class="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-700"
+                    loading="lazy"
+                  />
+
+                  <!-- Position Badge (Tenure) -->
+                  <div class="absolute top-4 right-4">
+                    <span
+                      class="px-3 py-1 bg-white/95 backdrop-blur-sm text-primary text-xs font-bold rounded-full shadow-lg border border-primary/20"
+                      x-text="leader.tenure"
+                    ></span>
+                  </div>
+
+                  <!-- Click/Tap indicator -->
+                  <div
+                    class="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center"
+                  >
+                    <span
+                      class="bg-white text-primary px-4 py-2 rounded-full text-sm font-bold transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 shadow-lg"
+                    >
+                      <i class="ri-eye-line mr-1"></i>
+                      <span class="hidden sm:inline">Click to view</span>
+                      <span class="sm:hidden">Tap to view</span>
+                    </span>
+                  </div>
+                </div>
+
+                <!-- Content -->
+                <div class="p-5">
+                  <h3
+                    class="font-black text-gray-900 text-xl mb-1 group-hover:text-primary transition-colors"
+                    x-text="leader.name"
+                  ></h3>
+                  <p
+                    class="text-primary font-semibold text-sm mb-2"
+                    x-text="leader.position"
+                  ></p>
+
+                  <!-- Short Description Preview -->
+                  <p
+                    class="text-gray-600 text-sm line-clamp-2"
+                    x-text="leader.shortDesc"
+                  ></p>
+                </div>
+              </div>
+            </div>
+          </template>
+        </div>
+      </div>
+
+      <!-- Scroll Hint - Mobile optimized -->
+      <div class="flex justify-center mt-10">
+        <div
+          class="flex items-center gap-2 text-gray-500 text-xs sm:text-sm animate-pulse bg-white/50 backdrop-blur-sm px-3 sm:px-4 py-2 rounded-full shadow-sm border border-gray-200"
+        >
+          <i class="ri-mouse-line hidden sm:inline"></i>
+          <i class="ri-hand-line sm:hidden"></i>
+          <span class="hidden sm:inline"
+            >Hover to pause • Swipe to scroll • Tap cards for details</span
+          >
+          <span class="sm:hidden">Swipe to scroll • Tap cards for details</span>
+          <i class="ri-hand-line hidden sm:inline"></i>
+          <i class="ri-mouse-line sm:hidden"></i>
+        </div>
+      </div>
+
+      <!-- Animated Popover Modal -->
+      <div
+        x-show="popoverOpen"
+        class="fixed inset-0 z-[200] flex items-center justify-center p-4"
+        x-cloak
+        x-transition:enter="transition ease-out duration-300"
+        x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100"
+        x-transition:leave="transition ease-in duration-200"
+        x-transition:leave-start="opacity-100"
+        x-transition:leave-end="opacity-0"
+        @click="closePopover"
+      >
+        <!-- Backdrop with blur -->
+        <div class="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
+
+        <!-- Popover Content - Mobile optimized -->
+        <div
+          class="relative bg-white rounded-3xl w-full max-w-md mx-4 sm:mx-auto overflow-hidden shadow-2xl max-h-[90vh] overflow-y-auto"
+          x-show="popoverOpen"
+          x-transition:enter="transition ease-out duration-500 transform"
+          x-transition:enter-start="scale-75 translate-y-10 opacity-0 rotate-[-10deg]"
+          x-transition:enter-end="scale-100 translate-y-0 opacity-100 rotate-0"
+          x-transition:leave="transition ease-in duration-300 transform"
+          x-transition:leave-start="scale-100 translate-y-0 opacity-100 rotate-0"
+          x-transition:leave-end="scale-75 translate-y-10 opacity-0 rotate-[10deg]"
+          @click.stop
+        >
+          <!-- Close Button - Larger touch target on mobile -->
+          <!-- <button
+            @click="closePopover"
+            class="absolute top-4 right-4 z-10 w-12 h-12 sm:w-10 sm:h-10 bg-white/90 backdrop-blur-sm rounded-full shadow-lg flex items-center justify-center hover:bg-red-50 hover:text-red-500 transition-all duration-300 hover:rotate-90"
+          >
+            <i class="ri-close-line text-xl"></i>
+          </button> -->
+
+          <!-- Popover Content with Animation -->
+          <template x-if="selectedLeader">
+            <div>
+              <!-- Animated Image Container -->
+              <div
+                class="relative h-64 sm:h-80 overflow-hidden bg-gradient-to-br from-primary/20 to-secondary/20"
+              >
+                <!-- Floating animation for image -->
+                <div class="absolute inset-0 animate-kenburns">
+                  <img
+                    :src="selectedLeader.image"
+                    :alt="selectedLeader.name"
+                    class="w-full h-full object-cover object-center"
+                  />
+                </div>
+
+                <!-- Animated overlay gradient -->
+                <div
+                  class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent animate-fade-in"
+                ></div>
+
+                <!-- Animated position badge -->
+                <div class="absolute top-4 left-4 animate-slide-down">
+                  <span
+                    class="px-3 sm:px-4 py-2 bg-white/95 backdrop-blur-sm text-primary text-xs sm:text-sm font-bold rounded-full shadow-lg border border-primary/20 flex items-center gap-1"
+                  >
+                    <i class="ri-user-star-fill text-primary"></i>
+                    <span x-text="selectedLeader.position"></span>
+                  </span>
+                </div>
+
+                <!-- Animated tenure badge -->
+                <div
+                  class="absolute top-4 right-4 animate-slide-down delay-100"
+                >
+                  <span
+                    class="px-3 sm:px-4 py-2 bg-primary text-white text-xs sm:text-sm font-bold rounded-full shadow-lg flex items-center gap-1"
+                  >
+                    <i class="ri-timer-line"></i>
+                    <span x-text="selectedLeader.tenure"></span>
+                  </span>
+                </div>
+
+                <!-- Animated name overlay -->
+                <div
+                  class="absolute bottom-0 left-0 right-0 p-4 sm:p-6 text-white animate-slide-up"
+                >
+                  <h2
+                    class="text-2xl sm:text-3xl md:text-4xl font-black mb-2 drop-shadow-lg"
+                    x-text="selectedLeader.name"
+                  ></h2>
+                </div>
+              </div>
+
+              <!-- Animated Content -->
+              <div class="p-4 sm:p-6 animate-fade-in-up">
+                <!-- Decorative quote icon -->
+                <div class="flex justify-center mb-4 animate-bounce-subtle">
+                  <i
+                    class="ri-double-quotes-L text-3xl sm:text-4xl text-primary/30"
+                  ></i>
+                </div>
+
+                <!-- Description -->
+                <div class="animate-fade-in delay-200">
+                  <p
+                    class="text-gray-700 leading-relaxed text-base sm:text-lg text-center"
+                    x-text="selectedLeader.shortDesc"
+                  ></p>
+                </div>
+
+                <!-- Decorative line -->
+                <div
+                  class="w-20 h-1 bg-gradient-to-r from-primary to-secondary rounded-full mx-auto my-6 animate-expand-width"
+                ></div>
+
+                <!-- Footer with Got it button -->
+                <div class="flex justify-center animate-fade-in delay-300">
+                  <button
+                    onclick="window.location.href = '/book/'"
+                    class="px-8 sm:px-8 py-3 sm:py-3 bg-primary text-white rounded-full hover:bg-primary/90 transition-all duration-300 transform hover:scale-105 hover:shadow-lg flex items-center gap-2 group min-w-[120px] sm:min-w-0"
+                  >
+                    <span>Read More...</span>
+                    <i
+                      class="ri-book-line group-hover:translate-x-1 transition-transform"
+                    ></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </template>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  function leadersMarquee() {
+    return {
+      leaders: [
+        {
+          name: "Prophet John Mensah",
+          position: "Founder",
+          tenure: "Since 1910-1972",
+          image: "{% static 'img/leaders/prophet John Mensah.png' %}",
+          shortDesc:
+            "Born on 14 September 1910 at Kokofu in the Asante Region, Kweku Agyemang Mensah, founder of the Church of Christ SM, rose from humble beginnings to become a powerful prophet whose ministry touched Ghana and beyond. His remarkable journey, shaped by divine encounters and uncommon sacrifice, ended peacefully on 16 January 1972 in Cape Coast. The deeper truths, hidden moments, and extraordinary works behind his calling await you in the library.",
+        },
+        {
+          name: "Most Rev. Ing. Dr. Dan Markin",
+          position: "Apostle General",
+          tenure: "Since 1963-2021",
+          image: "{% static 'img/leaders/Dr.Markin.jpg' %}",
+          shortDesc:
+            "A passionate teacher and mentor. Rev. Sarah has discipled hundreds of women and established thriving community outreach programs that transform lives daily.",
+        },
+        {
+          name: "Apostle Dan Tachie",
+          position: "Chairman of Deacons",
+          // tenure: "",
+          image: "{% static 'img/leaders/elder-michael.jpg' %}",
+          shortDesc:
+            "A faithful servant leader. Elder Michael ensures every ministry has resources to thrive while personally caring for the needs of church families.",
+        },
+        {
+          name: "Minister David Asare",
+          position: "Worship Leader",
+          tenure: "Since 2015",
+          image: "{% static 'img/leaders/david-asare.jpg' %}",
+          shortDesc:
+            "An anointed worship leader with 5 albums. Minister David creates atmospheres where people encounter God's presence through spirit-filled music.",
+        },
+        {
+          name: "Proph Grace Amankwah",
+          position: "Prayer Ministry Head",
+          tenure: "Since 2013",
+          image: "{% static 'img/leaders/prophetess-grace.jpg' %}",
+          shortDesc:
+            "A woman of prayer with a prophetic gift. Prophetess Grace leads 24/7 prayer chains and has seen countless miracles and testimonies.",
+        },
+        {
+          name: "Pastor Emmanuel Tagoe",
+          position: "Youth Pastor",
+          tenure: "Since 2018",
+          image: "{% static 'img/leaders/pastor-emmanuel.jpg' %}",
+          shortDesc:
+            "Connecting young people to Christ through relevance and truth. Pastor Emmanuel reaches over 500 youth weekly through innovative programs.",
+        },
+        {
+          name: "Dr. Mercy Owusu",
+          position: "Health Ministry Lead",
+          tenure: "Since 2016",
+          image: "{% static 'img/leaders/dr-mercy.jpg' %}",
+          shortDesc:
+            "A medical doctor bringing healing and hope. Dr. Mercy has treated over 10,000 patients through medical missions and health outreach.",
+        },
+        {
+          name: "Apostle James Kofi",
+          position: "Mission Director",
+          tenure: "Since 2014",
+          image: "{% static 'img/leaders/apostle-james.jpg' %}",
+          shortDesc:
+            "A church planter with apostolic vision. Apostle James has planted 15 churches across West Africa and trained hundreds of leaders.",
+        },
+        {
+          name: "Minister Lydia Boateng",
+          position: "Children's Director",
+          tenure: "Since 2017",
+          image: "{% static 'img/leaders/lydia-boateng.jpg' %}",
+          shortDesc:
+            "A creative educator nurturing young faith. Minister Lydia's 'Kingdom Kids' program reaches 300+ children weekly with fun Bible teaching.",
+        },
+        {
+          name: "Brother Isaac Nketia",
+          position: "Technical Director",
+          tenure: "Since 2019",
+          image: "{% static 'img/leaders/isaac-nketia.jpg' %}",
+          shortDesc:
+            "Using media to spread the Gospel globally. Brother Isaac's productions reach millions online through quality broadcasts and digital content.",
+        },
+      ],
+      cardWidth: 300,
+      scrollPosition: 0,
+      animationFrame: null,
+      isPaused: false,
+      speed: 0.8,
+      currentSlide: 0,
+      popoverOpen: false,
+      selectedLeader: null,
+      hoverTimer: null,
+      pauseTimer: null,
+
+      // Drag related properties
+      isDragging: false,
+      dragStartX: 0,
+      dragStartScroll: 0,
+      dragProgress: 0,
+      manualScrollTimeout: null,
+
+      // Touch handling properties
+      touchStartX: 0,
+      touchStartY: 0,
+      touchStartTime: 0,
+      isTouchDragging: false,
+      touchThreshold: 10, // pixels of movement to consider as drag
+
+      init() {
+        this.updateCardWidth();
+        window.addEventListener("resize", () => this.updateCardWidth());
+        this.startMarquee();
+
+        // Log to confirm initialization
+        console.log("Marquee initialized with mobile support");
+      },
+
+      updateCardWidth() {
+        if (window.innerWidth < 640) {
+          this.cardWidth = 260;
+        } else {
+          this.cardWidth = 300;
+        }
+      },
+
+      startMarquee() {
+        const scroll = () => {
+          if (!this.isPaused && !this.isDragging && !this.isTouchDragging) {
+            const container = this.$refs.carousel;
+            if (container) {
+              const totalWidth = (this.cardWidth + 24) * this.leaders.length;
+
+              this.scrollPosition += this.speed;
+
+              // Reset to start when we've scrolled through one complete set
+              if (this.scrollPosition >= totalWidth) {
+                this.scrollPosition = 0;
+              }
+
+              // Calculate current slide based on scroll position
+              this.currentSlide =
+                Math.floor(this.scrollPosition / (this.cardWidth + 24)) %
+                this.leaders.length;
+            }
+          }
+          this.animationFrame = requestAnimationFrame(scroll);
+        };
+
+        this.animationFrame = requestAnimationFrame(scroll);
+      },
+
+      pauseMarquee() {
+        // Clear any existing resume timer
+        if (this.pauseTimer) {
+          clearTimeout(this.pauseTimer);
+          this.pauseTimer = null;
+        }
+
+        // Clear hover timer if exists
+        if (this.hoverTimer) {
+          clearTimeout(this.hoverTimer);
+          this.hoverTimer = null;
+        }
+
+        this.isPaused = true;
+      },
+
+      resumeMarquee() {
+        // Clear any existing timers
+        if (this.pauseTimer) {
+          clearTimeout(this.pauseTimer);
+          this.pauseTimer = null;
+        }
+
+        if (this.hoverTimer) {
+          clearTimeout(this.hoverTimer);
+          this.hoverTimer = null;
+        }
+
+        // Only resume if popover is not open and not dragging
+        if (!this.popoverOpen && !this.isDragging && !this.isTouchDragging) {
+          // Small delay to prevent flickering when moving between cards
+          this.pauseTimer = setTimeout(() => {
+            this.isPaused = false;
+            this.pauseTimer = null;
+          }, 50);
+        }
+      },
+
+      // Mouse drag handlers
+      startDrag(event) {
+        this.isDragging = true;
+        this.pauseMarquee();
+
+        this.dragStartX = event.clientX;
+        this.dragStartScroll = this.scrollPosition;
+
+        // Add dragging class to cursor
+        document.body.style.cursor = "grabbing";
+
+        // Prevent default to avoid text selection
+        event.preventDefault();
+      },
+
+      onDrag(event) {
+        if (!this.isDragging) return;
+
+        event.preventDefault();
+
+        const deltaX = this.dragStartX - event.clientX;
+
+        // Calculate new scroll position
+        const maxScroll = (this.cardWidth + 24) * this.leaders.length;
+        let newScroll = this.dragStartScroll + deltaX * 1.5;
+
+        // Wrap around for infinite scroll effect
+        if (newScroll < 0) {
+          newScroll = maxScroll + newScroll;
+        } else if (newScroll > maxScroll) {
+          newScroll = newScroll - maxScroll;
+        }
+
+        this.scrollPosition = newScroll;
+
+        // Calculate drag progress for visual feedback
+        this.dragProgress = Math.min(Math.abs(deltaX) / 200, 1);
+
+        // Update current slide
+        this.currentSlide =
+          Math.floor(this.scrollPosition / (this.cardWidth + 24)) %
+          this.leaders.length;
+      },
+
+      endDrag() {
+        if (this.isDragging) {
+          this.isDragging = false;
+          this.dragProgress = 0;
+          document.body.style.cursor = "";
+
+          // Resume auto-scroll after a short delay
+          if (!this.popoverOpen) {
+            setTimeout(() => {
+              this.resumeMarquee();
+            }, 100);
+          }
+        }
+      },
+
+      // Touch handlers
+      startTouch(event) {
+        this.isTouchDragging = true;
+        this.pauseMarquee();
+
+        const touch = event.touches[0];
+        this.touchStartX = touch.clientX;
+        this.touchStartY = touch.clientY;
+        this.touchStartTime = Date.now();
+        this.dragStartScroll = this.scrollPosition;
+
+        // Prevent default to avoid page scroll
+        event.preventDefault();
+      },
+
+      onTouchMove(event) {
+        if (!this.isTouchDragging) return;
+
+        // Prevent default to avoid page scroll
+        event.preventDefault();
+
+        const touch = event.touches[0];
+        const deltaX = this.touchStartX - touch.clientX;
+        const deltaY = Math.abs(this.touchStartY - touch.clientY);
+
+        // If vertical movement is significant, don't handle as horizontal drag
+        if (deltaY > 20) {
+          this.endTouch();
+          return;
+        }
+
+        // Calculate new scroll position
+        const maxScroll = (this.cardWidth + 24) * this.leaders.length;
+        let newScroll = this.dragStartScroll + deltaX * 1.5;
+
+        // Wrap around for infinite scroll effect
+        if (newScroll < 0) {
+          newScroll = maxScroll + newScroll;
+        } else if (newScroll > maxScroll) {
+          newScroll = newScroll - maxScroll;
+        }
+
+        this.scrollPosition = newScroll;
+
+        // Calculate drag progress for visual feedback
+        this.dragProgress = Math.min(Math.abs(deltaX) / 200, 1);
+
+        // Update current slide
+        this.currentSlide =
+          Math.floor(this.scrollPosition / (this.cardWidth + 24)) %
+          this.leaders.length;
+      },
+
+      endTouch(event) {
+        if (!this.isTouchDragging) return;
+
+        const touchEndTime = Date.now();
+        const touchDuration = touchEndTime - this.touchStartTime;
+
+        // Get the final touch position if event exists
+        if (event && event.changedTouches && event.changedTouches.length > 0) {
+          const touch = event.changedTouches[0];
+          const deltaX = Math.abs(this.touchStartX - touch.clientX);
+          const deltaY = Math.abs(this.touchStartY - touch.clientY);
+
+          // Check if this was a tap (short duration, minimal movement)
+          if (touchDuration < 300 && deltaX < 10 && deltaY < 10) {
+            // This was a tap, but we need to let the card click handler deal with it
+            console.log(
+              "Tap detected, but letting card click handler handle it",
+            );
+          }
+        }
+
+        this.isTouchDragging = false;
+        this.dragProgress = 0;
+
+        // Resume auto-scroll after a short delay
+        if (!this.popoverOpen) {
+          setTimeout(() => {
+            this.resumeMarquee();
+          }, 100);
+        }
+      },
+
+      // Card click handler - works for both mouse and touch
+      handleCardClick(leader, event) {
+        // Don't open if we were dragging
+        if (this.isDragging || this.isTouchDragging) {
+          console.log("Not opening popover because dragging");
+          return;
+        }
+
+        // Prevent default to avoid any issues
+        event.preventDefault();
+
+        console.log("Card clicked/tapped:", leader.name);
+        this.openPopover(leader);
+      },
+
+      // Manual navigation
+      slideLeft() {
+        this.pauseMarquee();
+
+        // Calculate new position
+        const slideWidth = this.cardWidth + 24;
+        let newPosition = this.scrollPosition - slideWidth;
+
+        // Wrap around for infinite scroll
+        const maxScroll = slideWidth * this.leaders.length;
+        if (newPosition < 0) {
+          newPosition = maxScroll + newPosition;
+        }
+
+        this.scrollPosition = newPosition;
+
+        // Update current slide
+        this.currentSlide =
+          Math.floor(this.scrollPosition / slideWidth) % this.leaders.length;
+
+        // Resume after delay
+        clearTimeout(this.manualScrollTimeout);
+        this.manualScrollTimeout = setTimeout(() => {
+          this.resumeMarquee();
+        }, 2000);
+      },
+
+      slideRight() {
+        this.pauseMarquee();
+
+        // Calculate new position
+        const slideWidth = this.cardWidth + 24;
+        let newPosition = this.scrollPosition + slideWidth;
+
+        // Wrap around for infinite scroll
+        const maxScroll = slideWidth * this.leaders.length;
+        if (newPosition >= maxScroll) {
+          newPosition = newPosition - maxScroll;
+        }
+
+        this.scrollPosition = newPosition;
+
+        // Update current slide
+        this.currentSlide =
+          Math.floor(this.scrollPosition / slideWidth) % this.leaders.length;
+
+        // Resume after delay
+        clearTimeout(this.manualScrollTimeout);
+        this.manualScrollTimeout = setTimeout(() => {
+          this.resumeMarquee();
+        }, 2000);
+      },
+
+      goToSlide(index) {
+        this.pauseMarquee();
+        this.scrollPosition = (this.cardWidth + 24) * index;
+        this.currentSlide = index;
+
+        // Resume after 2 seconds
+        setTimeout(() => {
+          if (!this.popoverOpen) {
+            this.resumeMarquee();
+          }
+        }, 2000);
+      },
+
+      // Popover functions
+      openPopover(leader) {
+        console.log("Opening popover for:", leader.name);
+        this.selectedLeader = leader;
+        this.popoverOpen = true;
+        this.pauseMarquee();
+        document.body.style.overflow = "hidden";
+      },
+
+      closePopover() {
+        console.log("Closing popover");
+        this.popoverOpen = false;
+        this.selectedLeader = null;
+        document.body.style.overflow = "";
+        this.resumeMarquee();
+      },
+
+      destroy() {
+        if (this.animationFrame) {
+          cancelAnimationFrame(this.animationFrame);
+        }
+        if (this.hoverTimer) {
+          clearTimeout(this.hoverTimer);
+        }
+        if (this.pauseTimer) {
+          clearTimeout(this.pauseTimer);
+        }
+        if (this.manualScrollTimeout) {
+          clearTimeout(this.manualScrollTimeout);
+        }
+        document.body.style.cursor = "";
+      },
+    };
+  }
+</script>
+
+<style>
+  /* Add x-cloak to hide elements before Alpine initializes */
+  [x-cloak] {
+    display: none !important;
+  }
+
+  /* Ensure proper scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Line clamp utility */
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* Floating card effects */
+  .group:hover .floating-card {
+    animation: float 3s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-8px);
+    }
+    100% {
+      transform: translateY(0px);
+    }
+  }
+
+  /* Smooth transitions */
+  .group:hover .group-hover\:scale-110 {
+    transform: scale(1.1);
+  }
+
+  .group:hover {
+    filter: drop-shadow(0 20px 25px -5px rgba(124, 58, 237, 0.2));
+  }
+
+  /* Ensure carousel doesn't block scrolling */
+  #leaders {
+    overflow: visible !important;
+  }
+
+  #leaders .overflow-hidden {
+    overflow: hidden !important;
+  }
+
+  /* Fix for will-change performance */
+  .will-change-transform {
+    will-change: transform;
+  }
+
+  /* Card hover lift effect */
+  .group:hover .bg-white {
+    box-shadow: 0 25px 50px -12px rgba(124, 58, 237, 0.35);
+  }
+
+  /* Prevent text selection during hover */
+  .group {
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent; /* Remove tap highlight on mobile */
+    cursor: pointer;
+  }
+
+  /* Smooth pause/resume transition */
+  .transition-transform {
+    transition-property: transform;
+    transition-timing-function: linear;
+  }
+
+  /* Navigation buttons */
+  button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* Drag indicator */
+  .drag-progress {
+    transition: transform 0.15s ease-out;
+  }
+
+  /* Cursor styles */
+  .cursor-grab {
+    cursor: grab;
+  }
+
+  .cursor-grabbing {
+    cursor: grabbing;
+  }
+
+  /* Backdrop blur */
+  .backdrop-blur-sm {
+    backdrop-filter: blur(8px);
+  }
+
+  /* Button hover effects */
+  .group:hover i {
+    transition: transform 0.2s ease-out;
+  }
+
+  /* Slider button positioning */
+  .absolute.top-1\/2 {
+    transform: translateY(-50%);
+  }
+
+  /* Responsive button sizing */
+  @media (max-width: 640px) {
+    .w-10.h-10 {
+      width: 2.5rem;
+      height: 2.5rem;
+    }
+  }
+
+  /* Popover Animations */
+  @keyframes kenburns {
+    0% {
+      transform: scale(1);
+    }
+    100% {
+      transform: scale(1.1);
+    }
+  }
+
+  .animate-kenburns {
+    animation: kenburns 10s ease-in-out infinite alternate;
+  }
+
+  @keyframes slide-down {
+    0% {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-slide-down {
+    animation: slide-down 0.5s ease-out forwards;
+  }
+
+  .delay-100 {
+    animation-delay: 0.1s;
+  }
+
+  @keyframes slide-up {
+    0% {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-slide-up {
+    animation: slide-up 0.5s ease-out forwards;
+  }
+
+  @keyframes fade-in {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+
+  .animate-fade-in {
+    animation: fade-in 0.8s ease-out forwards;
+  }
+
+  @keyframes fade-in-up {
+    0% {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-in-up {
+    animation: fade-in-up 0.6s ease-out forwards;
+  }
+
+  @keyframes expand-width {
+    0% {
+      width: 0;
+      opacity: 0;
+    }
+    100% {
+      width: 5rem;
+      opacity: 1;
+    }
+  }
+
+  .animate-expand-width {
+    animation: expand-width 0.5s ease-out forwards;
+  }
+
+  @keyframes bounce-subtle {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-5px);
+    }
+  }
+
+  .animate-bounce-subtle {
+    animation: bounce-subtle 2s ease-in-out infinite;
+  }
+
+  .delay-200 {
+    animation-delay: 0.2s;
+  }
+
+  .delay-300 {
+    animation-delay: 0.3s;
+  }
+
+  /* Pulse animation */
+  .animate-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  @keyframes pulse {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
+
+  /* Hover overlay for cards */
+  .group:hover .absolute.inset-0.bg-primary\/20 {
+    opacity: 1;
+  }
+
+  .group:hover .translate-y-4 {
+    transform: translateY(0);
+  }
+
+  /* Mobile optimizations */
+  @media (max-width: 640px) {
+    /* Larger touch targets */
+    button,
+    [role="button"],
+    .group {
+      touch-action: manipulation;
+    }
+
+    /* Better scrolling on mobile */
+    .overflow-hidden {
+      -webkit-overflow-scrolling: touch;
+    }
+
+    /* Prevent pull-to-refresh while dragging */
+    .cursor-grabbing {
+      overscroll-behavior: contain;
+    }
+  }
+</style>

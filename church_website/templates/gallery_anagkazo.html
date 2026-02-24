@@ -1,0 +1,776 @@
+{% load static %}
+<!-- ANAGKAZO SECTION -->
+<div
+  class="masonry-item group relative rounded-2xl overflow-hidden bg-slate-900 shadow-sm hover:shadow-2xl transition-all duration-500 animate-slide-up"
+  data-category="anagkazo"
+>
+  <div class="relative w-full">
+    <video
+      src="{% static 'img/VID-20250308-WA0008.mp4' %}"
+      data-full="{% static 'img/VID-20250308-WA0008.mp4' %}"
+      class="w-full h-auto object-cover opacity-90 group-hover:opacity-75 transition-opacity duration-300"
+      muted
+      loop
+      onmouseover="this.play()"
+      onmouseout="this.pause()"
+    ></video>
+    <div
+      class="absolute inset-0 flex items-center justify-center pointer-events-none group-hover:opacity-0 transition-opacity"
+    >
+      <div
+        class="w-12 h-12 rounded-full bg-white/30 backdrop-blur-sm flex items-center justify-center border border-white/20"
+      >
+        <i class="ri-play-fill text-2xl text-white"></i>
+      </div>
+    </div>
+  </div>
+  <div
+    class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6 pointer-events-none"
+  >
+    <div
+      class="pointer-events-auto flex gap-3 translate-y-4 group-hover:translate-y-0 transition-transform duration-300"
+    >
+      <button
+        onclick="openModal(this)"
+        class="p-2 rounded-full bg-white text-slate-900 hover:bg-brand-500 hover:text-white"
+      >
+        <i class="ri-play-fill text-lg"></i>
+      </button>
+      <button
+        onclick="downloadMedia(this)"
+        class="p-2 rounded-full bg-white/20 backdrop-blur-md text-white hover:bg-white hover:text-brand-600"
+      >
+        <i class="ri-download-line"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div
+  class="masonry-item group relative rounded-2xl overflow-hidden bg-slate-900 shadow-sm hover:shadow-2xl transition-all duration-500 animate-slide-up"
+  data-category="anagkazo"
+>
+  <div class="relative w-full">
+    <video
+      src="{% static 'img/VID-20250308-WA0009.mp4' %}"
+      data-full="{% static 'img/VID-20250308-WA0009.mp4' %}"
+      class="w-full h-auto object-cover opacity-90 group-hover:opacity-75 transition-opacity duration-300"
+      muted
+      loop
+      onmouseover="this.play()"
+      onmouseout="this.pause()"
+    ></video>
+    <div
+      class="absolute inset-0 flex items-center justify-center pointer-events-none group-hover:opacity-0 transition-opacity"
+    >
+      <div
+        class="w-12 h-12 rounded-full bg-white/30 backdrop-blur-sm flex items-center justify-center border border-white/20"
+      >
+        <i class="ri-play-fill text-2xl text-white"></i>
+      </div>
+    </div>
+  </div>
+  <div
+    class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6 pointer-events-none"
+  >
+    <div
+      class="pointer-events-auto flex gap-3 translate-y-4 group-hover:translate-y-0 transition-transform duration-300"
+    >
+      <button
+        onclick="openModal(this)"
+        class="p-2 rounded-full bg-white text-slate-900 hover:bg-brand-500 hover:text-white"
+      >
+        <i class="ri-play-fill text-lg"></i>
+      </button>
+      <button
+        onclick="downloadMedia(this)"
+        class="p-2 rounded-full bg-white/20 backdrop-blur-md text-white hover:bg-white hover:text-brand-600"
+      >
+        <i class="ri-download-line"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div
+  class="masonry-item group relative rounded-2xl overflow-hidden bg-slate-900 shadow-sm hover:shadow-2xl transition-all duration-500 animate-slide-up"
+  data-category="anagkazo"
+>
+  <div class="relative w-full">
+    <video
+      src="{% static 'img/VID-20250308-WA0010.mp4' %}"
+      data-full="{% static 'img/VID-20250308-WA0010.mp4' %}"
+      class="w-full h-auto object-cover opacity-90 group-hover:opacity-75 transition-opacity duration-300"
+      muted
+      loop
+      onmouseover="this.play()"
+      onmouseout="this.pause()"
+    ></video>
+    <div
+      class="absolute inset-0 flex items-center justify-center pointer-events-none group-hover:opacity-0 transition-opacity"
+    >
+      <div
+        class="w-12 h-12 rounded-full bg-white/30 backdrop-blur-sm flex items-center justify-center border border-white/20"
+      >
+        <i class="ri-play-fill text-2xl text-white"></i>
+      </div>
+    </div>
+  </div>
+  <div
+    class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6 pointer-events-none"
+  >
+    <div
+      class="pointer-events-auto flex gap-3 translate-y-4 group-hover:translate-y-0 transition-transform duration-300"
+    >
+      <button
+        onclick="openModal(this)"
+        class="p-2 rounded-full bg-white text-slate-900 hover:bg-brand-500 hover:text-white"
+      >
+        <i class="ri-play-fill text-lg"></i>
+      </button>
+      <button
+        onclick="downloadMedia(this)"
+        class="p-2 rounded-full bg-white/20 backdrop-blur-md text-white hover:bg-white hover:text-brand-600"
+      >
+        <i class="ri-download-line"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div
+  class="masonry-item group relative rounded-2xl overflow-hidden bg-white shadow-sm hover:shadow-2xl transition-all duration-500 animate-slide-up"
+  data-category="anagkazo"
+>
+  <img
+    src="{% static 'img/IMG-20250308-WA0025.jpg' %}"
+    data-full="{% static 'img/IMG-20250308-WA0025.jpg' %}"
+    alt="Anagkazo"
+    loading="lazy"
+    class="w-full h-auto object-cover transform transition-transform duration-700 group-hover:scale-105"
+  />
+  <div
+    class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6"
+  >
+    <p
+      class="text-white font-semibold translate-y-4 group-hover:translate-y-0 transition-transform duration-300"
+    >
+      Anagkazo 2025
+    </p>
+    <div
+      class="flex gap-3 mt-3 translate-y-4 group-hover:translate-y-0 transition-transform duration-300"
+    >
+      <button
+        onclick="openModal(this)"
+        class="p-2 rounded-full bg-white/20 backdrop-blur-md text-white hover:bg-white hover:text-brand-600"
+      >
+        <i class="ri-fullscreen-line"></i>
+      </button>
+      <button
+        onclick="downloadMedia(this)"
+        class="p-2 rounded-full bg-white/20 backdrop-blur-md text-white hover:bg-white hover:text-brand-600"
+      >
+        <i class="ri-download-line"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div
+  class="masonry-item group relative rounded-2xl overflow-hidden bg-white shadow-sm hover:shadow-2xl transition-all duration-500 animate-slide-up"
+  data-category="anagkazo"
+>
+  <img
+    src="{% static 'img/IMG-20250308-WA0026.jpg' %}"
+    data-full="{% static 'img/IMG-20250308-WA0026.jpg' %}"
+    alt="Anagkazo"
+    loading="lazy"
+    class="w-full h-auto object-cover transform transition-transform duration-700 group-hover:scale-105"
+  />
+  <div
+    class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6"
+  >
+    <p
+      class="text-white font-semibold translate-y-4 group-hover:translate-y-0 transition-transform duration-300"
+    >
+      Anagkazo 2025
+    </p>
+    <div
+      class="flex gap-3 mt-3 translate-y-4 group-hover:translate-y-0 transition-transform duration-300"
+    >
+      <button
+        onclick="openModal(this)"
+        class="p-2 rounded-full bg-white/20 backdrop-blur-md text-white hover:bg-white hover:text-brand-600"
+      >
+        <i class="ri-fullscreen-line"></i>
+      </button>
+      <button
+        onclick="downloadMedia(this)"
+        class="p-2 rounded-full bg-white/20 backdrop-blur-md text-white hover:bg-white hover:text-brand-600"
+      >
+        <i class="ri-download-line"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div
+  class="masonry-item group relative rounded-2xl overflow-hidden bg-white shadow-sm hover:shadow-2xl transition-all duration-500 animate-slide-up"
+  data-category="anagkazo"
+>
+  <img
+    src="{% static 'img/IMG-20250308-WA0036.jpg' %}"
+    data-full="{% static 'img/IMG-20250308-WA0036.jpg' %}"
+    alt="Anagkazo"
+    loading="lazy"
+    class="w-full h-auto object-cover transform transition-transform duration-700 group-hover:scale-105"
+  />
+  <div
+    class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6"
+  >
+    <div
+      class="flex gap-3 mt-3 translate-y-4 group-hover:translate-y-0 transition-transform duration-300"
+    >
+      <button
+        onclick="openModal(this)"
+        class="p-2 rounded-full bg-white/20 backdrop-blur-md text-white hover:bg-white hover:text-brand-600"
+      >
+        <i class="ri-fullscreen-line"></i>
+      </button>
+      <button
+        onclick="downloadMedia(this)"
+        class="p-2 rounded-full bg-white/20 backdrop-blur-md text-white hover:bg-white hover:text-brand-600"
+      >
+        <i class="ri-download-line"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div
+  class="masonry-item group relative rounded-2xl overflow-hidden bg-white shadow-sm hover:shadow-2xl transition-all duration-500 animate-slide-up"
+  data-category="anagkazo"
+>
+  <img
+    src="{% static 'img/IMG-20250308-WA0028.jpg' %}"
+    data-full="{% static 'img/IMG-20250308-WA0028.jpg' %}"
+    alt="Anagkazo"
+    loading="lazy"
+    class="w-full h-auto object-cover transform transition-transform duration-700 group-hover:scale-105"
+  />
+  <div
+    class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6"
+  >
+    <div
+      class="flex gap-3 mt-3 translate-y-4 group-hover:translate-y-0 transition-transform duration-300"
+    >
+      <button
+        onclick="openModal(this)"
+        class="p-2 rounded-full bg-white/20 backdrop-blur-md text-white hover:bg-white hover:text-brand-600"
+      >
+        <i class="ri-fullscreen-line"></i>
+      </button>
+      <button
+        onclick="downloadMedia(this)"
+        class="p-2 rounded-full bg-white/20 backdrop-blur-md text-white hover:bg-white hover:text-brand-600"
+      >
+        <i class="ri-download-line"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div
+  class="masonry-item group relative rounded-2xl overflow-hidden bg-white shadow-sm hover:shadow-2xl transition-all duration-500 animate-slide-up"
+  data-category="anagkazo"
+>
+  <img
+    src="{% static 'img/IMG-20250308-WA0030.jpg' %}"
+    data-full="{% static 'img/IMG-20250308-WA0030.jpg' %}"
+    alt="Anagkazo"
+    loading="lazy"
+    class="w-full h-auto object-cover transform transition-transform duration-700 group-hover:scale-105"
+  />
+  <div
+    class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6"
+  >
+    <div
+      class="flex gap-3 mt-3 translate-y-4 group-hover:translate-y-0 transition-transform duration-300"
+    >
+      <button
+        onclick="openModal(this)"
+        class="p-2 rounded-full bg-white/20 backdrop-blur-md text-white hover:bg-white hover:text-brand-600"
+      >
+        <i class="ri-fullscreen-line"></i>
+      </button>
+      <button
+        onclick="downloadMedia(this)"
+        class="p-2 rounded-full bg-white/20 backdrop-blur-md text-white hover:bg-white hover:text-brand-600"
+      >
+        <i class="ri-download-line"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div
+  class="masonry-item group relative rounded-2xl overflow-hidden bg-white shadow-sm hover:shadow-2xl transition-all duration-500 animate-slide-up"
+  data-category="anagkazo"
+>
+  <img
+    src="{% static 'img/IMG-20250308-WA0031.jpg' %}"
+    data-full="{% static 'img/IMG-20250308-WA0031.jpg' %}"
+    alt="Anagkazo"
+    loading="lazy"
+    class="w-full h-auto object-cover transform transition-transform duration-700 group-hover:scale-105"
+  />
+  <div
+    class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6"
+  >
+    <div
+      class="flex gap-3 mt-3 translate-y-4 group-hover:translate-y-0 transition-transform duration-300"
+    >
+      <button
+        onclick="openModal(this)"
+        class="p-2 rounded-full bg-white/20 backdrop-blur-md text-white hover:bg-white hover:text-brand-600"
+      >
+        <i class="ri-fullscreen-line"></i>
+      </button>
+      <button
+        onclick="downloadMedia(this)"
+        class="p-2 rounded-full bg-white/20 backdrop-blur-md text-white hover:bg-white hover:text-brand-600"
+      >
+        <i class="ri-download-line"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div
+  class="masonry-item group relative rounded-2xl overflow-hidden bg-white shadow-sm hover:shadow-2xl transition-all duration-500 animate-slide-up"
+  data-category="anagkazo"
+>
+  <img
+    src="{% static 'img/IMG-20250308-WA0032.jpg' %}"
+    data-full="{% static 'img/IMG-20250308-WA0032.jpg' %}"
+    alt="Anagkazo"
+    loading="lazy"
+    class="w-full h-auto object-cover transform transition-transform duration-700 group-hover:scale-105"
+  />
+  <div
+    class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6"
+  >
+    <div
+      class="flex gap-3 mt-3 translate-y-4 group-hover:translate-y-0 transition-transform duration-300"
+    >
+      <button
+        onclick="openModal(this)"
+        class="p-2 rounded-full bg-white/20 backdrop-blur-md text-white hover:bg-white hover:text-brand-600"
+      >
+        <i class="ri-fullscreen-line"></i>
+      </button>
+      <button
+        onclick="downloadMedia(this)"
+        class="p-2 rounded-full bg-white/20 backdrop-blur-md text-white hover:bg-white hover:text-brand-600"
+      >
+        <i class="ri-download-line"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div
+  class="masonry-item group relative rounded-2xl overflow-hidden bg-white shadow-sm hover:shadow-2xl transition-all duration-500 animate-slide-up"
+  data-category="anagkazo"
+>
+  <img
+    src="{% static 'img/IMG-20250308-WA0033.jpg' %}"
+    data-full="{% static 'img/IMG-20250308-WA0033.jpg' %}"
+    alt="Anagkazo"
+    loading="lazy"
+    class="w-full h-auto object-cover transform transition-transform duration-700 group-hover:scale-105"
+  />
+  <div
+    class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6"
+  >
+    <div
+      class="flex gap-3 mt-3 translate-y-4 group-hover:translate-y-0 transition-transform duration-300"
+    >
+      <button
+        onclick="openModal(this)"
+        class="p-2 rounded-full bg-white/20 backdrop-blur-md text-white hover:bg-white hover:text-brand-600"
+      >
+        <i class="ri-fullscreen-line"></i>
+      </button>
+      <button
+        onclick="downloadMedia(this)"
+        class="p-2 rounded-full bg-white/20 backdrop-blur-md text-white hover:bg-white hover:text-brand-600"
+      >
+        <i class="ri-download-line"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div
+  class="masonry-item group relative rounded-2xl overflow-hidden bg-white shadow-sm hover:shadow-2xl transition-all duration-500 animate-slide-up"
+  data-category="anagkazo"
+>
+  <img
+    src="{% static 'img/IMG-20250308-WA0034.jpg' %}"
+    data-full="{% static 'img/IMG-20250308-WA0034.jpg' %}"
+    alt="Anagkazo"
+    loading="lazy"
+    class="w-full h-auto object-cover transform transition-transform duration-700 group-hover:scale-105"
+  />
+  <div
+    class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6"
+  >
+    <div
+      class="flex gap-3 mt-3 translate-y-4 group-hover:translate-y-0 transition-transform duration-300"
+    >
+      <button
+        onclick="openModal(this)"
+        class="p-2 rounded-full bg-white/20 backdrop-blur-md text-white hover:bg-white hover:text-brand-600"
+      >
+        <i class="ri-fullscreen-line"></i>
+      </button>
+      <button
+        onclick="downloadMedia(this)"
+        class="p-2 rounded-full bg-white/20 backdrop-blur-md text-white hover:bg-white hover:text-brand-600"
+      >
+        <i class="ri-download-line"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div
+  class="masonry-item group relative rounded-2xl overflow-hidden bg-white shadow-sm hover:shadow-2xl transition-all duration-500 animate-slide-up"
+  data-category="anagkazo"
+>
+  <img
+    src="{% static 'img/IMG-20250308-WA0022.jpg' %}"
+    data-full="{% static 'img/IMG-20250308-WA0022.jpg' %}"
+    alt="Anagkazo"
+    loading="lazy"
+    class="w-full h-auto object-cover transform transition-transform duration-700 group-hover:scale-105"
+  />
+  <div
+    class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6"
+  >
+    <div
+      class="flex gap-3 mt-3 translate-y-4 group-hover:translate-y-0 transition-transform duration-300"
+    >
+      <button
+        onclick="openModal(this)"
+        class="p-2 rounded-full bg-white/20 backdrop-blur-md text-white hover:bg-white hover:text-brand-600"
+      >
+        <i class="ri-fullscreen-line"></i>
+      </button>
+      <button
+        onclick="downloadMedia(this)"
+        class="p-2 rounded-full bg-white/20 backdrop-blur-md text-white hover:bg-white hover:text-brand-600"
+      >
+        <i class="ri-download-line"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div
+  class="masonry-item group relative rounded-2xl overflow-hidden bg-white shadow-sm hover:shadow-2xl transition-all duration-500 animate-slide-up"
+  data-category="anagkazo"
+>
+  <img
+    src="{% static 'img/IMG-20250308-WA0010.jpg' %}"
+    data-full="{% static 'img/IMG-20250308-WA0010.jpg' %}"
+    alt="Anagkazo"
+    loading="lazy"
+    class="w-full h-auto object-cover transform transition-transform duration-700 group-hover:scale-105"
+  />
+  <div
+    class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6"
+  >
+    <div
+      class="flex gap-3 mt-3 translate-y-4 group-hover:translate-y-0 transition-transform duration-300"
+    >
+      <button
+        onclick="openModal(this)"
+        class="p-2 rounded-full bg-white/20 backdrop-blur-md text-white hover:bg-white hover:text-brand-600"
+      >
+        <i class="ri-fullscreen-line"></i>
+      </button>
+      <button
+        onclick="downloadMedia(this)"
+        class="p-2 rounded-full bg-white/20 backdrop-blur-md text-white hover:bg-white hover:text-brand-600"
+      >
+        <i class="ri-download-line"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div
+  class="masonry-item group relative rounded-2xl overflow-hidden bg-white shadow-sm hover:shadow-2xl transition-all duration-500 animate-slide-up"
+  data-category="anagkazo"
+>
+  <img
+    src="{% static 'img/IMG-20250308-WA0012.jpg' %}"
+    data-full="{% static 'img/IMG-20250308-WA0012.jpg' %}"
+    alt="Anagkazo"
+    loading="lazy"
+    class="w-full h-auto object-cover transform transition-transform duration-700 group-hover:scale-105"
+  />
+  <div
+    class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6"
+  >
+    <div
+      class="flex gap-3 mt-3 translate-y-4 group-hover:translate-y-0 transition-transform duration-300"
+    >
+      <button
+        onclick="openModal(this)"
+        class="p-2 rounded-full bg-white/20 backdrop-blur-md text-white hover:bg-white hover:text-brand-600"
+      >
+        <i class="ri-fullscreen-line"></i>
+      </button>
+      <button
+        onclick="downloadMedia(this)"
+        class="p-2 rounded-full bg-white/20 backdrop-blur-md text-white hover:bg-white hover:text-brand-600"
+      >
+        <i class="ri-download-line"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div
+  class="masonry-item group relative rounded-2xl overflow-hidden bg-white shadow-sm hover:shadow-2xl transition-all duration-500 animate-slide-up"
+  data-category="anagkazo"
+>
+  <img
+    src="{% static 'img/IMG-20250308-WA0013.jpg' %}"
+    data-full="{% static 'img/IMG-20250308-WA0013.jpg' %}"
+    alt="Anagkazo"
+    loading="lazy"
+    class="w-full h-auto object-cover transform transition-transform duration-700 group-hover:scale-105"
+  />
+  <div
+    class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6"
+  >
+    <div
+      class="flex gap-3 mt-3 translate-y-4 group-hover:translate-y-0 transition-transform duration-300"
+    >
+      <button
+        onclick="openModal(this)"
+        class="p-2 rounded-full bg-white/20 backdrop-blur-md text-white hover:bg-white hover:text-brand-600"
+      >
+        <i class="ri-fullscreen-line"></i>
+      </button>
+      <button
+        onclick="downloadMedia(this)"
+        class="p-2 rounded-full bg-white/20 backdrop-blur-md text-white hover:bg-white hover:text-brand-600"
+      >
+        <i class="ri-download-line"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div
+  class="masonry-item group relative rounded-2xl overflow-hidden bg-white shadow-sm hover:shadow-2xl transition-all duration-500 animate-slide-up"
+  data-category="anagkazo"
+>
+  <img
+    src="{% static 'img/IMG-20250308-WA0015.jpg' %}"
+    data-full="{% static 'img/IMG-20250308-WA0015.jpg' %}"
+    alt="Anagkazo"
+    loading="lazy"
+    class="w-full h-auto object-cover transform transition-transform duration-700 group-hover:scale-105"
+  />
+  <div
+    class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6"
+  >
+    <div
+      class="flex gap-3 mt-3 translate-y-4 group-hover:translate-y-0 transition-transform duration-300"
+    >
+      <button
+        onclick="openModal(this)"
+        class="p-2 rounded-full bg-white/20 backdrop-blur-md text-white hover:bg-white hover:text-brand-600"
+      >
+        <i class="ri-fullscreen-line"></i>
+      </button>
+      <button
+        onclick="downloadMedia(this)"
+        class="p-2 rounded-full bg-white/20 backdrop-blur-md text-white hover:bg-white hover:text-brand-600"
+      >
+        <i class="ri-download-line"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div
+  class="masonry-item group relative rounded-2xl overflow-hidden bg-white shadow-sm hover:shadow-2xl transition-all duration-500 animate-slide-up"
+  data-category="anagkazo"
+>
+  <img
+    src="{% static 'img/IMG-20250308-WA0014.jpg' %}"
+    data-full="{% static 'img/IMG-20250308-WA0014.jpg' %}"
+    alt="Anagkazo"
+    loading="lazy"
+    class="w-full h-auto object-cover transform transition-transform duration-700 group-hover:scale-105"
+  />
+  <div
+    class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6"
+  >
+    <div
+      class="flex gap-3 mt-3 translate-y-4 group-hover:translate-y-0 transition-transform duration-300"
+    >
+      <button
+        onclick="openModal(this)"
+        class="p-2 rounded-full bg-white/20 backdrop-blur-md text-white hover:bg-white hover:text-brand-600"
+      >
+        <i class="ri-fullscreen-line"></i>
+      </button>
+      <button
+        onclick="downloadMedia(this)"
+        class="p-2 rounded-full bg-white/20 backdrop-blur-md text-white hover:bg-white hover:text-brand-600"
+      >
+        <i class="ri-download-line"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div
+  class="masonry-item group relative rounded-2xl overflow-hidden bg-white shadow-sm hover:shadow-2xl transition-all duration-500 animate-slide-up"
+  data-category="anagkazo"
+>
+  <img
+    src="{% static 'img/IMG-20250308-WA0035.jpg' %}"
+    data-full="{% static 'img/IMG-20250308-WA0035.jpg' %}"
+    alt="Anagkazo"
+    loading="lazy"
+    class="w-full h-auto object-cover transform transition-transform duration-700 group-hover:scale-105"
+  />
+  <div
+    class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6"
+  >
+    <div
+      class="flex gap-3 mt-3 translate-y-4 group-hover:translate-y-0 transition-transform duration-300"
+    >
+      <button
+        onclick="openModal(this)"
+        class="p-2 rounded-full bg-white/20 backdrop-blur-md text-white hover:bg-white hover:text-brand-600"
+      >
+        <i class="ri-fullscreen-line"></i>
+      </button>
+      <button
+        onclick="downloadMedia(this)"
+        class="p-2 rounded-full bg-white/20 backdrop-blur-md text-white hover:bg-white hover:text-brand-600"
+      >
+        <i class="ri-download-line"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div
+  class="masonry-item group relative rounded-2xl overflow-hidden bg-white shadow-sm hover:shadow-2xl transition-all duration-500 animate-slide-up"
+  data-category="anagkazo"
+>
+  <img
+    src="{% static 'img/IMG-20250308-WA0017.jpg' %}"
+    data-full="{% static 'img/IMG-20250308-WA0017.jpg' %}"
+    alt="Anagkazo"
+    loading="lazy"
+    class="w-full h-auto object-cover transform transition-transform duration-700 group-hover:scale-105"
+  />
+  <div
+    class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6"
+  >
+    <div
+      class="flex gap-3 mt-3 translate-y-4 group-hover:translate-y-0 transition-transform duration-300"
+    >
+      <button
+        onclick="openModal(this)"
+        class="p-2 rounded-full bg-white/20 backdrop-blur-md text-white hover:bg-white hover:text-brand-600"
+      >
+        <i class="ri-fullscreen-line"></i>
+      </button>
+      <button
+        onclick="downloadMedia(this)"
+        class="p-2 rounded-full bg-white/20 backdrop-blur-md text-white hover:bg-white hover:text-brand-600"
+      >
+        <i class="ri-download-line"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div
+  class="masonry-item group relative rounded-2xl overflow-hidden bg-white shadow-sm hover:shadow-2xl transition-all duration-500 animate-slide-up"
+  data-category="anagkazo"
+>
+  <img
+    src="{% static 'img/IMG-20250308-WA0018.jpg' %}"
+    data-full="{% static 'img/IMG-20250308-WA0018.jpg' %}"
+    alt="Anagkazo"
+    loading="lazy"
+    class="w-full h-auto object-cover transform transition-transform duration-700 group-hover:scale-105"
+  />
+  <div
+    class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6"
+  >
+    <div
+      class="flex gap-3 mt-3 translate-y-4 group-hover:translate-y-0 transition-transform duration-300"
+    >
+      <button
+        onclick="openModal(this)"
+        class="p-2 rounded-full bg-white/20 backdrop-blur-md text-white hover:bg-white hover:text-brand-600"
+      >
+        <i class="ri-fullscreen-line"></i>
+      </button>
+      <button
+        onclick="downloadMedia(this)"
+        class="p-2 rounded-full bg-white/20 backdrop-blur-md text-white hover:bg-white hover:text-brand-600"
+      >
+        <i class="ri-download-line"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div
+  class="masonry-item group relative rounded-2xl overflow-hidden bg-white shadow-sm hover:shadow-2xl transition-all duration-500 animate-slide-up"
+  data-category="anagkazo"
+>
+  <img
+    src="{% static 'img/IMG-20250308-WA0019.jpg' %}"
+    data-full="{% static 'img/IMG-20250308-WA0019.jpg' %}"
+    alt="Anagkazo"
+    loading="lazy"
+    class="w-full h-auto object-cover transform transition-transform duration-700 group-hover:scale-105"
+  />
+  <div
+    class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6"
+  >
+    <div
+      class="flex gap-3 mt-3 translate-y-4 group-hover:translate-y-0 transition-transform duration-300"
+    >
+      <button
+        onclick="openModal(this)"
+        class="p-2 rounded-full bg-white/20 backdrop-blur-md text-white hover:bg-white hover:text-brand-600"
+      >
+        <i class="ri-fullscreen-line"></i>
+      </button>
+      <button
+        onclick="downloadMedia(this)"
+        class="p-2 rounded-full bg-white/20 backdrop-blur-md text-white hover:bg-white hover:text-brand-600"
+      >
+        <i class="ri-download-line"></i>
+      </button>
+    </div>
+  </div>
+</div>

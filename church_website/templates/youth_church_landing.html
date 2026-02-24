@@ -1,0 +1,70 @@
+{% load static %}
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    {% include 'includes/head.html' %}
+
+    <style>
+      html,
+      body {
+        overflow-y: scroll;
+        scrollbar-width: none; /* Firefox */
+        -ms-overflow-style: none; /* IE & Edge */
+      }
+
+      html::-webkit-scrollbar,
+      body::-webkit-scrollbar {
+        width: 0;
+        height: 0;
+        display: none; /* Chrome, Safari */
+      }
+    </style>
+  </head>
+
+  <body
+    class="font-sans bg-gray-50 text-gray-800 antialiased no-scrollbar"
+    x-data="{ mobileMenu: false, searchOpen: false, calendarOpen: false }"
+  >
+    <!-- Background Blobs -->
+    {% include 'includes/background-blobs.html' %}
+
+    <!-- Header -->
+    {% include 'includes/header.html' %}
+
+    <!-- Calendar Modal -->
+    {% include 'includes/calendar-modal.html' %}
+
+    <!-- Mobile Menu -->
+    {% include 'includes/mobile-menu.html' %}
+
+    <!-- Hero Section -->
+    {% include 'sections/hero.html' %}
+
+    <!-- Stats Section -->
+    {% include 'sections/stats.html' %}
+
+    <!-- About Section -->
+    {% include 'sections/about.html' %}
+
+    <!-- Leaders Section (moved before News & Events) -->
+    {% include 'sections/leaders.html' %}
+
+    <!-- News & Events Section -->
+    {% include 'sections/news-events.html' %}
+
+    <!-- Gallery Section -->
+    {% include 'sections/gallery.html' %}
+
+    <!-- Contact Section -->
+    {% include 'sections/contact.html' %}
+
+    <!-- Footer -->
+    {% include 'includes/footer.html' %}
+
+    <!-- Modals -->
+    {% include 'includes/modals.html' %}
+
+    <!-- Scripts -->
+    {% include 'includes/scripts.html' %}
+  </body>
+</html>

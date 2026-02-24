@@ -1,0 +1,714 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes"
+    />
+    <title>Sanctuary · modern podcast platform</title>
+    <!-- Tailwind + fonts + icons -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <!-- plyr (audio skin) -->
+    <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      :root {
+        --primary: #8b5cf6;
+        --primary-dark: #7c3aed;
+        --primary-light: #a78bfa;
+        --secondary: #ec4899;
+        --accent: #f59e0b;
+        --dark: #0f172a;
+        --light: #f8fafc;
+        --gray: #64748b;
+        --gradient: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+      }
+      body {
+        font-family: "Inter", sans-serif;
+        background: #f8fafc;
+        color: var(--dark);
+      }
+
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #e2e8f0;
+        border-radius: 20px;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: linear-gradient(140deg, #a78bfa, #f472b6);
+        border-radius: 20px;
+      }
+
+      .gradient-text {
+        background: var(--gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .hero-minimal {
+        background: linear-gradient(120deg, #1e1b4b, #312e81, #581c87);
+        padding: 4rem 1.5rem;
+        color: white;
+        text-align: center;
+        border-radius: 0 0 3rem 3rem;
+      }
+
+      /* video cards – clickable cards with thumbnails (no iframe errors) */
+      .video-card {
+        background: #fff;
+        border-radius: 28px;
+        overflow: hidden;
+        box-shadow: 0 12px 25px -10px rgba(0, 0, 0, 0.1);
+        border: 1px solid #fff;
+        transition: all 0.2s;
+        cursor: pointer;
+      }
+      .video-card:hover {
+        transform: scale(1.01);
+        box-shadow: 0 25px 35px -14px #c084fc;
+      }
+      .video-thumb {
+        position: relative;
+        background: #0f0f1e;
+        aspect-ratio: 16/9;
+      }
+      .video-thumb img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        opacity: 0.8;
+      }
+      .play-overlay {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0, 0, 0, 0.3);
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      .video-card:hover .play-overlay {
+        opacity: 1;
+      }
+      .play-overlay i {
+        font-size: 3rem;
+        color: white;
+        text-shadow: 0 2px 10px black;
+      }
+      .live-badge {
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        background: #ef4444;
+        color: white;
+        padding: 4px 12px;
+        border-radius: 40px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        z-index: 10;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        box-shadow: 0 5px 12px rgba(239, 68, 68, 0.4);
+      }
+      .video-id-badge {
+        position: absolute;
+        bottom: 12px;
+        right: 12px;
+        background: rgba(0, 0, 0, 0.7);
+        color: white;
+        padding: 4px 14px;
+        border-radius: 40px;
+        font-size: 0.75rem;
+        font-family: monospace;
+        z-index: 10;
+        backdrop-filter: blur(4px);
+      }
+
+      .episode-card-modern {
+        background: white;
+        border-radius: 24px;
+        overflow: hidden;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
+        border: 1px solid #f1f5f9;
+        transition: all 0.2s;
+        cursor: pointer;
+      }
+      .episode-card-modern:hover {
+        box-shadow: 0 20px 30px -12px #c084fc;
+      }
+      .episode-card-modern img {
+        height: 180px;
+        width: 100%;
+        object-fit: cover;
+      }
+
+      .pill {
+        padding: 8px 22px;
+        background: white;
+        border-radius: 40px;
+        font-weight: 500;
+        border: 1px solid #e9eef3;
+        color: #334155;
+        transition: all 0.1s;
+        white-space: nowrap;
+        cursor: pointer;
+      }
+      .pill.active {
+        background: var(--gradient);
+        color: white;
+        border: none;
+      }
+
+      .static-source-badge {
+        background: #ede9fe;
+        color: #5b21b6;
+        padding: 8px 22px;
+        border-radius: 40px;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.9rem;
+      }
+      .static-source-badge i {
+        color: #8b5cf6;
+      }
+
+      .player-fixed {
+        position: fixed;
+        bottom: 20px;
+        left: 20px;
+        right: 20px;
+        max-width: 1000px;
+        margin: 0 auto;
+        background: rgba(20, 20, 30, 0.95);
+        backdrop-filter: blur(20px);
+        border-radius: 60px;
+        padding: 12px 20px;
+        color: white;
+        transform: translateY(200%);
+        transition: transform 0.3s ease;
+        z-index: 1000;
+        border: 1px solid #ffffff20;
+      }
+      .player-fixed.show {
+        transform: translateY(0);
+      }
+
+      .line-clamp-2 {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+    </style>
+  </head>
+  <body class="antialiased">
+    <!-- HERO -->
+    <div class="hero-minimal">
+      <div class="max-w-6xl mx-auto">
+        <span
+          class="inline-block mb-3 px-6 py-2 bg-white/20 backdrop-blur-sm rounded-full text-sm font-semibold text-white/90"
+        >
+          <i class="fa-regular fa-circle-dot mr-2"></i>LIVE STREAMS EVERY SUNDAY
+        </span>
+        <h1 class="text-5xl md:text-6xl font-extrabold mb-4 tracking-tight">
+          <span class="gradient-text">Sanctuary</span>
+          <span class="text-white">podcast</span>
+        </h1>
+        <p class="text-white/80 text-xl max-w-2xl mx-auto">
+          Free sermons · teachings · live video from YouTube & Facebook
+        </p>
+      </div>
+    </div>
+
+    <!-- VIDEO FEED SECTION – clickable cards linking to your videos -->
+    <div class="max-w-6xl mx-auto px-4 mt-10">
+      <div class="flex items-center justify-between mb-5">
+        <h2 class="text-3xl font-bold text-gray-800">
+          <i class="fa-regular fa-circle-play text-indigo-500 mr-3"></i>LIVE &
+          recent streams
+        </h2>
+        <span
+          class="bg-red-100 text-red-700 px-4 py-2 rounded-full text-sm font-semibold"
+        >
+          <i class="fa-solid fa-circle mr-1 animate-pulse"></i> 2 live now
+        </span>
+      </div>
+      <div class="grid md:grid-cols-2 gap-6">
+        <!-- YouTube card – links to your specific video oX8maRinc9o -->
+        <a
+          href="https://www.youtube.com/watch?v=oX8maRinc9o"
+          target="_blank"
+          class="video-card no-underline"
+        >
+          <div class="video-thumb">
+            <img
+              src="https://img.youtube.com/vi/oX8maRinc9o/maxresdefault.jpg"
+              alt="YouTube video"
+              onerror="
+                this.src =
+                  'https://images.unsplash.com/photo-1611162616479-46f6358b7c1a?w=600&auto=format'
+              "
+            />
+            <div class="play-overlay">
+              <i class="fa-regular fa-circle-play"></i>
+            </div>
+            <span class="live-badge"
+              ><i class="fa-solid fa-circle"></i> YOUTUBE LIVE</span
+            >
+            <span class="video-id-badge"
+              ><i class="fa-regular fa-eye mr-1"></i>oX8maRinc9o</span
+            >
+          </div>
+          <div class="p-5">
+            <h3 class="font-bold text-xl">Living Hope · Sunday Celebration</h3>
+            <p class="text-gray-500 flex items-center gap-2 mt-1">
+              <i class="fa-brands fa-youtube text-red-600"></i> Watch on YouTube
+            </p>
+          </div>
+        </a>
+        <!-- Facebook card – links to video with hardcoded ID (demo) -->
+        <a
+          href="https://www.facebook.com/watch/?v=123456789012345"
+          target="_blank"
+          class="video-card no-underline"
+        >
+          <div class="video-thumb">
+            <img
+              src="https://images.unsplash.com/photo-1588681664899-f142f2c00e5f?w=600&auto=format"
+              alt="Facebook video"
+            />
+            <div class="play-overlay">
+              <i class="fa-regular fa-circle-play"></i>
+            </div>
+            <span class="live-badge" style="background: #1877f2"
+              ><i class="fa-solid fa-circle"></i> FACEBOOK LIVE</span
+            >
+            <span class="video-id-badge"
+              ><i class="fa-regular fa-eye mr-1"></i>123456789012345</span
+            >
+          </div>
+          <div class="p-5">
+            <h3 class="font-bold text-xl">Evening prayer & worship</h3>
+            <p class="text-gray-500 flex items-center gap-2 mt-1">
+              <i class="fa-brands fa-facebook text-blue-600"></i> Watch on
+              Facebook
+            </p>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <!-- RSS SOURCE BADGES (static) -->
+    <div class="max-w-6xl mx-auto px-4 mt-12">
+      <div class="flex flex-wrap items-center gap-3">
+        <span
+          class="text-sm font-semibold uppercase tracking-wide text-gray-500"
+          >podcast feeds ﹕</span
+        >
+        <div class="static-source-badge">
+          <i class="fa-solid fa-check-circle text-green-600"></i> Sanctuary main
+        </div>
+        <div class="static-source-badge">
+          <i class="fa-solid fa-check-circle text-green-600"></i> Bible Study
+          Hour
+        </div>
+        <div class="static-source-badge">
+          <i class="fa-solid fa-check-circle text-green-600"></i> Worship
+          Together
+        </div>
+        <div class="static-source-badge">
+          <i class="fa-solid fa-check-circle text-green-600"></i> Youth Impact
+        </div>
+        <span class="text-xs text-gray-400 ml-2"
+          >(feeds defined by programmer)</span
+        >
+      </div>
+    </div>
+
+    <!-- CATEGORY PILLS + SORT -->
+    <div
+      class="max-w-6xl mx-auto px-4 mt-8 flex flex-wrap items-center justify-between gap-4"
+    >
+      <div class="flex gap-2 flex-wrap" id="categoryFilters">
+        <button class="pill active" data-cat="all">All</button>
+        <button class="pill" data-cat="sunday">Sunday sermons</button>
+        <button class="pill" data-cat="bible-study">Bible study</button>
+        <button class="pill" data-cat="worship">Worship</button>
+        <button class="pill" data-cat="youth">Youth</button>
+      </div>
+      <select
+        class="border-0 bg-white px-5 py-3 rounded-full text-sm shadow-sm"
+        id="sortSelect"
+      >
+        <option value="newest">📅 Newest first</option>
+        <option value="oldest">📅 Oldest first</option>
+        <option value="popular">🔥 Most popular</option>
+      </select>
+    </div>
+
+    <!-- EPISODES GRID -->
+    <div class="max-w-6xl mx-auto px-4 py-8">
+      <div
+        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+        id="episodesGrid"
+      ></div>
+      <div class="text-center mt-12">
+        <button
+          class="bg-white border border-indigo-200 text-indigo-700 px-10 py-4 rounded-full font-medium hover:shadow-lg transition"
+          id="loadMoreBtn"
+        >
+          <i class="fa-regular fa-plus mr-2"></i>Load more episodes
+        </button>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer
+      class="bg-white/70 backdrop-blur-sm border-t border-indigo-100 mt-20 py-16 px-4"
+    >
+      <div
+        class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 text-gray-700"
+      >
+        <div>
+          <i class="fa-solid fa-church text-3xl text-indigo-500 mb-3"></i>
+          <p class="font-bold text-xl">Sanctuary</p>
+          <p class="text-sm text-gray-500 mt-2">free sermons, modern grace.</p>
+        </div>
+        <div>
+          <h4 class="font-bold mb-3">Explore</h4>
+          <ul class="space-y-2 text-sm">
+            <li>All podcasts</li>
+            <li>Series</li>
+            <li>Live videos</li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-bold mb-3">Links</h4>
+          <ul class="space-y-2 text-sm">
+            <li>YouTube (oX8maRinc9o)</li>
+            <li>Facebook (123456789012345)</li>
+            <li>RSS defined</li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-bold mb-3">Follow</h4>
+          <div class="flex gap-3 text-indigo-600 text-xl">
+            <i class="fa-brands fa-youtube"></i
+            ><i class="fa-brands fa-facebook"></i
+            ><i class="fa-brands fa-instagram"></i>
+          </div>
+        </div>
+      </div>
+      <p class="text-center text-gray-400 text-xs mt-12">
+        © 2026 Sanctuary Podcasts — all feeds hardcoded
+      </p>
+    </footer>
+
+    <!-- PLAYER BAR -->
+    <div class="player-fixed" id="playerBar">
+      <div class="flex items-center gap-4">
+        <img
+          src="https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=80"
+          class="w-12 h-12 rounded-2xl object-cover"
+          id="nowPlayingImg"
+          alt="cover"
+        />
+        <div class="flex-1 min-w-0">
+          <div class="font-semibold truncate" id="nowPlayingTitle">
+            Select sermon
+          </div>
+          <div class="text-xs text-white/60" id="nowPlayingSpeaker"></div>
+        </div>
+        <div class="flex gap-2 items-center">
+          <button
+            class="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20"
+            id="playPauseBtn"
+          >
+            <i class="fa-solid fa-play" id="playPauseIcon"></i>
+          </button>
+          <button
+            class="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20"
+            id="closePlayerBtn"
+          >
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+      </div>
+      <div class="w-full h-1 bg-white/20 mt-2 rounded-full">
+        <div
+          class="h-1 bg-indigo-400 rounded-full"
+          id="progressFill"
+          style="width: 0%"
+        ></div>
+      </div>
+    </div>
+    <audio id="audioPlayer" preload="metadata"></audio>
+
+    <script>
+      (function () {
+        // ---------- HARD-CODED IDs ----------
+        const YOUTUBE_VIDEO_ID = "oX8maRinc9o"; // your specific video
+        const FACEBOOK_VIDEO_ID = "123456789012345"; // your video ID
+
+        // Episode database
+        let allEpisodes = [
+          {
+            id: "admin-1",
+            title: "The power of forgiveness (admin)",
+            speaker: "Pastor Sarah",
+            series: "Special",
+            date: "2026-02-24",
+            duration: 3180,
+            duration_formatted: "53:00",
+            listens: 1200,
+            imageUrl:
+              "https://images.unsplash.com/photo-1544427920-c49ccfb85579?w=500",
+            audioUrl:
+              "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+            description: "Deep message on forgiveness.",
+            sourceId: "s1",
+            sourceName: "Sanctuary main",
+            category: "sunday",
+          },
+          {
+            id: "e1",
+            title: "Faith in the storm",
+            speaker: "John MacArthur",
+            series: "Trust",
+            date: "2026-02-20",
+            duration: 2670,
+            duration_formatted: "44:30",
+            listens: 15400,
+            imageUrl:
+              "https://images.unsplash.com/photo-1476231797791-1f5b89f1a0c2?w=500",
+            audioUrl:
+              "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
+            description: "Finding peace in chaos",
+            sourceId: "s2",
+            sourceName: "Bible Study Hour",
+            category: "sunday",
+          },
+          {
+            id: "e2",
+            title: "Worship night live",
+            speaker: "Worship team",
+            series: "Songs",
+            date: "2026-02-18",
+            duration: 3930,
+            duration_formatted: "1:05:30",
+            listens: 8700,
+            imageUrl:
+              "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=500",
+            audioUrl:
+              "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
+            description: "Live worship",
+            sourceId: "s3",
+            sourceName: "Worship Together",
+            category: "worship",
+          },
+          {
+            id: "e3",
+            title: "Youth courage",
+            speaker: "Mike Smith",
+            series: "Unshaken",
+            date: "2026-02-15",
+            duration: 2190,
+            duration_formatted: "36:30",
+            listens: 4200,
+            imageUrl:
+              "https://images.unsplash.com/photo-1523580494863-6f3031224c94?w=500",
+            audioUrl:
+              "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3",
+            description: "bold faith",
+            sourceId: "s4",
+            sourceName: "Youth Impact",
+            category: "youth",
+          },
+          {
+            id: "e4",
+            title: "Psalm 23",
+            speaker: "David Kim",
+            series: "Psalms",
+            date: "2026-02-10",
+            duration: 1860,
+            duration_formatted: "31:00",
+            listens: 6300,
+            imageUrl:
+              "https://images.unsplash.com/photo-1504052434569-70ad5836ab65?w=500",
+            audioUrl:
+              "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3",
+            description: "Shepherd leader",
+            sourceId: "s1",
+            sourceName: "Sanctuary main",
+            category: "bible-study",
+          },
+        ];
+
+        // UI state
+        let currentCategory = "all";
+        let displayedCount = 6;
+        let currentEpisode = null;
+        let isPlaying = false;
+
+        // DOM elements
+        const grid = document.getElementById("episodesGrid");
+        const playerBar = document.getElementById("playerBar");
+        const audio = document.getElementById("audioPlayer");
+        const playBtn = document.getElementById("playPauseBtn");
+        const playIcon = document.getElementById("playPauseIcon");
+        const progressFill = document.getElementById("progressFill");
+        const nowImg = document.getElementById("nowPlayingImg");
+        const nowTitle = document.getElementById("nowPlayingTitle");
+        const nowSpeaker = document.getElementById("nowPlayingSpeaker");
+        const sortSelect = document.getElementById("sortSelect");
+        const loadMoreBtn = document.getElementById("loadMoreBtn");
+        const closePlayerBtn = document.getElementById("closePlayerBtn");
+
+        function filterEpisodes() {
+          let filtered = allEpisodes.filter(
+            (e) => currentCategory === "all" || e.category === currentCategory,
+          );
+          const sort = sortSelect.value;
+          if (sort === "newest")
+            filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
+          else if (sort === "oldest")
+            filtered.sort((a, b) => new Date(a.date) - new Date(b.date));
+          else if (sort === "popular")
+            filtered.sort((a, b) => b.listens - a.listens);
+          return filtered;
+        }
+
+        function renderEpisodes() {
+          const filtered = filterEpisodes();
+          const toRender = filtered.slice(0, displayedCount);
+          if (toRender.length === 0) {
+            grid.innerHTML = `<div class="col-span-full text-center py-20 text-gray-400"><i class="fa-regular fa-face-frown text-5xl mb-4"></i><p>no episodes match</p></div>`;
+            return;
+          }
+          grid.innerHTML = toRender
+            .map(
+              (ep) => `
+          <div class="episode-card-modern cursor-pointer" data-id="${ep.id}">
+            <img src="${ep.imageUrl}" alt="${ep.title}" loading="lazy" class="h-44 w-full object-cover">
+            <div class="p-5">
+              <div class="flex items-center justify-between mb-1">
+                <span class="text-xs font-bold text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full">${ep.sourceName}</span>
+                <span class="text-xs text-gray-400"><i class="fa-regular fa-clock mr-1"></i>${ep.duration_formatted}</span>
+              </div>
+              <h3 class="font-bold text-lg leading-tight">${ep.title}</h3>
+              <p class="text-sm text-gray-500 mt-1">${ep.speaker}</p>
+              <p class="text-xs text-gray-400 line-clamp-2 mt-2">${ep.description}</p>
+              <div class="flex items-center justify-between text-xs text-gray-400 mt-3">
+                <span><i class="fa-regular fa-calendar mr-1"></i>${new Date(ep.date).toLocaleDateString()}</span>
+                <span><i class="fa-regular fa-eye mr-1"></i>${ep.listens}</span>
+              </div>
+            </div>
+          </div>`,
+            )
+            .join("");
+
+          document.querySelectorAll(".episode-card-modern").forEach((card) => {
+            card.addEventListener("click", () => {
+              const id = card.dataset.id;
+              const ep = allEpisodes.find((e) => e.id === id);
+              if (ep) playEpisode(ep);
+            });
+          });
+        }
+
+        function playEpisode(ep) {
+          currentEpisode = ep;
+          nowImg.src = ep.imageUrl;
+          nowTitle.innerText = ep.title;
+          nowSpeaker.innerText = ep.speaker;
+          audio.src = ep.audioUrl;
+          playerBar.classList.add("show");
+          audio
+            .play()
+            .then(() => {
+              isPlaying = true;
+              playIcon.className = "fa-solid fa-pause";
+            })
+            .catch(() => {});
+        }
+
+        playBtn.addEventListener("click", () => {
+          if (!currentEpisode) return;
+          if (isPlaying) {
+            audio.pause();
+            playIcon.className = "fa-solid fa-play";
+          } else {
+            audio.play();
+            playIcon.className = "fa-solid fa-pause";
+          }
+          isPlaying = !isPlaying;
+        });
+
+        audio.addEventListener("timeupdate", () => {
+          if (audio.duration)
+            progressFill.style.width =
+              (audio.currentTime / audio.duration) * 100 + "%";
+        });
+
+        audio.addEventListener("ended", () => {
+          playIcon.className = "fa-solid fa-play";
+          isPlaying = false;
+        });
+
+        closePlayerBtn.addEventListener("click", () => {
+          playerBar.classList.remove("show");
+          audio.pause();
+          isPlaying = false;
+          playIcon.className = "fa-solid fa-play";
+        });
+
+        document.querySelectorAll(".pill").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            document
+              .querySelectorAll(".pill")
+              .forEach((b) => b.classList.remove("active"));
+            btn.classList.add("active");
+            currentCategory = btn.dataset.cat;
+            displayedCount = 6;
+            renderEpisodes();
+          });
+        });
+
+        sortSelect.addEventListener("change", () => {
+          displayedCount = 6;
+          renderEpisodes();
+        });
+
+        loadMoreBtn.addEventListener("click", () => {
+          displayedCount += 6;
+          renderEpisodes();
+        });
+
+        renderEpisodes();
+      })();
+    </script>
+  </body>
+</html>

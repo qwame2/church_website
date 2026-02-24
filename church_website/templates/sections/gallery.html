@@ -1,0 +1,236 @@
+{% load static %}
+<section
+  id="gallery"
+  class="py-10 sm:py-14 md:py-20 lg:py-24 bg-gray-50 relative overflow-hidden"
+>
+  <div
+    class="absolute top-0 left-0 w-full h-full overflow-hidden z-0 pointer-events-none"
+  >
+    <div
+      class="absolute top-[-10%] right-[-5%] w-48 h-48 sm:w-64 sm:h-64 md:w-80 md:h-80 lg:w-96 lg:h-96 bg-purple-200 rounded-full filter blur-[60px] sm:blur-[80px] md:blur-[100px] opacity-20 sm:opacity-30 md:opacity-40 animate-blob"
+    ></div>
+    <div
+      class="absolute bottom-[-10%] left-[-5%] w-48 h-48 sm:w-64 sm:h-64 md:w-80 md:h-80 lg:w-96 lg:h-96 bg-blue-200 rounded-full filter blur-[60px] sm:blur-[80px] md:blur-[100px] opacity-20 sm:opacity-30 md:opacity-40 animate-blob animation-delay-2000"
+    ></div>
+  </div>
+
+  <div class="max-w-7xl mx-auto px-2 sm:px-3 lg:px-8 relative z-10">
+    <div
+      class="text-center mb-8 sm:mb-10 md:mb-12 lg:mb-16 px-1 sm:px-0"
+      data-aos="fade-up"
+    >
+      <span
+        class="text-primary font-bold tracking-wider uppercase text-xs sm:text-sm bg-primary/10 px-2 py-0.5 sm:px-3 sm:py-1 rounded-full"
+        >Gallery</span
+      >
+      <h2
+        class="text-xl sm:text-2xl md:text-3xl lg:text-5xl font-black text-gray-900 mt-1.5 sm:mt-2 md:mt-3 mb-1 sm:mb-1.5 md:mb-2 tracking-tight"
+      >
+        Captured
+        <span
+          class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary"
+          >Moments</span
+        >
+      </h2>
+      <p class="text-gray-500 text-xs sm:text-sm md:text-base lg:text-lg">
+        Real people. Real worship. Unfiltered joy.
+      </p>
+    </div>
+
+    <!-- Grid layout for gallery - 3 cards per row on mobile -->
+    <div
+      class="grid grid-cols-3 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3 md:gap-4 lg:gap-6"
+    >
+      <!-- Row 1: First 3 items -->
+      <!-- Item 1 -->
+      <div
+        class="relative group cursor-pointer"
+        onclick="openImageModal(this.querySelector('img').src)"
+        data-aos="fade-up"
+        data-aos-delay="100"
+      >
+        <div
+          class="relative overflow-hidden rounded-lg sm:rounded-xl md:rounded-2xl border border-white shadow-sm group-hover:shadow-md transition-all duration-300 group-hover:-translate-y-0.5 sm:group-hover:-translate-y-1 md:group-hover:-translate-y-2"
+        >
+          <img
+            src="{% static 'img/4.jpg' %}"
+            class="w-full h-24 sm:h-32 md:h-40 lg:h-52 object-cover transform group-hover:scale-105 transition-transform duration-500"
+            alt="Gallery"
+          />
+          <div
+            class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-2 sm:p-3 md:p-4"
+          >
+            <span
+              class="text-white font-bold text-[10px] sm:text-xs md:text-sm translate-y-2 sm:translate-y-3 group-hover:translate-y-0 transition-transform duration-200"
+              >Worship</span
+            >
+          </div>
+        </div>
+      </div>
+
+      <!-- Item 2 -->
+      <div
+        class="relative group cursor-pointer"
+        onclick="openImageModal(this.querySelector('img').src)"
+        data-aos="fade-up"
+        data-aos-delay="150"
+      >
+        <div
+          class="relative overflow-hidden rounded-lg sm:rounded-xl md:rounded-2xl border border-white shadow-sm group-hover:shadow-md transition-all duration-300 group-hover:-translate-y-0.5 sm:group-hover:-translate-y-1 md:group-hover:-translate-y-2"
+        >
+          <img
+            src="{% static 'img/IMG-20250308-WA0029.jpg' %}"
+            class="w-full h-24 sm:h-32 md:h-40 lg:h-52 object-cover transform group-hover:scale-105 transition-transform duration-500"
+            alt="Gallery"
+          />
+          <div
+            class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-2 sm:p-3 md:p-4"
+          >
+            <span
+              class="text-white font-bold text-[10px] sm:text-xs md:text-sm translate-y-2 sm:translate-y-3 group-hover:translate-y-0 transition-transform duration-200"
+              >Service</span
+            >
+          </div>
+        </div>
+      </div>
+
+      <!-- Item 3 - Video -->
+      <div class="relative group" data-aos="fade-up" data-aos-delay="200">
+        <div
+          class="relative overflow-hidden rounded-lg sm:rounded-xl md:rounded-2xl border border-white shadow-sm group-hover:shadow-md transition-all duration-300 group-hover:-translate-y-0.5 sm:group-hover:-translate-y-1 md:group-hover:-translate-y-2 bg-black"
+        >
+          <video
+            src="{% static 'img/710830b.mp4' %}"
+            class="w-full h-24 sm:h-32 md:h-40 lg:h-52 object-cover opacity-90 group-hover:opacity-100 transition-opacity"
+            controls
+            preload="metadata"
+          ></video>
+          <div
+            class="absolute top-1 left-1 sm:top-2 sm:left-2 md:top-3 md:left-3 flex items-center gap-0.5 sm:gap-1 bg-white/20 backdrop-blur-sm border border-white/20 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full"
+          >
+            <span
+              class="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-red-500 rounded-full animate-pulse"
+            ></span>
+            <span
+              class="text-white text-[8px] sm:text-[10px] md:text-xs font-bold"
+              >LIVE</span
+            >
+          </div>
+        </div>
+      </div>
+
+      <!-- Row 2: Next 3 items -->
+      <!-- Item 4 -->
+      <div
+        class="relative group cursor-pointer"
+        onclick="openImageModal(this.querySelector('img').src)"
+        data-aos="fade-up"
+        data-aos-delay="250"
+      >
+        <div
+          class="relative overflow-hidden rounded-lg sm:rounded-xl md:rounded-2xl border border-white shadow-sm group-hover:shadow-md transition-all duration-300 group-hover:-translate-y-0.5 sm:group-hover:-translate-y-1 md:group-hover:-translate-y-2"
+        >
+          <img
+            src="{% static 'img/IMG-20250308-WA0028.jpg' %}"
+            class="w-full h-24 sm:h-32 md:h-40 lg:h-52 object-cover transform group-hover:scale-105 transition-transform duration-500"
+            alt="Gallery"
+          />
+          <div
+            class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-2 sm:p-3 md:p-4"
+          >
+            <span
+              class="text-white font-bold text-[10px] sm:text-xs md:text-sm translate-y-2 sm:translate-y-3 group-hover:translate-y-0 transition-transform duration-200"
+              >Youth</span
+            >
+          </div>
+        </div>
+      </div>
+
+      <!-- Item 5 -->
+      <div
+        class="relative group cursor-pointer"
+        onclick="openImageModal(this.querySelector('img').src)"
+        data-aos="fade-up"
+        data-aos-delay="300"
+      >
+        <div
+          class="relative overflow-hidden rounded-lg sm:rounded-xl md:rounded-2xl border border-white shadow-sm group-hover:shadow-md transition-all duration-300 group-hover:-translate-y-0.5 sm:group-hover:-translate-y-1 md:group-hover:-translate-y-2"
+        >
+          <img
+            src="{% static 'img/IMG-20250308-WA0026.jpg' %}"
+            class="w-full h-24 sm:h-32 md:h-40 lg:h-52 object-cover transform group-hover:scale-105 transition-transform duration-500"
+            alt="Gallery"
+          />
+          <div
+            class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-2 sm:p-3 md:p-4"
+          >
+            <span
+              class="text-white font-bold text-[10px] sm:text-xs md:text-sm translate-y-2 sm:translate-y-3 group-hover:translate-y-0 transition-transform duration-200"
+              >Church</span
+            >
+          </div>
+        </div>
+      </div>
+
+      <!-- Item 6 - More Photos -->
+      <div
+        class="relative group cursor-pointer"
+        onclick="window.location.href='{% url 'gallery' %}'"
+        data-aos="fade-up"
+        data-aos-delay="350"
+      >
+        <div
+          class="relative overflow-hidden rounded-lg sm:rounded-xl md:rounded-2xl border border-white shadow-sm group-hover:shadow-md transition-all duration-300 group-hover:-translate-y-0.5 sm:group-hover:-translate-y-1 md:group-hover:-translate-y-2 bg-gradient-to-br from-primary/20 to-secondary/20"
+        >
+          <!-- Make it same height as image cards -->
+          <div
+            class="w-full h-24 sm:h-32 md:h-40 lg:h-52 flex items-center justify-center"
+          >
+            <div class="text-center p-2 sm:p-3 md:p-4 lg:p-6">
+              <!-- Mobile only: Stacked compact layout -->
+              <div class="block sm:hidden">
+                <div class="flex flex-col items-center">
+                  <div
+                    class="w-6 h-6 bg-white/30 backdrop-blur-sm rounded-full flex items-center justify-center mb-1"
+                  >
+                    <i class="ri-image-fill text-white text-xs"></i>
+                  </div>
+                  <div class="text-center">
+                    <h3 class="text-white font-bold text-[10px] leading-tight">
+                      More
+                    </h3>
+                    <p class="text-white/90 text-[8px] leading-tight">Photos</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Desktop/Tablet: Original layout -->
+              <div class="hidden sm:block">
+                <div
+                  class="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 lg:w-16 lg:h-16 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto mb-2 sm:mb-3 md:mb-4"
+                >
+                  <i
+                    class="ri-image-fill text-white text-sm sm:text-base md:text-xl lg:text-2xl"
+                  ></i>
+                </div>
+                <h3
+                  class="text-white font-bold text-sm sm:text-base md:text-lg lg:text-xl mb-1 sm:mb-2"
+                >
+                  More Photos
+                </h3>
+                <p class="text-white/80 text-xs sm:text-sm md:text-base">
+                  View full gallery
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Overlay for hover effect -->
+          <div
+            class="absolute inset-0 bg-gradient-to-t from-primary/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+          ></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
