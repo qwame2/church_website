@@ -1,714 +1,1832 @@
+{% load static %}
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes"
-    />
-    <title>Sanctuary · modern podcast platform</title>
-    <!-- Tailwind + fonts + icons -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Church of Christ(SM)) Podcast | Listen & Grow</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap"
       rel="stylesheet"
     />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
-    />
-    <!-- plyr (audio skin) -->
-    <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ["Inter", "sans-serif"],
+              serif: ["Playfair Display", "serif"],
+            },
+            colors: {
+              primary: "#1132d4",
+              "accent-gold": "#d4af37",
+              "background-light": "#fcfcfd",
+            },
+          },
+        },
+      };
+    </script>
     <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
+      @keyframes marquee {
+        0% {
+          transform: translateX(0);
+        }
+        100% {
+          transform: translateX(-50%);
+        }
       }
-      :root {
-        --primary: #8b5cf6;
-        --primary-dark: #7c3aed;
-        --primary-light: #a78bfa;
-        --secondary: #ec4899;
-        --accent: #f59e0b;
-        --dark: #0f172a;
-        --light: #f8fafc;
-        --gray: #64748b;
-        --gradient: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+      .animate-marquee {
+        animation: marquee 30s linear infinite;
+        width: max-content;
       }
-      body {
-        font-family: "Inter", sans-serif;
-        background: #f8fafc;
-        color: var(--dark);
+      .waveform-bar {
+        width: 3px;
+        background-color: currentColor;
+        border-radius: 1px;
       }
-
-      ::-webkit-scrollbar {
-        width: 8px;
-        height: 8px;
-      }
-      ::-webkit-scrollbar-track {
-        background: #e2e8f0;
-        border-radius: 20px;
-      }
-      ::-webkit-scrollbar-thumb {
-        background: linear-gradient(140deg, #a78bfa, #f472b6);
-        border-radius: 20px;
-      }
-
-      .gradient-text {
-        background: var(--gradient);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-      }
-
-      .hero-minimal {
-        background: linear-gradient(120deg, #1e1b4b, #312e81, #581c87);
-        padding: 4rem 1.5rem;
-        color: white;
-        text-align: center;
-        border-radius: 0 0 3rem 3rem;
-      }
-
-      /* video cards – clickable cards with thumbnails (no iframe errors) */
-      .video-card {
-        background: #fff;
-        border-radius: 28px;
-        overflow: hidden;
-        box-shadow: 0 12px 25px -10px rgba(0, 0, 0, 0.1);
-        border: 1px solid #fff;
-        transition: all 0.2s;
-        cursor: pointer;
-      }
-      .video-card:hover {
-        transform: scale(1.01);
-        box-shadow: 0 25px 35px -14px #c084fc;
-      }
-      .video-thumb {
-        position: relative;
-        background: #0f0f1e;
-        aspect-ratio: 16/9;
-      }
-      .video-thumb img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        opacity: 0.8;
-      }
-      .play-overlay {
-        position: absolute;
-        inset: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: rgba(0, 0, 0, 0.3);
-        opacity: 0;
-        transition: opacity 0.2s;
-      }
-      .video-card:hover .play-overlay {
-        opacity: 1;
-      }
-      .play-overlay i {
-        font-size: 3rem;
-        color: white;
-        text-shadow: 0 2px 10px black;
-      }
-      .live-badge {
-        position: absolute;
-        top: 12px;
-        left: 12px;
-        background: #ef4444;
-        color: white;
-        padding: 4px 12px;
-        border-radius: 40px;
-        font-size: 0.7rem;
-        font-weight: 700;
-        z-index: 10;
-        display: flex;
-        align-items: center;
-        gap: 5px;
-        box-shadow: 0 5px 12px rgba(239, 68, 68, 0.4);
-      }
-      .video-id-badge {
-        position: absolute;
-        bottom: 12px;
-        right: 12px;
-        background: rgba(0, 0, 0, 0.7);
-        color: white;
-        padding: 4px 14px;
-        border-radius: 40px;
-        font-size: 0.75rem;
-        font-family: monospace;
-        z-index: 10;
-        backdrop-filter: blur(4px);
-      }
-
-      .episode-card-modern {
-        background: white;
-        border-radius: 24px;
-        overflow: hidden;
-        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
-        border: 1px solid #f1f5f9;
-        transition: all 0.2s;
-        cursor: pointer;
-      }
-      .episode-card-modern:hover {
-        box-shadow: 0 20px 30px -12px #c084fc;
-      }
-      .episode-card-modern img {
-        height: 180px;
-        width: 100%;
-        object-fit: cover;
-      }
-
-      .pill {
-        padding: 8px 22px;
-        background: white;
-        border-radius: 40px;
-        font-weight: 500;
-        border: 1px solid #e9eef3;
-        color: #334155;
-        transition: all 0.1s;
-        white-space: nowrap;
-        cursor: pointer;
-      }
-      .pill.active {
-        background: var(--gradient);
-        color: white;
-        border: none;
-      }
-
-      .static-source-badge {
-        background: #ede9fe;
-        color: #5b21b6;
-        padding: 8px 22px;
-        border-radius: 40px;
-        font-weight: 500;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        font-size: 0.9rem;
-      }
-      .static-source-badge i {
-        color: #8b5cf6;
-      }
-
-      .player-fixed {
-        position: fixed;
-        bottom: 20px;
-        left: 20px;
-        right: 20px;
-        max-width: 1000px;
-        margin: 0 auto;
-        background: rgba(20, 20, 30, 0.95);
-        backdrop-filter: blur(20px);
-        border-radius: 60px;
-        padding: 12px 20px;
-        color: white;
-        transform: translateY(200%);
-        transition: transform 0.3s ease;
-        z-index: 1000;
-        border: 1px solid #ffffff20;
-      }
-      .player-fixed.show {
-        transform: translateY(0);
-      }
-
-      .line-clamp-2 {
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
+      .selection-primary::selection {
+        background-color: rgba(17, 50, 212, 0.1);
       }
     </style>
   </head>
-  <body class="antialiased">
-    <!-- HERO -->
-    <div class="hero-minimal">
-      <div class="max-w-6xl mx-auto">
-        <span
-          class="inline-block mb-3 px-6 py-2 bg-white/20 backdrop-blur-sm rounded-full text-sm font-semibold text-white/90"
-        >
-          <i class="fa-regular fa-circle-dot mr-2"></i>LIVE STREAMS EVERY SUNDAY
-        </span>
-        <h1 class="text-5xl md:text-6xl font-extrabold mb-4 tracking-tight">
-          <span class="gradient-text">Sanctuary</span>
-          <span class="text-white">podcast</span>
-        </h1>
-        <p class="text-white/80 text-xl max-w-2xl mx-auto">
-          Free sermons · teachings · live video from YouTube & Facebook
-        </p>
-      </div>
-    </div>
-
-    <!-- VIDEO FEED SECTION – clickable cards linking to your videos -->
-    <div class="max-w-6xl mx-auto px-4 mt-10">
-      <div class="flex items-center justify-between mb-5">
-        <h2 class="text-3xl font-bold text-gray-800">
-          <i class="fa-regular fa-circle-play text-indigo-500 mr-3"></i>LIVE &
-          recent streams
-        </h2>
-        <span
-          class="bg-red-100 text-red-700 px-4 py-2 rounded-full text-sm font-semibold"
-        >
-          <i class="fa-solid fa-circle mr-1 animate-pulse"></i> 2 live now
-        </span>
-      </div>
-      <div class="grid md:grid-cols-2 gap-6">
-        <!-- YouTube card – links to your specific video oX8maRinc9o -->
-        <a
-          href="https://www.youtube.com/watch?v=oX8maRinc9o"
-          target="_blank"
-          class="video-card no-underline"
-        >
-          <div class="video-thumb">
-            <img
-              src="https://img.youtube.com/vi/oX8maRinc9o/maxresdefault.jpg"
-              alt="YouTube video"
-              onerror="
-                this.src =
-                  'https://images.unsplash.com/photo-1611162616479-46f6358b7c1a?w=600&auto=format'
-              "
-            />
-            <div class="play-overlay">
-              <i class="fa-regular fa-circle-play"></i>
-            </div>
-            <span class="live-badge"
-              ><i class="fa-solid fa-circle"></i> YOUTUBE LIVE</span
-            >
-            <span class="video-id-badge"
-              ><i class="fa-regular fa-eye mr-1"></i>oX8maRinc9o</span
-            >
-          </div>
-          <div class="p-5">
-            <h3 class="font-bold text-xl">Living Hope · Sunday Celebration</h3>
-            <p class="text-gray-500 flex items-center gap-2 mt-1">
-              <i class="fa-brands fa-youtube text-red-600"></i> Watch on YouTube
-            </p>
-          </div>
-        </a>
-        <!-- Facebook card – links to video with hardcoded ID (demo) -->
-        <a
-          href="https://www.facebook.com/watch/?v=123456789012345"
-          target="_blank"
-          class="video-card no-underline"
-        >
-          <div class="video-thumb">
-            <img
-              src="https://images.unsplash.com/photo-1588681664899-f142f2c00e5f?w=600&auto=format"
-              alt="Facebook video"
-            />
-            <div class="play-overlay">
-              <i class="fa-regular fa-circle-play"></i>
-            </div>
-            <span class="live-badge" style="background: #1877f2"
-              ><i class="fa-solid fa-circle"></i> FACEBOOK LIVE</span
-            >
-            <span class="video-id-badge"
-              ><i class="fa-regular fa-eye mr-1"></i>123456789012345</span
-            >
-          </div>
-          <div class="p-5">
-            <h3 class="font-bold text-xl">Evening prayer & worship</h3>
-            <p class="text-gray-500 flex items-center gap-2 mt-1">
-              <i class="fa-brands fa-facebook text-blue-600"></i> Watch on
-              Facebook
-            </p>
-          </div>
-        </a>
-      </div>
-    </div>
-
-    <!-- RSS SOURCE BADGES (static) -->
-    <div class="max-w-6xl mx-auto px-4 mt-12">
-      <div class="flex flex-wrap items-center gap-3">
-        <span
-          class="text-sm font-semibold uppercase tracking-wide text-gray-500"
-          >podcast feeds ﹕</span
-        >
-        <div class="static-source-badge">
-          <i class="fa-solid fa-check-circle text-green-600"></i> Sanctuary main
-        </div>
-        <div class="static-source-badge">
-          <i class="fa-solid fa-check-circle text-green-600"></i> Bible Study
-          Hour
-        </div>
-        <div class="static-source-badge">
-          <i class="fa-solid fa-check-circle text-green-600"></i> Worship
-          Together
-        </div>
-        <div class="static-source-badge">
-          <i class="fa-solid fa-check-circle text-green-600"></i> Youth Impact
-        </div>
-        <span class="text-xs text-gray-400 ml-2"
-          >(feeds defined by programmer)</span
-        >
-      </div>
-    </div>
-
-    <!-- CATEGORY PILLS + SORT -->
+  <body
+    class="bg-background-light text-slate-900 font-sans pb-24 selection-primary"
+  >
+    <!-- Floating Actions -->
     <div
-      class="max-w-6xl mx-auto px-4 mt-8 flex flex-wrap items-center justify-between gap-4"
+      class="fixed right-4 top-1/2 -translate-y-1/2 z-[60] flex flex-col gap-2"
     >
-      <div class="flex gap-2 flex-wrap" id="categoryFilters">
-        <button class="pill active" data-cat="all">All</button>
-        <button class="pill" data-cat="sunday">Sunday sermons</button>
-        <button class="pill" data-cat="bible-study">Bible study</button>
-        <button class="pill" data-cat="worship">Worship</button>
-        <button class="pill" data-cat="youth">Youth</button>
-      </div>
-      <select
-        class="border-0 bg-white px-5 py-3 rounded-full text-sm shadow-sm"
-        id="sortSelect"
+      <button
+        class="w-10 h-10 bg-white shadow-lg rounded-full flex items-center justify-center text-slate-400 hover:text-primary transition-all border border-slate-100 hover:scale-110"
       >
-        <option value="newest">📅 Newest first</option>
-        <option value="oldest">📅 Oldest first</option>
-        <option value="popular">🔥 Most popular</option>
-      </select>
+        <i data-lucide="message-circle" class="w-5 h-5"></i>
+      </button>
+      <button
+        class="w-10 h-10 bg-white shadow-lg rounded-full flex items-center justify-center text-slate-400 hover:text-primary transition-all border border-slate-100 hover:scale-110"
+      >
+        <i data-lucide="share-2" class="w-5 h-5"></i>
+      </button>
+      <button
+        class="w-10 h-10 bg-white shadow-lg rounded-full flex items-center justify-center text-slate-400 hover:text-primary transition-all border border-slate-100 hover:scale-110"
+      >
+        <i data-lucide="hand-heart" class="w-5 h-5"></i>
+      </button>
     </div>
 
-    <!-- EPISODES GRID -->
-    <div class="max-w-6xl mx-auto px-4 py-8">
+    <!-- Header -->
+    <header
+      class="sticky top-0 z-50 w-full border-b border-slate-200 bg-white/80 backdrop-blur-md"
+    >
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="flex h-16 items-center justify-between">
+          <div class="flex items-center gap-2">
+            <div
+              class="flex h-10 w-10 items-center justify-center rounded-lg bg-white text-white"
+            >
+              <img
+                src="{% static 'img/logo1.jpg' %}"
+                class="w-full h-full object-contain"
+                alt="Watermark"
+              />
+            </div>
+            <span class="text-xl font-bold tracking-tight text-primary"
+              >The Church of Christ(SM)</span
+            >
+          </div>
+          <div class="flex items-center gap-4">
+            <div class="relative hidden sm:block">
+              <span
+                class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400"
+              >
+                <i data-lucide="search" class="w-4 h-4"></i>
+              </span>
+              <input
+                id="search-input"
+                oninput="handleSearch(this.value)"
+                class="h-9 w-64 rounded-full border-none bg-slate-100 pl-10 text-sm focus:ring-2 focus:ring-primary/50"
+                placeholder="Search title, speaker, or date..."
+                type="text"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main
+      class="flex-grow bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:20px_20px]"
+    >
+      <!-- Live Banner -->
       <div
-        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-        id="episodesGrid"
-      ></div>
-      <div class="text-center mt-12">
+        class="bg-red-600 text-white py-2 px-4 text-center text-sm font-bold flex items-center justify-center gap-3"
+      >
+        <span class="flex h-2 w-2 rounded-full bg-white animate-pulse"></span>
+        LIVE NOW: Sunday Morning Service - Broadcast Publicly for All
         <button
-          class="bg-white border border-indigo-200 text-indigo-700 px-10 py-4 rounded-full font-medium hover:shadow-lg transition"
-          id="loadMoreBtn"
+          class="ml-4 px-3 py-1 bg-white text-red-600 rounded text-xs uppercase tracking-widest font-black hover:bg-slate-100 transition-colors"
         >
-          <i class="fa-regular fa-plus mr-2"></i>Load more episodes
+          Join Stream
         </button>
       </div>
-    </div>
 
-    <!-- FOOTER -->
-    <footer
-      class="bg-white/70 backdrop-blur-sm border-t border-indigo-100 mt-20 py-16 px-4"
-    >
+      <!-- Marquee Ticker -->
       <div
-        class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 text-gray-700"
+        class="bg-slate-900 text-white/70 py-1.5 overflow-hidden whitespace-nowrap border-b border-slate-800"
       >
-        <div>
-          <i class="fa-solid fa-church text-3xl text-indigo-500 mb-3"></i>
-          <p class="font-bold text-xl">Sanctuary</p>
-          <p class="text-sm text-gray-500 mt-2">free sermons, modern grace.</p>
-        </div>
-        <div>
-          <h4 class="font-bold mb-3">Explore</h4>
-          <ul class="space-y-2 text-sm">
-            <li>All podcasts</li>
-            <li>Series</li>
-            <li>Live videos</li>
-          </ul>
-        </div>
-        <div>
-          <h4 class="font-bold mb-3">Links</h4>
-          <ul class="space-y-2 text-sm">
-            <li>YouTube (oX8maRinc9o)</li>
-            <li>Facebook (123456789012345)</li>
-            <li>RSS defined</li>
-          </ul>
-        </div>
-        <div>
-          <h4 class="font-bold mb-3">Follow</h4>
-          <div class="flex gap-3 text-indigo-600 text-xl">
-            <i class="fa-brands fa-youtube"></i
-            ><i class="fa-brands fa-facebook"></i
-            ><i class="fa-brands fa-instagram"></i>
-          </div>
-        </div>
-      </div>
-      <p class="text-center text-gray-400 text-xs mt-12">
-        © 2026 Sanctuary Podcasts — all feeds hardcoded
-      </p>
-    </footer>
-
-    <!-- PLAYER BAR -->
-    <div class="player-fixed" id="playerBar">
-      <div class="flex items-center gap-4">
-        <img
-          src="https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=80"
-          class="w-12 h-12 rounded-2xl object-cover"
-          id="nowPlayingImg"
-          alt="cover"
-        />
-        <div class="flex-1 min-w-0">
-          <div class="font-semibold truncate" id="nowPlayingTitle">
-            Select sermon
-          </div>
-          <div class="text-xs text-white/60" id="nowPlayingSpeaker"></div>
-        </div>
-        <div class="flex gap-2 items-center">
-          <button
-            class="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20"
-            id="playPauseBtn"
-          >
-            <i class="fa-solid fa-play" id="playPauseIcon"></i>
-          </button>
-          <button
-            class="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20"
-            id="closePlayerBtn"
-          >
-            <i class="fa-solid fa-xmark"></i>
-          </button>
-        </div>
-      </div>
-      <div class="w-full h-1 bg-white/20 mt-2 rounded-full">
         <div
-          class="h-1 bg-indigo-400 rounded-full"
-          id="progressFill"
-          style="width: 0%"
-        ></div>
+          class="flex animate-marquee gap-12 text-[10px] font-bold uppercase tracking-[0.2em]"
+        >
+          <span class="flex items-center gap-2"
+            ><span class="w-1 h-1 rounded-full bg-accent-gold"></span> Trending
+            Now: Understanding Grace</span
+          >
+          <span class="flex items-center gap-2"
+            ><span class="w-1 h-1 rounded-full bg-accent-gold"></span> New
+            Testimony: "This podcast changed my life!" - Mark R.</span
+          >
+          <span class="flex items-center gap-2"
+            ><span class="w-1 h-1 rounded-full bg-accent-gold"></span> Recent
+            Comment: "So powerful!" on Episode #42</span
+          >
+          <span class="flex items-center gap-2"
+            ><span class="w-1 h-1 rounded-full bg-accent-gold"></span> 1,240
+            people listening right now</span
+          >
+          <span class="flex items-center gap-2"
+            ><span class="w-1 h-1 rounded-full bg-accent-gold"></span> New
+            Testimony: God is good!</span
+          >
+          <!-- Duplicate for seamless scroll -->
+          <span class="flex items-center gap-2"
+            ><span class="w-1 h-1 rounded-full bg-accent-gold"></span> Trending
+            Now: Understanding Grace</span
+          >
+          <span class="flex items-center gap-2"
+            ><span class="w-1 h-1 rounded-full bg-accent-gold"></span> New
+            Testimony: "This podcast changed my life!" - Mark R.</span
+          >
+        </div>
       </div>
-    </div>
-    <audio id="audioPlayer" preload="metadata"></audio>
 
-    <script>
-      (function () {
-        // ---------- HARD-CODED IDs ----------
-        const YOUTUBE_VIDEO_ID = "oX8maRinc9o"; // your specific video
-        const FACEBOOK_VIDEO_ID = "123456789012345"; // your video ID
+      <!-- Hero Section -->
+      <section class="relative py-24 lg:py-40 overflow-hidden">
+        <div
+          class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-primary/10 via-background-light to-background-light"
+        ></div>
+        <div
+          class="relative mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8"
+        >
+          <span
+            class="inline-flex items-center rounded-full bg-primary/5 border border-primary/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-primary mb-8"
+          >
+            <i data-lucide="mic" class="w-3.5 h-3.5 mr-2"></i> New Episodes
+            Weekly
+          </span>
+          <h1
+            class="text-6xl font-black tracking-tight text-slate-900 sm:text-8xl font-serif"
+          >
+            Church <span class="text-primary italic">Podcast</span>
+          </h1>
+          <p
+            class="mx-auto mt-8 max-w-2xl text-xl leading-8 text-slate-600 font-medium italic"
+          >
+            "Faith comes by hearing, and hearing by the word of God." — Romans
+            10:17
+          </p>
+          <div class="mt-12 flex flex-wrap items-center justify-center gap-6">
+            <button
+              class="rounded-full bg-primary px-10 py-4 text-sm font-bold text-white shadow-xl shadow-primary/20 hover:scale-105 transition-all"
+            >
+              Listen Now - No Login Required
+            </button>
+            <button
+              class="rounded-full bg-white px-10 py-4 text-sm font-bold text-slate-900 shadow-sm ring-1 ring-slate-200 hover:bg-slate-50 hover:scale-105 transition-all"
+            >
+              View All Episodes
+            </button>
+          </div>
+          <p
+            class="mt-4 text-xs font-semibold text-slate-400 uppercase tracking-[0.2em]"
+          >
+            Free public access for everyone
+          </p>
+        </div>
+      </section>
 
-        // Episode database
-        let allEpisodes = [
-          {
-            id: "admin-1",
-            title: "The power of forgiveness (admin)",
-            speaker: "Pastor Sarah",
-            series: "Special",
-            date: "2026-02-24",
-            duration: 3180,
-            duration_formatted: "53:00",
-            listens: 1200,
-            imageUrl:
-              "https://images.unsplash.com/photo-1544427920-c49ccfb85579?w=500",
-            audioUrl:
-              "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
-            description: "Deep message on forgiveness.",
-            sourceId: "s1",
-            sourceName: "Sanctuary main",
-            category: "sunday",
-          },
-          {
-            id: "e1",
-            title: "Faith in the storm",
-            speaker: "John MacArthur",
-            series: "Trust",
-            date: "2026-02-20",
-            duration: 2670,
-            duration_formatted: "44:30",
-            listens: 15400,
-            imageUrl:
-              "https://images.unsplash.com/photo-1476231797791-1f5b89f1a0c2?w=500",
-            audioUrl:
-              "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
-            description: "Finding peace in chaos",
-            sourceId: "s2",
-            sourceName: "Bible Study Hour",
-            category: "sunday",
-          },
-          {
-            id: "e2",
-            title: "Worship night live",
-            speaker: "Worship team",
-            series: "Songs",
-            date: "2026-02-18",
-            duration: 3930,
-            duration_formatted: "1:05:30",
-            listens: 8700,
-            imageUrl:
-              "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=500",
-            audioUrl:
-              "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
-            description: "Live worship",
-            sourceId: "s3",
-            sourceName: "Worship Together",
-            category: "worship",
-          },
-          {
-            id: "e3",
-            title: "Youth courage",
-            speaker: "Mike Smith",
-            series: "Unshaken",
-            date: "2026-02-15",
-            duration: 2190,
-            duration_formatted: "36:30",
-            listens: 4200,
-            imageUrl:
-              "https://images.unsplash.com/photo-1523580494863-6f3031224c94?w=500",
-            audioUrl:
-              "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3",
-            description: "bold faith",
-            sourceId: "s4",
-            sourceName: "Youth Impact",
-            category: "youth",
-          },
-          {
-            id: "e4",
-            title: "Psalm 23",
-            speaker: "David Kim",
-            series: "Psalms",
-            date: "2026-02-10",
-            duration: 1860,
-            duration_formatted: "31:00",
-            listens: 6300,
-            imageUrl:
-              "https://images.unsplash.com/photo-1504052434569-70ad5836ab65?w=500",
-            audioUrl:
-              "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3",
-            description: "Shepherd leader",
-            sourceId: "s1",
-            sourceName: "Sanctuary main",
-            category: "bible-study",
-          },
-        ];
-
-        // UI state
-        let currentCategory = "all";
-        let displayedCount = 6;
-        let currentEpisode = null;
-        let isPlaying = false;
-
-        // DOM elements
-        const grid = document.getElementById("episodesGrid");
-        const playerBar = document.getElementById("playerBar");
-        const audio = document.getElementById("audioPlayer");
-        const playBtn = document.getElementById("playPauseBtn");
-        const playIcon = document.getElementById("playPauseIcon");
-        const progressFill = document.getElementById("progressFill");
-        const nowImg = document.getElementById("nowPlayingImg");
-        const nowTitle = document.getElementById("nowPlayingTitle");
-        const nowSpeaker = document.getElementById("nowPlayingSpeaker");
-        const sortSelect = document.getElementById("sortSelect");
-        const loadMoreBtn = document.getElementById("loadMoreBtn");
-        const closePlayerBtn = document.getElementById("closePlayerBtn");
-
-        function filterEpisodes() {
-          let filtered = allEpisodes.filter(
-            (e) => currentCategory === "all" || e.category === currentCategory,
-          );
-          const sort = sortSelect.value;
-          if (sort === "newest")
-            filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
-          else if (sort === "oldest")
-            filtered.sort((a, b) => new Date(a.date) - new Date(b.date));
-          else if (sort === "popular")
-            filtered.sort((a, b) => b.listens - a.listens);
-          return filtered;
-        }
-
-        function renderEpisodes() {
-          const filtered = filterEpisodes();
-          const toRender = filtered.slice(0, displayedCount);
-          if (toRender.length === 0) {
-            grid.innerHTML = `<div class="col-span-full text-center py-20 text-gray-400"><i class="fa-regular fa-face-frown text-5xl mb-4"></i><p>no episodes match</p></div>`;
-            return;
-          }
-          grid.innerHTML = toRender
-            .map(
-              (ep) => `
-          <div class="episode-card-modern cursor-pointer" data-id="${ep.id}">
-            <img src="${ep.imageUrl}" alt="${ep.title}" loading="lazy" class="h-44 w-full object-cover">
-            <div class="p-5">
-              <div class="flex items-center justify-between mb-1">
-                <span class="text-xs font-bold text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full">${ep.sourceName}</span>
-                <span class="text-xs text-gray-400"><i class="fa-regular fa-clock mr-1"></i>${ep.duration_formatted}</span>
+      <!-- Featured Episode -->
+      <section
+        class="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8 -mt-24 relative z-10"
+      >
+        <div
+          class="overflow-hidden rounded-3xl bg-white/70 backdrop-blur-xl shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] ring-1 ring-slate-200/50 lg:flex"
+        >
+          <div class="relative lg:w-1/2 min-h-[400px]">
+            <div
+              class="absolute inset-0 bg-cover bg-center"
+              style="
+                background-image: url(&quot;https://lh3.googleusercontent.com/aida-public/AB6AXuCyzIUdYXXHjccr8_Uj_k8ZTcmd4ZJBb8H73t6Gx6Ir7v6dmddoQDa6Mm5BGO9rbPTZTUKlZ8JMbZ2uk3rZYB2RxxjIsD4vl-dB6CJ5YMeRD_Qu_no79vbMWODsXVvpORPQyPAvzoG7lPIEGb6YGENtsbKVfdsGkcK2q8EyYEsoLQTmRvXXCCU3BLOTtMRd5MoJRQpnEeEg2y8MCqFqp5fHrmSVLMSsJdFDBHcM0XkcBH-2J4q2uWnd218ZIx5H4KivcJ0STK8vKA&quot;);
+              "
+            ></div>
+            <div
+              class="absolute inset-0 bg-gradient-to-tr from-primary/40 to-transparent"
+            ></div>
+            <div class="absolute bottom-8 left-8 flex items-center gap-4">
+              <button
+                onclick="playEpisode('featured')"
+                class="flex h-14 w-14 items-center justify-center rounded-full bg-white text-primary shadow-2xl hover:scale-110 transition-transform"
+              >
+                <i
+                  data-lucide="play"
+                  id="featured-play-icon"
+                  class="w-8 h-8 fill-current ml-1"
+                ></i>
+              </button>
+              <span
+                class="font-bold text-white text-lg tracking-wide"
+                id="featured-play-text"
+                >Listen Now</span
+              >
+            </div>
+          </div>
+          <div class="flex flex-col justify-center p-10 lg:w-1/2 lg:p-16">
+            <div
+              class="flex items-center gap-3 text-accent-gold font-bold text-xs tracking-[0.2em] uppercase mb-6"
+            >
+              <span
+                class="bg-red-600 text-white px-2 py-0.5 rounded text-[10px] font-black mr-2 animate-pulse"
+                >LIVE</span
+              >
+              <span
+                class="h-[2px] w-10 bg-gradient-to-r from-accent-gold to-yellow-200"
+              ></span>
+              Featured Episode
+            </div>
+            <h2
+              class="text-4xl font-serif font-bold text-slate-900 leading-tight"
+            >
+              The Power of Unconditional Grace
+            </h2>
+            <p class="mt-6 text-slate-600 leading-relaxed text-lg">
+              Join Pastor John Doe as he explores the profound depths of God's
+              grace and how it transforms our daily walk with Christ.
+            </p>
+            <div class="mt-10 flex items-center gap-8">
+              <div class="flex items-center gap-5">
+                <div class="h-14 w-14 rounded-full ring-2 ring-primary/20 p-1">
+                  <div
+                    class="h-full w-full rounded-full bg-cover"
+                    style="
+                      background-image: url(&quot;https://lh3.googleusercontent.com/aida-public/AB6AXuDPXbSKZx7yFPqn6OrjJk2n36JrNd4sL0LEXbQqSeFUbYFYG4hvnu9jiMBD7DAwtsc26CQdNrNvlL9qG9q-F8kdQtinr7QZro7wTCEvd3cIsVahWU6FfHxXu_Q7NcmkOiBU0-r6D39VTLFoDWYkOT0JHFnQ66bbMzdl8NfKTfEKQh24rBq8Lp3TZiqFQa5QpXMzjTHTRhUFnbTKLYy-5Zr1jh4sJVPtie4vg4pyHoiqnF6k9GsufJrC1_xaxkNrcH-7MitfgdDB1Q&quot;);
+                    "
+                  ></div>
+                </div>
+                <div>
+                  <p class="text-base font-bold text-slate-900">
+                    Pastor John Doe
+                  </p>
+                  <p
+                    class="text-xs font-medium text-slate-500 uppercase tracking-widest mt-1"
+                  >
+                    Oct 24, 2023 • 45 mins
+                  </p>
+                </div>
               </div>
-              <h3 class="font-bold text-lg leading-tight">${ep.title}</h3>
-              <p class="text-sm text-gray-500 mt-1">${ep.speaker}</p>
-              <p class="text-xs text-gray-400 line-clamp-2 mt-2">${ep.description}</p>
-              <div class="flex items-center justify-between text-xs text-gray-400 mt-3">
-                <span><i class="fa-regular fa-calendar mr-1"></i>${new Date(ep.date).toLocaleDateString()}</span>
-                <span><i class="fa-regular fa-eye mr-1"></i>${ep.listens}</span>
+              <div
+                class="flex items-center gap-4 border-l border-slate-100 pl-8"
+              >
+                <button
+                  id="featured-like-btn"
+                  onclick="toggleLike('featured')"
+                  class="flex flex-col items-center gap-1 text-slate-400 hover:text-red-500 transition-all"
+                >
+                  <i
+                    data-lucide="heart"
+                    id="featured-like-icon"
+                    class="w-5 h-5"
+                  ></i>
+                  <span id="featured-like-count" class="text-[10px] font-bold"
+                    >1.2k</span
+                  >
+                </button>
+                <button
+                  onclick="openShare('featured')"
+                  class="flex flex-col items-center gap-1 text-slate-400 hover:text-primary transition-all"
+                >
+                  <i data-lucide="share-2" class="w-5 h-5"></i>
+                  <span class="text-[10px] font-bold">Share</span>
+                </button>
               </div>
             </div>
-          </div>`,
-            )
-            .join("");
+            <div class="mt-10 flex gap-2 h-10 items-end text-primary/30">
+              <div class="waveform-bar h-1/4"></div>
+              <div class="waveform-bar h-1/2"></div>
+              <div class="waveform-bar h-full"></div>
+              <div class="waveform-bar h-2/3"></div>
+              <div class="waveform-bar h-3/4"></div>
+              <div class="waveform-bar h-1/2"></div>
+              <div class="waveform-bar h-full"></div>
+              <div class="waveform-bar h-1/3"></div>
+              <div class="waveform-bar h-2/3"></div>
+              <div class="waveform-bar h-5/6"></div>
+              <div class="waveform-bar h-1/2"></div>
+              <div class="waveform-bar h-3/4"></div>
+              <div class="waveform-bar h-2/3"></div>
+              <div class="waveform-bar h-1/3"></div>
+              <div class="waveform-bar h-full"></div>
+              <div class="waveform-bar h-2/3"></div>
+              <div class="waveform-bar h-1/2"></div>
+              <div class="waveform-bar h-3/4"></div>
+              <div class="waveform-bar h-2/3"></div>
+              <div class="waveform-bar h-full"></div>
+              <div class="waveform-bar h-1/3"></div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-          document.querySelectorAll(".episode-card-modern").forEach((card) => {
-            card.addEventListener("click", () => {
-              const id = card.dataset.id;
-              const ep = allEpisodes.find((e) => e.id === id);
-              if (ep) playEpisode(ep);
-            });
-          });
+      <!-- Recent Episodes -->
+      <section
+        id="recent-episodes"
+        class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8"
+      >
+        <div
+          class="flex flex-col md:flex-row md:items-center justify-between mb-10 gap-6"
+        >
+          <div>
+            <h3 class="text-2xl font-bold text-slate-900 font-serif">
+              Recent Episodes
+            </h3>
+            <span
+              class="block text-xs font-bold text-primary mt-1 uppercase tracking-widest"
+              >Publicly accessible archive • No account needed</span
+            >
+          </div>
+          <div class="flex flex-wrap gap-2" id="category-filters">
+            <button
+              onclick="setCategory('All')"
+              class="cat-btn rounded-full px-4 py-2 text-xs font-bold transition-all bg-primary text-white"
+            >
+              All
+            </button>
+            <button
+              onclick="setCategory('Sermons')"
+              class="cat-btn rounded-full px-4 py-2 text-xs font-bold transition-all bg-white text-slate-600 border border-slate-200 hover:border-primary"
+            >
+              Sermons
+            </button>
+            <button
+              onclick="setCategory('Bible Study')"
+              class="cat-btn rounded-full px-4 py-2 text-xs font-bold transition-all bg-white text-slate-600 border border-slate-200 hover:border-primary"
+            >
+              Bible Study
+            </button>
+            <button
+              onclick="setCategory('Prayer')"
+              class="cat-btn rounded-full px-4 py-2 text-xs font-bold transition-all bg-white text-slate-600 border border-slate-200 hover:border-primary"
+            >
+              Prayer
+            </button>
+            <button
+              onclick="setCategory('Youth')"
+              class="cat-btn rounded-full px-4 py-2 text-xs font-bold transition-all bg-white text-slate-600 border border-slate-200 hover:border-primary"
+            >
+              Youth
+            </button>
+          </div>
+        </div>
+
+        <div class="grid gap-6" id="episodes-list">
+          <!-- Episodes will be rendered here by JS -->
+        </div>
+
+        <div id="load-more-container" class="mt-12 text-center">
+          <button
+            id="load-more-btn"
+            onclick="loadMore()"
+            class="font-bold text-primary flex items-center justify-center mx-auto gap-2 hover:underline"
+          >
+            Load More Episodes
+            <i data-lucide="chevron-down" class="w-5 h-5"></i>
+          </button>
+          <button
+            id="show-less-btn"
+            onclick="showLess()"
+            class="hidden font-bold text-slate-400 flex items-center justify-center mx-auto gap-2 hover:underline hover:text-primary transition-colors"
+          >
+            Show Less
+            <i data-lucide="chevron-up" class="w-5 h-5"></i>
+          </button>
+        </div>
+      </section>
+
+      <!-- Popular This Week -->
+      <section class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between mb-8">
+          <h3
+            class="text-xl font-bold text-slate-900 font-serif flex items-center gap-2"
+          >
+            <i data-lucide="trending-up" class="text-primary w-5 h-5"></i>
+            Popular This Week
+          </h3>
+          <button
+            onclick="viewAnalytics()"
+            class="text-xs font-bold text-primary hover:underline"
+          >
+            View Analytics
+          </button>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="popular-grid">
+          <!-- Popular items will be rendered here -->
+        </div>
+      </section>
+
+      <!-- Quote Section -->
+      <section class="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8">
+        <div
+          class="relative overflow-hidden rounded-[3rem] bg-slate-900 px-8 py-24 text-center text-white shadow-3xl"
+        >
+          <div
+            class="absolute top-0 left-0 w-full h-full opacity-5 pointer-events-none select-none overflow-hidden"
+          >
+            <i
+              data-lucide="quote"
+              class="absolute -top-40 -left-20 w-[640px] h-[640px]"
+            ></i>
+          </div>
+          <div class="relative z-10 mx-auto max-w-3xl">
+            <i
+              data-lucide="church"
+              class="text-accent-gold mx-auto mb-10 w-16 h-16"
+            ></i>
+            <h2
+              class="text-3xl font-serif font-bold italic leading-relaxed sm:text-5xl"
+            >
+              "Therefore, if anyone is in Christ, the new creation has come: The
+              old has gone, the new is here!"
+            </h2>
+            <div class="mt-10 flex flex-col items-center">
+              <div
+                class="h-[2px] w-12 bg-gradient-to-r from-accent-gold to-yellow-200 mb-6"
+              ></div>
+              <p
+                class="text-accent-gold font-bold tracking-[0.3em] uppercase text-sm"
+              >
+                2 Corinthians 5:17
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Testimonials -->
+      <section class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+          <h3 class="text-2xl font-bold text-slate-900 font-serif mb-2">
+            What People Are Saying
+          </h3>
+          <p class="text-slate-500 text-sm">
+            Real stories from our global listening community
+          </p>
+        </div>
+        <div class="grid md:grid-cols-3 gap-6" id="testimonials-grid">
+          <!-- Testimonials will be rendered here -->
+        </div>
+      </section>
+
+      <!-- Subscription Platforms -->
+      <section class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 text-center">
+        <h3 class="text-xl font-bold text-slate-900 mb-8 font-serif">
+          Subscribe on Your Favorite Platform
+        </h3>
+        <span
+          class="block text-xs font-bold text-primary mt-1 uppercase tracking-widest mb-8"
+          >Publicly accessible archive • No account needed</span
+        >
+        <div class="flex flex-wrap justify-center gap-6">
+          <a
+            href="#"
+            class="flex items-center gap-3 rounded-xl bg-white px-6 py-4 border border-slate-200 shadow-sm hover:shadow-md hover:border-primary transition-all group"
+          >
+            <div
+              class="flex h-10 w-10 items-center justify-center rounded-full bg-[#1DB954]/10"
+            >
+              <i
+                data-lucide="play"
+                class="w-5 h-5 text-[#1DB954] fill-current"
+              ></i>
+            </div>
+            <span class="font-bold">Spotify</span>
+          </a>
+          <a
+            href="#"
+            class="flex items-center gap-3 rounded-xl bg-white px-6 py-4 border border-slate-200 shadow-sm hover:shadow-md hover:border-primary transition-all group"
+          >
+            <div
+              class="flex h-10 w-10 items-center justify-center rounded-full bg-[#A052DB]/10"
+            >
+              <i
+                data-lucide="play"
+                class="w-5 h-5 text-[#A052DB] fill-current"
+              ></i>
+            </div>
+            <span class="font-bold">Apple Podcasts</span>
+          </a>
+          <a
+            href="#"
+            class="flex items-center gap-3 rounded-xl bg-white px-6 py-4 border border-slate-200 shadow-sm hover:shadow-md hover:border-primary transition-all group"
+          >
+            <div
+              class="flex h-10 w-10 items-center justify-center rounded-full bg-[#FF0000]/10"
+            >
+              <i
+                data-lucide="play"
+                class="w-5 h-5 text-[#FF0000] fill-current"
+              ></i>
+            </div>
+            <span class="font-bold">YouTube</span>
+          </a>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200">
+      <div class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+        <div
+          class="rounded-3xl bg-slate-50 p-8 lg:p-12 text-center border border-slate-100"
+        >
+          <h2 class="text-3xl font-black text-slate-900 font-serif italic">
+            Listen, Grow, and Share the Word
+          </h2>
+          <p class="mt-4 text-slate-600">
+            Join our newsletter to receive weekly devotionals and podcast
+            updates directly in your inbox.
+          </p>
+          <div class="mt-8 flex flex-col sm:flex-row justify-center gap-3">
+            <input
+              class="max-w-xs rounded-lg border-slate-200 bg-white px-4 py-2 focus:ring-2 focus:ring-primary/50 outline-none"
+              placeholder="Enter your email"
+              type="email"
+            />
+            <button
+              class="rounded-lg bg-primary px-6 py-3 font-bold text-white hover:bg-primary/90 transition-colors"
+            >
+              Subscribe Now
+            </button>
+          </div>
+        </div>
+
+        <div class="mt-16 grid grid-cols-2 gap-8 md:grid-cols-4 lg:grid-cols-5">
+          <div class="col-span-2 lg:col-span-2">
+            <div class="flex items-center gap-2 mb-6">
+              <div
+                class="flex h-8 w-8 items-center justify-center rounded bg-primary text-white"
+              >
+                <img
+                  src="{% static 'img/logo1.jpg' %}"
+                  class="w-full h-full object-contain"
+                  alt="Watermark"
+                />
+              </div>
+              <span class="text-lg font-bold tracking-tight text-primary"
+                >The Church of Christ(SM)</span
+              >
+            </div>
+            <p class="text-sm text-slate-500 max-w-xs">
+              Connecting people to Christ and each other through the power of
+              the Word.
+            </p>
+            <div class="mt-6 flex gap-4">
+              <a class="text-slate-400 hover:text-primary" href="#"
+                ><i data-lucide="trending-up" class="w-5 h-5"></i
+              ></a>
+              <a class="text-slate-400 hover:text-primary" href="#"
+                ><i data-lucide="share-2" class="w-5 h-5"></i
+              ></a>
+              <a class="text-slate-400 hover:text-primary" href="#"
+                ><i data-lucide="mail" class="w-5 h-5"></i
+              ></a>
+            </div>
+          </div>
+          <div>
+            <h4
+              class="text-sm font-bold text-slate-900 uppercase tracking-wider mb-6"
+            >
+              Podcast
+            </h4>
+            <ul class="space-y-4 text-sm text-slate-500">
+              <li>
+                <a class="hover:text-primary transition-colors" href="#"
+                  >Recent Episodes</a
+                >
+              </li>
+              <li>
+                <a class="hover:text-primary transition-colors" href="#"
+                  >Sermon Archive</a
+                >
+              </li>
+              <li>
+                <a class="hover:text-primary transition-colors" href="#"
+                  >Series List</a
+                >
+              </li>
+              <li>
+                <a class="hover:text-primary transition-colors" href="#"
+                  >Guest Speakers</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h4
+              class="text-sm font-bold text-slate-900 uppercase tracking-wider mb-6"
+            >
+              Church
+            </h4>
+            <ul class="space-y-4 text-sm text-slate-500">
+              <li>
+                <a class="hover:text-primary transition-colors" href="#"
+                  >About Us</a
+                >
+              </li>
+              <li>
+                <a class="hover:text-primary transition-colors" href="#"
+                  >Visit Us</a
+                >
+              </li>
+              <li>
+                <a class="hover:text-primary transition-colors" href="#"
+                  >Connect</a
+                >
+              </li>
+              <li>
+                <a class="hover:text-primary transition-colors" href="#"
+                  >Giving</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h4
+              class="text-sm font-bold text-slate-900 uppercase tracking-wider mb-6"
+            >
+              Legal
+            </h4>
+            <ul class="space-y-4 text-sm text-slate-500">
+              <li>
+                <a class="hover:text-primary transition-colors" href="#"
+                  >Privacy Policy</a
+                >
+              </li>
+              <li>
+                <a class="hover:text-primary transition-colors" href="#"
+                  >Terms of Use</a
+                >
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div
+          class="mt-16 border-t border-slate-100 pt-8 text-center text-xs text-slate-400"
+        >
+          <p>
+            © 2023 The Church of Christ(SM). All rights reserved. Faith comes by
+            hearing.
+          </p>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Persistent Player -->
+    <div
+      id="player-bar"
+      class="fixed bottom-0 left-0 right-0 z-[70] bg-white/95 backdrop-blur-xl border-t border-slate-200 shadow-[0_-10px_40px_-15px_rgba(0,0,0,0.1)] transform translate-y-full transition-transform duration-500 ease-in-out"
+    >
+      <div class="mx-auto max-w-7xl px-4 py-3 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between gap-4">
+          <!-- Episode Info -->
+          <div class="flex items-center gap-3 w-1/3">
+            <div
+              class="h-12 w-12 flex-shrink-0 overflow-hidden rounded-lg bg-slate-100 shadow-sm"
+            >
+              <img
+                id="player-artwork"
+                src=""
+                alt=""
+                class="h-full w-full object-cover"
+              />
+            </div>
+            <div class="hidden sm:block overflow-hidden">
+              <p
+                id="player-title"
+                class="text-sm font-bold text-slate-900 truncate"
+              ></p>
+              <p
+                id="player-speaker"
+                class="text-xs font-medium text-slate-500 truncate"
+              ></p>
+            </div>
+          </div>
+
+          <!-- Controls -->
+          <div class="flex flex-col items-center gap-1.5 flex-grow max-w-md">
+            <div class="flex items-center gap-6">
+              <button
+                class="text-slate-400 hover:text-primary transition-colors"
+              >
+                <i data-lucide="skip-back" class="w-5 h-5 fill-current"></i>
+              </button>
+              <button
+                onclick="togglePlay()"
+                class="flex h-11 w-11 items-center justify-center rounded-full bg-primary text-white shadow-lg shadow-primary/20 hover:scale-110 active:scale-95 transition-all"
+              >
+                <i
+                  data-lucide="play"
+                  id="player-play-icon"
+                  class="w-5 h-5 fill-current ml-0.5"
+                ></i>
+              </button>
+              <button
+                class="text-slate-400 hover:text-primary transition-colors"
+              >
+                <i data-lucide="skip-forward" class="w-5 h-5 fill-current"></i>
+              </button>
+            </div>
+            <div class="w-full flex items-center gap-3">
+              <span
+                id="player-current-time"
+                class="text-[10px] font-bold text-slate-400 w-10 text-right tabular-nums"
+                >0:00</span
+              >
+              <div
+                class="flex-grow h-1.5 bg-slate-100 rounded-full overflow-hidden cursor-pointer relative group"
+              >
+                <div class="absolute inset-0 bg-primary/5 w-full"></div>
+                <div
+                  id="player-progress-fill"
+                  class="absolute inset-y-0 left-0 bg-primary w-0 rounded-full transition-all duration-300 ease-linear"
+                ></div>
+                <!-- Handle -->
+                <div
+                  id="player-progress-handle"
+                  class="absolute top-1/2 -translate-y-1/2 h-3 w-3 bg-white border-2 border-primary rounded-full shadow-sm opacity-0 group-hover:opacity-100 transition-opacity"
+                  style="left: 0%"
+                ></div>
+              </div>
+              <span
+                id="player-duration"
+                class="text-[10px] font-bold text-slate-400 w-10 tabular-nums"
+                >0:00</span
+              >
+            </div>
+          </div>
+
+          <!-- Volume & Extras -->
+          <div class="flex items-center justify-end gap-4 w-1/3">
+            <div class="hidden md:flex items-center gap-2">
+              <button
+                onclick="toggleMute()"
+                class="text-slate-400 hover:text-primary transition-colors"
+              >
+                <i
+                  data-lucide="volume-2"
+                  id="player-volume-icon"
+                  class="w-4.5 h-4.5"
+                ></i>
+              </button>
+              <div
+                class="w-20 h-1 bg-slate-100 rounded-full overflow-hidden cursor-pointer relative"
+              >
+                <div
+                  id="player-volume-bar"
+                  class="absolute inset-y-0 left-0 bg-slate-400 rounded-full"
+                  style="width: 80%"
+                ></div>
+              </div>
+            </div>
+            <button
+              class="text-slate-400 hover:text-primary transition-colors hidden sm:block"
+            >
+              <i data-lucide="heart" class="w-4.5 h-4.5"></i>
+            </button>
+            <button class="text-slate-400 hover:text-primary transition-colors">
+              <i data-lucide="share-2" class="w-4.5 h-4.5"></i>
+            </button>
+            <div class="h-6 w-[1px] bg-slate-200 mx-1"></div>
+            <button
+              onclick="closePlayer()"
+              class="text-slate-400 hover:text-red-500 transition-colors p-1 hover:bg-slate-100 rounded-full"
+            >
+              <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Analytics Modal -->
+    <div
+      id="analytics-modal"
+      class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm"
+    >
+      <div
+        class="bg-white rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl transform transition-all scale-95 opacity-0"
+        id="analytics-content"
+      >
+        <div class="p-8">
+          <div class="flex items-center justify-between mb-8">
+            <h3 class="text-2xl font-black text-slate-900 font-serif">
+              Podcast Analytics
+            </h3>
+            <button
+              onclick="closeAnalytics()"
+              class="text-slate-400 hover:text-red-500 transition-colors"
+            >
+              <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+          </div>
+          <div class="grid grid-cols-2 gap-4 mb-8">
+            <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100">
+              <p
+                class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1"
+              >
+                Total Listens
+              </p>
+              <p class="text-2xl font-black text-primary">12,450</p>
+            </div>
+            <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100">
+              <p
+                class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1"
+              >
+                Avg. Retention
+              </p>
+              <p class="text-2xl font-black text-primary">82%</p>
+            </div>
+            <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100">
+              <p
+                class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1"
+              >
+                Top Region
+              </p>
+              <p class="text-2xl font-black text-primary">North Am.</p>
+            </div>
+            <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100">
+              <p
+                class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1"
+              >
+                Shares
+              </p>
+              <p class="text-2xl font-black text-primary">1.2k</p>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <p
+              class="text-xs font-bold text-slate-400 uppercase tracking-widest"
+            >
+              Top Performing Episodes
+            </p>
+            <div
+              class="flex items-center justify-between p-3 bg-primary/5 rounded-xl"
+            >
+              <span class="text-sm font-bold text-slate-700"
+                >1. Power of Grace</span
+              >
+              <span class="text-xs font-black text-primary">4.2k</span>
+            </div>
+            <div
+              class="flex items-center justify-between p-3 bg-slate-50 rounded-xl"
+            >
+              <span class="text-sm font-bold text-slate-700"
+                >2. Walking in Wisdom</span
+              >
+              <span class="text-xs font-black text-slate-400">2.1k</span>
+            </div>
+          </div>
+        </div>
+        <div class="bg-slate-50 p-6 text-center border-t border-slate-100">
+          <button
+            onclick="closeAnalytics()"
+            class="w-full py-3 bg-primary text-white font-bold rounded-xl shadow-lg shadow-primary/20 hover:scale-[1.02] transition-all"
+          >
+            Close Dashboard
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Share Modal -->
+    <div
+      id="share-modal"
+      class="fixed inset-0 z-[110] hidden flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm"
+    >
+      <div
+        class="bg-white rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl transform transition-all scale-95 opacity-0"
+        id="share-content"
+      >
+        <div class="p-8">
+          <div class="flex items-center justify-between mb-6">
+            <h3 class="text-xl font-black text-slate-900 font-serif">
+              Share Episode
+            </h3>
+            <button
+              onclick="closeShare()"
+              class="text-slate-400 hover:text-red-500 transition-colors"
+            >
+              <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+          </div>
+          <p
+            id="share-episode-title"
+            class="text-sm font-bold text-slate-600 mb-6 line-clamp-1"
+          ></p>
+          <div class="grid grid-cols-5 gap-2 mb-8">
+            <button
+              onclick="shareTo('twitter')"
+              class="flex flex-col items-center gap-2 group"
+            >
+              <div
+                class="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-sky-50 group-hover:text-sky-500 transition-all"
+              >
+                <i data-lucide="twitter" class="w-4 h-4"></i>
+              </div>
+              <span
+                class="text-[9px] font-bold text-slate-400 group-hover:text-slate-600"
+                >Twitter</span
+              >
+            </button>
+            <button
+              onclick="shareTo('facebook')"
+              class="flex flex-col items-center gap-2 group"
+            >
+              <div
+                class="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-blue-50 group-hover:text-blue-600 transition-all"
+              >
+                <i data-lucide="facebook" class="w-4 h-4"></i>
+              </div>
+              <span
+                class="text-[9px] font-bold text-slate-400 group-hover:text-slate-600"
+                >Facebook</span
+              >
+            </button>
+            <button
+              onclick="shareTo('whatsapp')"
+              class="flex flex-col items-center gap-2 group"
+            >
+              <div
+                class="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-emerald-50 group-hover:text-emerald-500 transition-all"
+              >
+                <i data-lucide="message-circle" class="w-4 h-4"></i>
+              </div>
+              <span
+                class="text-[9px] font-bold text-slate-400 group-hover:text-slate-600"
+                >WhatsApp</span
+              >
+            </button>
+            <button
+              onclick="shareTo('mail')"
+              class="flex flex-col items-center gap-2 group"
+            >
+              <div
+                class="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-red-50 group-hover:text-red-500 transition-all"
+              >
+                <i data-lucide="mail" class="w-4 h-4"></i>
+              </div>
+              <span
+                class="text-[9px] font-bold text-slate-400 group-hover:text-slate-600"
+                >Email</span
+              >
+            </button>
+            <button
+              onclick="copyLink()"
+              class="flex flex-col items-center gap-2 group"
+            >
+              <div
+                id="copy-icon-container"
+                class="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-emerald-50 group-hover:text-emerald-500 transition-all"
+              >
+                <i data-lucide="link" class="w-4 h-4"></i>
+              </div>
+              <span
+                class="text-[9px] font-bold text-slate-400 group-hover:text-slate-600"
+                >Copy</span
+              >
+            </button>
+          </div>
+          <div class="relative">
+            <input
+              id="share-link-input"
+              type="text"
+              readonly
+              class="w-full bg-slate-50 border border-slate-100 rounded-xl py-3 px-4 text-xs font-mono text-slate-500 pr-12 focus:outline-none"
+            />
+            <button
+              onclick="copyLink()"
+              class="absolute right-3 top-1/2 -translate-y-1/2 text-primary hover:text-primary-dark transition-colors"
+            >
+              <i data-lucide="copy" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const IMAGES = {
+        pastorHero:
+          "https://lh3.googleusercontent.com/aida-public/AB6AXuCyzIUdYXXHjccr8_Uj_k8ZTcmd4ZJBb8H73t6Gx6Ir7v6dmddoQDa6Mm5BGO9rbPTZTUKlZ8JMbZ2uk3rZYB2RxxjIsD4vl-dB6CJ5YMeRD_Qu_no79vbMWODsXVvpORPQyPAvzoG7lPIEGb6YGENtsbKVfdsGkcK2q8EyYEsoLQTmRvXXCCU3BLOTtMRd5MoJRQpnEeEg2y8MCqFqp5fHrmSVLMSsJdFDBHcM0XkcBH-2J4q2uWnd218ZIx5H4KivcJ0STK8vKA",
+        pastorPortrait:
+          "https://lh3.googleusercontent.com/aida-public/AB6AXuDPXbSKZx7yFPqn6OrjJk2n36JrNd4sL0LEXbQqSeFUbYFYG4hvnu9jiMBD7DAwtsc26CQdNrNvlL9qG9q-F8kdQtinr7QZro7wTCEvd3cIsVahWU6FfHxXu_Q7NcmkOiBU0-r6D39VTLFoDWYkOT0JHFnQ66bbMzdl8NfKTfEKQh24rBq8Lp3TZiqFQa5QpXMzjTHTRhUFnbTKLYy-5Zr1jh4sJVPtie4vg4pyHoiqnF6k9GsufJrC1_xaxkNrcH-7MitfgdDB1Q",
+        sarah:
+          "https://lh3.googleusercontent.com/aida-public/AB6AXuBeV1jJgs7NwS_V4KyUTcl1P4QN9DlBlx2JaUizyY6Y0Iwyc2C9IIxp5kjvnbul11m8KJmb-FVUpZx7DN9KCR01fEhfVFC49zY9bIi-KJXzSAXMmpwBEf2FjkB17DggAIfjNNZ3FAr2-vBxElKIh1kY5kamuZWRA-0YWTbgaVpIjP2-LlY4N6fWCbNQs7Hgo9wWfPlxaRwNShNkjbRMXIOatEFNdHUlWnyNi0hbWM4N9Uxu8sIfx0mZLroatBCOMkqZOqEE_YnHhw",
+        mark: "https://lh3.googleusercontent.com/aida-public/AB6AXuDq95tiQftQg-o5gEqPKrjpkCwFxGC2tumA2KKKooSiWe3andho5PtdoSb3g5OfDnxXkvkpuuW2dN3wHGgcgJWMlkFXoYpF0GfniyDxUFhHtVQOTUZJiTUl4F4-q_U8DSQ0pVgrJX1MCa8wrIKnENsYxB9no60SuKk9ZNSyuIVfhwucXlB7-DRW_C4j01GKqms1ki52ei-vmD-OkCVNUmGbpfaTonKIkqUyarcquljvk8lQW4WDC2EfsVLzryVyB1hhCHZvyKa_9Q",
+        emily:
+          "https://lh3.googleusercontent.com/aida-public/AB6AXuA3pTik64C2w_rdtxp1-c4AqH05_Ps1R-d6TOorWibDieNICXxpggm7nKpu4YeY9Y_nTIjv4KzXe7wKJkLGq7mPP9gF_Gau8jaP3NutXfPSGly12Tf8_wMY9t39aLJTKENMCyMkgJ2KZKRtlizozH-b7z3LAC-aA6DVshn3HR7LjrOZWh7VFHLI4GJJcSQUGQ_ILgGgcgsvkGS-M-hxnHcGTULynOOYTxr4mnQ7TKaj4v8eWSvXEqsp7EAfh5EhIunvGQXRCVVxFw",
+      };
+
+      const EPISODES = [
+        {
+          id: 1,
+          title: "Walking in Wisdom",
+          speaker: "Sarah Jenkins",
+          duration: "32 mins",
+          date: "Oct 20, 2023",
+          category: "Bible Study",
+          image: IMAGES.sarah,
+          isNew: true,
+          likes: "128",
+          views: "1.2k",
+        },
+        {
+          id: 2,
+          title: "Faith in a Digital Age",
+          speaker: "Mark Wilson",
+          duration: "28 mins",
+          date: "Oct 15, 2023",
+          category: "Youth",
+          image: IMAGES.mark,
+          isNew: false,
+          likes: "128",
+          views: "1.2k",
+        },
+        {
+          id: 3,
+          title: "Mental Health & The Gospel",
+          speaker: "Dr. Emily Thorne",
+          duration: "52 mins",
+          date: "Oct 10, 2023",
+          category: "Special Programs",
+          image: IMAGES.emily,
+          isNew: false,
+          likes: "128",
+          views: "1.2k",
+        },
+        {
+          id: 4,
+          title: "The Joy of Service",
+          speaker: "Pastor John Doe",
+          duration: "40 mins",
+          date: "Oct 05, 2023",
+          category: "Sermons",
+          image: IMAGES.pastorHero,
+          isNew: false,
+          likes: "245",
+          views: "3.1k",
+          shares: "89",
+        },
+        {
+          id: 5,
+          title: "Finding Peace in Chaos",
+          speaker: "Sarah Jenkins",
+          duration: "35 mins",
+          date: "Sep 28, 2023",
+          category: "Prayer",
+          image: IMAGES.sarah,
+          isNew: false,
+          likes: "189",
+          views: "2.4k",
+          shares: "56",
+        },
+        {
+          id: 6,
+          title: "Understanding Parables",
+          speaker: "Mark Wilson",
+          duration: "45 mins",
+          date: "Sep 21, 2023",
+          category: "Bible Study",
+          image: IMAGES.mark,
+          isNew: false,
+          likes: "156",
+          views: "1.8k",
+          shares: "42",
+        },
+        {
+          id: 7,
+          title: "The Heart of Worship",
+          speaker: "Sarah Jenkins",
+          duration: "30 mins",
+          date: "Sep 14, 2023",
+          category: "Sermons",
+          image: IMAGES.sarah,
+          isNew: false,
+          likes: "312",
+          views: "4.5k",
+          shares: "124",
+        },
+        {
+          id: 8,
+          title: "Youth & Identity",
+          speaker: "Mark Wilson",
+          duration: "25 mins",
+          date: "Sep 07, 2023",
+          category: "Youth",
+          image: IMAGES.mark,
+          isNew: false,
+          likes: "201",
+          views: "2.9k",
+          shares: "78",
+        },
+        {
+          id: 9,
+          title: "Daily Devotionals",
+          speaker: "Dr. Emily Thorne",
+          duration: "15 mins",
+          date: "Aug 31, 2023",
+          category: "Bible Study",
+          image: IMAGES.emily,
+          isNew: false,
+          likes: "145",
+          views: "1.5k",
+          shares: "34",
+        },
+        {
+          id: 10,
+          title: "The Power of Prayer",
+          speaker: "Pastor John Doe",
+          duration: "38 mins",
+          date: "Aug 24, 2023",
+          category: "Prayer",
+          image: IMAGES.pastorHero,
+          isNew: false,
+          likes: "276",
+          views: "3.8k",
+          shares: "92",
+        },
+        {
+          id: 11,
+          title: "Living with Purpose",
+          speaker: "Sarah Jenkins",
+          duration: "42 mins",
+          date: "Aug 17, 2023",
+          category: "Sermons",
+          image: IMAGES.sarah,
+          isNew: false,
+          likes: "198",
+          views: "2.6k",
+          shares: "64",
+        },
+        {
+          id: 12,
+          title: "Overcoming Fear",
+          speaker: "Mark Wilson",
+          duration: "33 mins",
+          date: "Aug 10, 2023",
+          category: "Special Programs",
+          image: IMAGES.mark,
+          isNew: false,
+          likes: "215",
+          views: "3.2k",
+          shares: "81",
+        },
+        {
+          id: 13,
+          title: "Grace Abounds",
+          speaker: "Dr. Emily Thorne",
+          duration: "48 mins",
+          date: "Aug 03, 2023",
+          category: "Bible Study",
+          image: IMAGES.emily,
+          isNew: false,
+          likes: "167",
+          views: "1.9k",
+          shares: "45",
+        },
+        {
+          id: 14,
+          title: "The Call to Discipleship",
+          speaker: "Pastor John Doe",
+          duration: "55 mins",
+          date: "Jul 27, 2023",
+          category: "Sermons",
+          image: IMAGES.pastorHero,
+          isNew: false,
+          likes: "342",
+          views: "5.1k",
+          shares: "156",
+        },
+        {
+          id: 15,
+          title: "Finding Hope",
+          speaker: "Sarah Jenkins",
+          duration: "29 mins",
+          date: "Jul 20, 2023",
+          category: "Prayer",
+          image: IMAGES.sarah,
+          isNew: false,
+          likes: "184",
+          views: "2.3k",
+          shares: "52",
+        },
+      ];
+
+      const POPULAR = [
+        { title: "Divine Purpose", listens: "2.4k", image: IMAGES.pastorHero },
+        { title: "Walking in Faith", listens: "1.8k", image: IMAGES.mark },
+        { title: "Renewed Mindset", listens: "1.5k", image: IMAGES.emily },
+        { title: "Gospel Truths", listens: "1.2k", image: IMAGES.sarah },
+      ];
+
+      const TESTIMONIALS = [
+        {
+          text: "This podcast has become my morning routine. The episode on 'Grace' was exactly what I needed to hear today.",
+          author: "James D.",
+          location: "London, UK",
+          initials: "JD",
+        },
+        {
+          text: "I love the 'Bible Study' series. Sarah explains things in such a relatable way. Highly recommend!",
+          author: "Sarah R.",
+          location: "Texas, USA",
+          initials: "SR",
+        },
+        {
+          text: "Thank you for making this publicly accessible. As someone without a local church, this is my home.",
+          author: "Michael K.",
+          location: "Toronto, CA",
+          initials: "MK",
+        },
+      ];
+
+      let state = {
+        activeCategory: "All",
+        searchQuery: "",
+        currentEpisode: null,
+        isPlaying: false,
+        hasStartedPlaying: false,
+        volume: 80,
+        isMuted: false,
+        currentTime: 0,
+        durationSeconds: 1800, // Default 30 mins
+        visibleEpisodesCount: 3,
+        likedEpisodes: JSON.parse(
+          localStorage.getItem("likedEpisodes") || "[]",
+        ),
+      };
+
+      let progressInterval = null;
+
+      function formatTime(seconds) {
+        const mins = Math.floor(seconds / 60);
+        const secs = Math.floor(seconds % 60);
+        return `${mins}:${secs.toString().padStart(2, "0")}`;
+      }
+
+      function parseDuration(durationStr) {
+        const match = durationStr.match(/(\d+)/);
+        return match ? parseInt(match[1]) * 60 : 1800;
+      }
+
+      function renderEpisodes() {
+        const list = document.getElementById("episodes-list");
+        const loadMoreContainer = document.getElementById(
+          "load-more-container",
+        );
+        const loadMoreBtn = document.getElementById("load-more-btn");
+        const showLessBtn = document.getElementById("show-less-btn");
+        list.innerHTML = "";
+
+        let filtered = EPISODES;
+
+        // Category Filter
+        if (state.activeCategory !== "All") {
+          filtered = filtered.filter(
+            (ep) => ep.category === state.activeCategory,
+          );
         }
 
-        function playEpisode(ep) {
-          currentEpisode = ep;
-          nowImg.src = ep.imageUrl;
-          nowTitle.innerText = ep.title;
-          nowSpeaker.innerText = ep.speaker;
-          audio.src = ep.audioUrl;
-          playerBar.classList.add("show");
-          audio
-            .play()
-            .then(() => {
-              isPlaying = true;
-              playIcon.className = "fa-solid fa-pause";
-            })
-            .catch(() => {});
+        // Search Filter
+        if (state.searchQuery) {
+          const query = state.searchQuery.toLowerCase();
+          filtered = filtered.filter(
+            (ep) =>
+              ep.title.toLowerCase().includes(query) ||
+              ep.speaker.toLowerCase().includes(query) ||
+              ep.date.toLowerCase().includes(query),
+          );
         }
 
-        playBtn.addEventListener("click", () => {
-          if (!currentEpisode) return;
-          if (isPlaying) {
-            audio.pause();
-            playIcon.className = "fa-solid fa-play";
+        const totalFiltered = filtered.length;
+        const displayList = filtered.slice(0, state.visibleEpisodesCount);
+
+        if (totalFiltered === 0) {
+          list.innerHTML = `
+                    <div class="text-center py-12 bg-white rounded-2xl border border-dashed border-slate-200">
+                        <p class="text-slate-400 font-medium">No episodes found matching your criteria.</p>
+                        <button onclick="clearFilters()" class="mt-4 text-primary font-bold text-sm hover:underline">Clear all filters</button>
+                    </div>
+                `;
+          loadMoreContainer.classList.add("hidden");
+          return;
+        }
+
+        loadMoreContainer.classList.remove("hidden");
+
+        // Toggle Load More vs Show Less
+        if (state.visibleEpisodesCount >= totalFiltered) {
+          loadMoreBtn.classList.add("hidden");
+          // Only show "Show Less" if we actually loaded more than the initial 3
+          if (state.visibleEpisodesCount > 3) {
+            showLessBtn.classList.remove("hidden");
           } else {
-            audio.play();
-            playIcon.className = "fa-solid fa-pause";
+            showLessBtn.classList.add("hidden");
           }
-          isPlaying = !isPlaying;
-        });
+        } else {
+          loadMoreBtn.classList.remove("hidden");
+          showLessBtn.classList.add("hidden");
+        }
 
-        audio.addEventListener("timeupdate", () => {
-          if (audio.duration)
-            progressFill.style.width =
-              (audio.currentTime / audio.duration) * 100 + "%";
-        });
+        displayList.forEach((ep) => {
+          const isCurrent =
+            state.currentEpisode &&
+            state.currentEpisode.id === ep.id &&
+            state.isPlaying;
+          const isLiked = state.likedEpisodes.includes(ep.id);
+          const baseLikes = parseInt(ep.likes.replace(/[^0-9]/g, "")) || 0;
+          const displayLikes = isLiked ? baseLikes + 1 : baseLikes;
 
-        audio.addEventListener("ended", () => {
-          playIcon.className = "fa-solid fa-play";
-          isPlaying = false;
+          const div = document.createElement("div");
+          div.className =
+            "group flex items-center gap-6 p-5 rounded-2xl bg-white border border-slate-100 hover:border-primary/20 hover:bg-slate-50/50 hover:shadow-xl hover:shadow-primary/5 transition-all duration-300";
+          div.innerHTML = `
+                    <div class="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-xl bg-slate-100 shadow-inner group-hover:scale-105 transition-transform duration-500">
+                        <div class="h-full w-full bg-cover bg-center" style="background-image: url('${ep.image}')"></div>
+                        <div class="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                            <i data-lucide="mic" class="text-white w-6 h-6"></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow">
+                        <div class="flex items-center mb-1">
+                            ${ep.isNew ? '<span class="bg-red-600 text-white text-[8px] font-black px-1.5 py-0.5 rounded-sm animate-pulse mr-2">NEW</span>' : ""}
+                        </div>
+                        <div class="flex items-center gap-3 mb-1.5">
+                            <span class="text-[10px] font-extrabold text-primary uppercase tracking-[0.15em] bg-primary/5 px-2 py-0.5 rounded">${ep.category}</span>
+                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">${ep.date}</span>
+                        </div>
+                        <h4 class="text-lg font-bold text-slate-900 group-hover:text-primary transition-colors">${ep.title}</h4>
+                        <p class="text-sm text-slate-500 font-medium mt-0.5">${ep.speaker} • ${ep.duration}</p>
+                    </div>
+                    <div class="flex items-center gap-4 pr-2">
+                        <div class="flex items-center gap-4 mr-4 text-slate-400 opacity-0 group-hover:opacity-100 translate-x-4 group-hover:translate-x-0 transition-all duration-500 ease-out">
+                            <div class="flex flex-col items-center">
+                                <button onclick="toggleLike(${ep.id})" class="transition-colors ${isLiked ? "text-red-500" : "hover:text-red-500"}">
+                                    <i data-lucide="heart" class="w-3.5 h-3.5 ${isLiked ? "fill-current" : ""}"></i>
+                                </button>
+                                <span class="text-[9px] font-bold mt-1">${displayLikes}</span>
+                            </div>
+                            <div class="flex flex-col items-center">
+                                <i data-lucide="eye" class="w-3.5 h-3.5 hover:text-primary cursor-pointer transition-colors"></i>
+                                <span class="text-[9px] font-bold mt-1">${ep.views}</span>
+                            </div>
+                            <div class="flex flex-col items-center">
+                                <i data-lucide="share-2" class="w-3.5 h-3.5 hover:text-primary cursor-pointer transition-colors"></i>
+                                <span class="text-[9px] font-bold mt-1">${ep.shares || "0"}</span>
+                            </div>
+                        </div>
+                        <button onclick="playEpisode(${ep.id})" class="flex h-11 w-11 items-center justify-center rounded-full bg-primary/5 text-primary hover:bg-primary hover:text-white transition-all shadow-sm hover:scale-110 active:scale-95">
+                            <i data-lucide="${isCurrent ? "pause" : "play"}" class="w-5 h-5 fill-current ${isCurrent ? "" : "ml-0.5"}"></i>
+                        </button>
+                        <button onclick="openShare(${ep.id})" class="flex h-11 w-11 items-center justify-center rounded-full border border-slate-100 text-slate-400 hover:text-primary transition-all hover:bg-white">
+                            <i data-lucide="share-2" class="w-4.5 h-4.5"></i>
+                        </button>
+                        <button onclick="downloadEpisode(${ep.id})" class="flex h-11 w-11 items-center justify-center rounded-full border border-slate-100 text-slate-400 hover:text-primary transition-all hover:bg-white">
+                            <i data-lucide="download" class="w-4.5 h-4.5"></i>
+                        </button>
+                    </div>
+                `;
+          list.appendChild(div);
         });
+        lucide.createIcons();
+      }
 
-        closePlayerBtn.addEventListener("click", () => {
-          playerBar.classList.remove("show");
-          audio.pause();
-          isPlaying = false;
-          playIcon.className = "fa-solid fa-play";
-        });
-
-        document.querySelectorAll(".pill").forEach((btn) => {
-          btn.addEventListener("click", () => {
-            document
-              .querySelectorAll(".pill")
-              .forEach((b) => b.classList.remove("active"));
-            btn.classList.add("active");
-            currentCategory = btn.dataset.cat;
-            displayedCount = 6;
-            renderEpisodes();
-          });
-        });
-
-        sortSelect.addEventListener("change", () => {
-          displayedCount = 6;
-          renderEpisodes();
-        });
-
-        loadMoreBtn.addEventListener("click", () => {
-          displayedCount += 6;
-          renderEpisodes();
-        });
-
+      function toggleLike(id) {
+        const index = state.likedEpisodes.indexOf(id);
+        if (index === -1) {
+          state.likedEpisodes.push(id);
+        } else {
+          state.likedEpisodes.splice(index, 1);
+        }
+        localStorage.setItem(
+          "likedEpisodes",
+          JSON.stringify(state.likedEpisodes),
+        );
         renderEpisodes();
-      })();
+        updateFeaturedLikeUI();
+      }
+
+      function updateFeaturedLikeUI() {
+        const isLiked = state.likedEpisodes.includes("featured");
+        const likeBtn = document.getElementById("featured-like-btn");
+        const likeIcon = document.getElementById("featured-like-icon");
+        const likeCount = document.getElementById("featured-like-count");
+
+        const baseLikes = 1240; // Base likes for featured
+        const displayLikes = isLiked ? baseLikes + 1 : baseLikes;
+
+        if (likeBtn && likeIcon && likeCount) {
+          likeCount.innerText = displayLikes;
+          if (isLiked) {
+            likeIcon.classList.add("fill-current", "text-red-500");
+            likeBtn.classList.add("text-red-500");
+          } else {
+            likeIcon.classList.remove("fill-current", "text-red-500");
+            likeBtn.classList.remove("text-red-500");
+          }
+          lucide.createIcons();
+        }
+      }
+
+      function loadMore() {
+        const btn = document.getElementById("load-more-btn");
+        const originalContent = btn.innerHTML;
+        btn.innerHTML =
+          '<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> Loading...';
+        lucide.createIcons();
+
+        setTimeout(() => {
+          state.visibleEpisodesCount += 6;
+          renderEpisodes();
+          btn.innerHTML = originalContent;
+          lucide.createIcons();
+        }, 800);
+      }
+
+      function showLess() {
+        state.visibleEpisodesCount = 3;
+        renderEpisodes();
+        // Scroll back to episodes section for better UX
+        document
+          .getElementById("recent-episodes")
+          .scrollIntoView({ behavior: "smooth" });
+      }
+
+      function viewAnalytics() {
+        const modal = document.getElementById("analytics-modal");
+        const content = document.getElementById("analytics-content");
+        modal.classList.remove("hidden");
+        setTimeout(() => {
+          content.classList.remove("scale-95", "opacity-0");
+          content.classList.add("scale-100", "opacity-100");
+        }, 10);
+        lucide.createIcons();
+      }
+
+      function closeAnalytics() {
+        const modal = document.getElementById("analytics-modal");
+        const content = document.getElementById("analytics-content");
+        content.classList.add("scale-95", "opacity-0");
+        content.classList.remove("scale-100", "opacity-100");
+        setTimeout(() => {
+          modal.classList.add("hidden");
+        }, 300);
+      }
+
+      function openShare(id) {
+        const ep = EPISODES.find((e) => e.id === id) || {
+          title: "The Church of Christ(SM) Podcast",
+        };
+        const modal = document.getElementById("share-modal");
+        const content = document.getElementById("share-content");
+        const titleEl = document.getElementById("share-episode-title");
+        const inputEl = document.getElementById("share-link-input");
+
+        titleEl.innerText = ep.title;
+        inputEl.value = `${window.location.origin}/episode/${id}`;
+
+        modal.classList.remove("hidden");
+        setTimeout(() => {
+          content.classList.remove("scale-95", "opacity-0");
+          content.classList.add("scale-100", "opacity-100");
+        }, 10);
+        lucide.createIcons();
+      }
+
+      function closeShare() {
+        const modal = document.getElementById("share-modal");
+        const content = document.getElementById("share-content");
+        content.classList.add("scale-95", "opacity-0");
+        content.classList.remove("scale-100", "opacity-100");
+        setTimeout(() => {
+          modal.classList.add("hidden");
+        }, 300);
+      }
+
+      function shareTo(platform) {
+        const title = document.getElementById("share-episode-title").innerText;
+        const url = document.getElementById("share-link-input").value;
+        const text = `Check out this episode: ${title}`;
+
+        let shareUrl = "";
+        switch (platform) {
+          case "twitter":
+            shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
+            break;
+          case "facebook":
+            shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
+            break;
+          case "whatsapp":
+            shareUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(text + " " + url)}`;
+            break;
+          case "mail":
+            shareUrl = `mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(text + "\n" + url)}`;
+            break;
+        }
+
+        if (shareUrl) window.open(shareUrl, "_blank");
+      }
+
+      function copyLink() {
+        const input = document.getElementById("share-link-input");
+        input.select();
+        document.execCommand("copy");
+
+        const iconContainer = document.getElementById("copy-icon-container");
+        const originalHtml = iconContainer.innerHTML;
+
+        iconContainer.innerHTML = '<i data-lucide="check" class="w-5 h-5"></i>';
+        iconContainer.classList.remove("text-slate-400");
+        iconContainer.classList.add("text-emerald-500", "bg-emerald-50");
+        lucide.createIcons();
+
+        setTimeout(() => {
+          iconContainer.innerHTML = originalHtml;
+          iconContainer.classList.add("text-slate-400");
+          iconContainer.classList.remove("text-emerald-500", "bg-emerald-50");
+          lucide.createIcons();
+        }, 2000);
+      }
+
+      function renderPopular() {
+        const grid = document.getElementById("popular-grid");
+        grid.innerHTML = POPULAR.map(
+          (item) => `
+                <div class="group cursor-pointer">
+                    <div class="relative aspect-video rounded-xl overflow-hidden mb-3 shadow-sm">
+                        <img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src="${item.image}">
+                        <div class="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors flex items-center justify-center">
+                            <i data-lucide="play-circle" class="text-white opacity-0 group-hover:opacity-100 transition-opacity w-8 h-8"></i>
+                        </div>
+                    </div>
+                    <p class="text-sm font-bold truncate text-slate-900">${item.title}</p>
+                    <p class="text-[10px] text-slate-500">${item.listens} Listens</p>
+                </div>
+            `,
+        ).join("");
+        lucide.createIcons();
+      }
+
+      function renderTestimonials() {
+        const grid = document.getElementById("testimonials-grid");
+        grid.innerHTML = TESTIMONIALS.map(
+          (t) => `
+                <div class="p-6 rounded-2xl bg-white border border-slate-100 shadow-sm hover:shadow-md transition-all">
+                    <div class="flex gap-1 text-accent-gold mb-4">
+                        <i data-lucide="star" class="w-3.5 h-3.5 fill-current"></i>
+                        <i data-lucide="star" class="w-3.5 h-3.5 fill-current"></i>
+                        <i data-lucide="star" class="w-3.5 h-3.5 fill-current"></i>
+                        <i data-lucide="star" class="w-3.5 h-3.5 fill-current"></i>
+                        <i data-lucide="star" class="w-3.5 h-3.5 fill-current"></i>
+                    </div>
+                    <p class="text-slate-600 text-sm italic">"${t.text}"</p>
+                    <div class="mt-6 flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xs">${t.initials}</div>
+                        <div>
+                            <p class="text-xs font-bold">${t.author}</p>
+                            <p class="text-[10px] text-slate-500">${t.location}</p>
+                        </div>
+                    </div>
+                </div>
+            `,
+        ).join("");
+        lucide.createIcons();
+      }
+
+      function updatePlayerUI() {
+        if (!state.currentEpisode) return;
+
+        document.getElementById("player-artwork").src =
+          state.currentEpisode.image;
+        document.getElementById("player-title").innerText =
+          state.currentEpisode.title;
+        document.getElementById("player-speaker").innerText =
+          state.currentEpisode.speaker;
+        document.getElementById("player-duration").innerText =
+          state.currentEpisode.duration;
+
+        // Show/Hide Player Bar
+        const playerBar = document.getElementById("player-bar");
+        if (state.hasStartedPlaying) {
+          playerBar.classList.remove("translate-y-full");
+          playerBar.classList.add("translate-y-0");
+        } else {
+          playerBar.classList.add("translate-y-full");
+          playerBar.classList.remove("translate-y-0");
+        }
+
+        // Update Progress
+        const progressPercent =
+          (state.currentTime / state.durationSeconds) * 100;
+        document.getElementById("player-progress-fill").style.width =
+          `${progressPercent}%`;
+        document.getElementById("player-progress-handle").style.left =
+          `${progressPercent}%`;
+        document.getElementById("player-current-time").innerText = formatTime(
+          state.currentTime,
+        );
+
+        const playIcon = document.getElementById("player-play-icon");
+        playIcon.setAttribute(
+          "data-lucide",
+          state.isPlaying ? "pause" : "play",
+        );
+
+        // Featured section update
+        const featuredPlayIcon = document.getElementById("featured-play-icon");
+        const featuredPlayText = document.getElementById("featured-play-text");
+        const isFeaturedPlaying =
+          state.currentEpisode.id === "featured" && state.isPlaying;
+
+        featuredPlayIcon.setAttribute(
+          "data-lucide",
+          isFeaturedPlaying ? "pause" : "play",
+        );
+        featuredPlayText.innerText = isFeaturedPlaying
+          ? "Now Playing"
+          : "Listen Now";
+
+        const volumeIcon = document.getElementById("player-volume-icon");
+        volumeIcon.setAttribute(
+          "data-lucide",
+          state.isMuted ? "volume-x" : "volume-2",
+        );
+        document.getElementById("player-volume-bar").style.width = state.isMuted
+          ? "0%"
+          : `${state.volume}%`;
+
+        lucide.createIcons();
+        renderEpisodes();
+      }
+
+      function startProgress() {
+        if (progressInterval) clearInterval(progressInterval);
+        progressInterval = setInterval(() => {
+          if (state.isPlaying) {
+            state.currentTime += 1;
+            if (state.currentTime >= state.durationSeconds) {
+              state.currentTime = 0;
+              state.isPlaying = false;
+              clearInterval(progressInterval);
+            }
+            updatePlayerUI();
+          }
+        }, 1000);
+      }
+
+      function playEpisode(id) {
+        let newEpisode;
+        if (id === "featured") {
+          newEpisode = {
+            id: "featured",
+            title: "The Power of Unconditional Grace",
+            speaker: "Pastor John Doe",
+            duration: "45 mins",
+            image: IMAGES.pastorHero,
+          };
+        } else {
+          newEpisode = EPISODES.find((e) => e.id === id);
+        }
+
+        if (state.currentEpisode && state.currentEpisode.id === newEpisode.id) {
+          state.isPlaying = !state.isPlaying;
+        } else {
+          state.currentEpisode = newEpisode;
+          state.isPlaying = true;
+          state.hasStartedPlaying = true;
+          state.currentTime = 0;
+          state.durationSeconds = parseDuration(newEpisode.duration);
+        }
+
+        if (state.isPlaying) {
+          startProgress();
+        } else {
+          if (progressInterval) clearInterval(progressInterval);
+        }
+
+        updatePlayerUI();
+      }
+
+      function togglePlay() {
+        state.isPlaying = !state.isPlaying;
+        if (state.isPlaying) {
+          startProgress();
+        } else {
+          if (progressInterval) clearInterval(progressInterval);
+        }
+        updatePlayerUI();
+      }
+
+      function toggleMute() {
+        state.isMuted = !state.isMuted;
+        updatePlayerUI();
+      }
+
+      function closePlayer() {
+        state.isPlaying = false;
+        state.hasStartedPlaying = false;
+        if (progressInterval) clearInterval(progressInterval);
+        updatePlayerUI();
+      }
+
+      function downloadEpisode(id) {
+        const ep = EPISODES.find((e) => e.id === id) || {
+          title: "Featured Episode",
+        };
+        // Simulate download
+        const btn = event.currentTarget;
+        const originalContent = btn.innerHTML;
+
+        btn.innerHTML =
+          '<i data-lucide="loader-2" class="w-4.5 h-4.5 animate-spin"></i>';
+        lucide.createIcons();
+
+        setTimeout(() => {
+          btn.innerHTML =
+            '<i data-lucide="check" class="w-4.5 h-4.5 text-green-500"></i>';
+          lucide.createIcons();
+          console.log(`Downloading: ${ep.title}`);
+
+          setTimeout(() => {
+            btn.innerHTML = originalContent;
+            lucide.createIcons();
+          }, 2000);
+        }, 1500);
+      }
+
+      function setCategory(cat) {
+        state.activeCategory = cat;
+        const btns = document.querySelectorAll(".cat-btn");
+        btns.forEach((btn) => {
+          if (btn.innerText === cat) {
+            btn.classList.add("bg-primary", "text-white");
+            btn.classList.remove(
+              "bg-white",
+              "text-slate-600",
+              "border",
+              "border-slate-200",
+            );
+          } else {
+            btn.classList.remove("bg-primary", "text-white");
+            btn.classList.add(
+              "bg-white",
+              "text-slate-600",
+              "border",
+              "border-slate-200",
+            );
+          }
+        });
+        renderEpisodes();
+      }
+
+      function handleSearch(query) {
+        state.searchQuery = query;
+        renderEpisodes();
+      }
+
+      function clearFilters() {
+        state.searchQuery = "";
+        state.activeCategory = "All";
+        document.getElementById("search-input").value = "";
+        setCategory("All");
+      }
+
+      window.onload = () => {
+        lucide.createIcons();
+        renderEpisodes();
+        renderPopular();
+        renderTestimonials();
+        updatePlayerUI();
+        updateFeaturedLikeUI();
+      };
     </script>
   </body>
 </html>
