@@ -1,0 +1,7 @@
+church_website/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+env/
+db.sqlite3
