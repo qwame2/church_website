@@ -1852,10 +1852,9 @@
           //   pages: 324,
           // },
           {
-            title: "The Screwtape Letters",
-            author: "C.S. Lewis",
-            cover:
-              "https://images.unsplash.com/photo-1544947950-fa07a98d237f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+            title: "The Legacy of Most Rev. Dr. Ing. Daniel Kojo Gyampa Markin",
+            author: "Unknown",
+            cover: "{%static 'img/Books/MostRev.png'%}",
             type: "mystery",
             format: "E-book",
             category: "Christian Mystery",
@@ -1863,7 +1862,7 @@
             featured: true,
             hasAudio: false,
             hasEbook: true,
-            ebookFile: "{% static 'ebooks/screwtape-letters.pdf' %}",
+            ebookFile: "{% static 'ebooks/MostRev.pdf' %}",
             pages: 209,
           },
           {
@@ -1974,7 +1973,7 @@
             readers: 876,
             hasAudio: false,
             hasEbook: true,
-            ebookFile: "{% static 'ebooks/art-of-peace.pdf' %}",
+            ebookFile: "{% static 'ebooks/' %}",
             pages: 245,
             description: "A guide to finding peace through faith and prayer.",
           },
@@ -2718,7 +2717,6 @@
         if (!book.hasEbook || !book.ebookFile) return;
 
         try {
-          console.log(`Updating page count for: ${book.title}`);
           const pageCount = await getPDFPageCount(book.ebookFile);
 
           // Update the book object
@@ -2756,8 +2754,6 @@
             }
           }
         } catch (error) {
-          console.error(`Failed to get page count for ${book.title}:`, error);
-
           // Use fallback page count
           if (cardElement) {
             const pagesElement = cardElement.querySelector(
@@ -3495,46 +3491,306 @@
 
         // Create book header with full-screen button and responsive classes
         const headerHTML = `
-          <div class="ebook-header-container" style="display: flex; justify-content: space-between; align-items: center; padding: 0 8px; width: 100%; flex-wrap: wrap; gap: 10px;">
-            <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
-              <img src="${book.cover}" alt="${book.title}" style="width: 48px; height: 48px; border-radius: 8px; object-fit: cover; box-shadow: 0 2px 4px rgba(0,0,0,0.1);" class="ebook-cover-img">
-              <div>
-                <h3 style="font-size: 18px; font-weight: 600; margin: 0; color: #1e293b;" class="ebook-title">${book.title}</h3>
-                <p style="font-size: 14px; color: #64748b; margin: 4px 0 0 0;" class="ebook-author">by ${book.author}</p>
-              </div>
-            </div>
-            <div style="display: flex; gap: 16px; align-items: center; flex-wrap: wrap;" class="ebook-actions">
-              <span style="font-size: 13px; color: #64748b; display: flex; align-items: center; gap: 4px;" class="ebook-readers">
-                <i class="fas fa-users"></i> <span class="readers-count">${book.readers}</span> reading now
-              </span>
-              <span style="font-size: 12px; color: #8b6b4d; background: #f0e6d2; padding: 4px 12px; border-radius: 20px; display: flex; align-items: center; gap: 4px;" class="ebook-pages-badge">
-                <i class="fas fa-file-pdf"></i> PDF • <span class="page-count">${pageCount}</span> pages
-              </span>
+          <div class="ebook-header-container" style="
+            display: flex; 
+            flex-direction: column;
+            align-items: flex-start; 
+            padding: 16px; 
+            width: 100%; 
+            gap: 16px;
+            background: #ffffff;
+            border-bottom: 1px solid #e2e8f0;
+            box-sizing: border-box;
+          ">
+            <!-- Top row with cover and title - now with wrapping title -->
+            <div style="
+              display: flex; 
+              align-items: flex-start; 
+              gap: 12px; 
+              width: 100%;
+              position: relative; /* For absolute positioning if needed */
+            ">
+              <!-- Fullscreen button - now at top-left corner -->
               <button
                 onclick="toggleFullScreen()"
                 class="fullscreen-btn"
                 style="
-                  background: none;
+                  background: #f1f5f9;
                   border: none;
-                  color: #4b5563;
+                  color: #334155;
                   cursor: pointer;
-                  font-size: 16px;
-                  width: 32px;
-                  height: 32px;
+                  font-size: 14px;
+                  width: 44px;
+                  height: 44px;
                   display: flex;
                   align-items: center;
                   justify-content: center;
                   border-radius: 50%;
                   transition: all 0.2s ease;
-                  transform: translateX(-20px);
+                  flex-shrink: 0;
+                  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+                  margin-top: -12px; /* Move up to top edge */
+                  margin-left: -12px; /* Move left to edge */
+                  margin-right: 8px; /* Add some spacing after button */
+                  z-index: 10;
                 "
                 title="Toggle full screen"
+                onmouseover="this.style.backgroundColor='#e2e8f0'; this.style.transform='scale(1.05)'"
+                onmouseout="this.style.backgroundColor='#f1f5f9'; this.style.transform='scale(1)'"
               >
-                <i class="fas fa-expand" id="fullscreen-icon"></i>
+                <i class="fas fa-expand" id="fullscreen-icon" style="font-size: 18px;"></i>
               </button>
+              
+              <img 
+                src="${book.cover}" 
+                alt="${book.title}" 
+                style="
+                  width: 70px; 
+                  height: 70px; 
+                  border-radius: 12px; 
+                  object-fit: cover; 
+                  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                  flex-shrink: 0;
+                  border: 2px solid #ffffff;
+                " 
+                class="ebook-cover-img"
+                onerror="this.src='https://via.placeholder.com/70x70?text=No+Cover'"
+              >
+              
+              <!-- Title and author container - now with wrapping text -->
+              <div style="
+                flex: 1; 
+                min-width: 0; /* Prevents flex overflow */
+              ">
+                <h3 style="
+                  font-size: clamp(16px, 4.5vw, 20px); 
+                  font-weight: 700; 
+                  margin: 0 0 4px 0; 
+                  color: #0f172a;
+                  line-height: 1.4;
+                  word-wrap: break-word;
+                  overflow-wrap: break-word;
+                  hyphens: auto;
+                  display: -webkit-box;
+                  -webkit-line-clamp: 3;
+                  -webkit-box-orient: vertical;
+                  overflow: hidden;
+                  max-width: 100%;
+                " class="ebook-title">
+                  ${book.title}
+                </h3>
+                
+                <p style="
+                  font-size: clamp(13px, 3.8vw, 15px); 
+                  color: #475569; 
+                  margin: 0;
+                  font-weight: 500;
+                  display: flex;
+                  align-items: center;
+                  gap: 4px;
+                  flex-wrap: wrap;
+                " class="ebook-author">
+                  <span style="color: #94a3b8;">by</span> 
+                  <span style="color: #334155; font-weight: 600;">${book.author}</span>
+                </p>
+              </div>
+            </div>
+
+            <!-- Bottom row with stats - more compact on mobile -->
+            <div style="
+              display: flex;
+              flex-wrap: wrap;
+              align-items: center;
+              gap: 10px;
+              width: 100%;
+              padding-top: 4px;
+              border-top: 1px dashed #e2e8f0;
+              margin-top: 4px;
+            " class="ebook-actions">
+              
+              <!-- Readers count - simplified for mobile -->
+              <span style="
+                font-size: 13px; 
+                color: #1e293b; 
+                display: inline-flex; 
+                align-items: center; 
+                gap: 6px;
+                background: #f1f4f9;
+                padding: 8px 14px;
+                border-radius: 40px;
+                white-space: nowrap;
+                font-weight: 500;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+              " class="ebook-readers">
+                <i class="fas fa-users" style="color: #3b82f6; font-size: 12px;"></i> 
+                <span class="readers-count" style="font-weight: 600;">${book.readers}</span> 
+                <span style="color: #64748b; font-weight: 400;">reading</span>
+              </span>
+
+              <!-- Pages badge - simplified for mobile -->
+              <span style="
+                font-size: 13px; 
+                color: #7b5e3c; 
+                background: #f5ede1; 
+                padding: 8px 14px; 
+                border-radius: 40px; 
+                display: inline-flex; 
+                align-items: center; 
+                gap: 6px;
+                font-weight: 500;
+                white-space: nowrap;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+              " class="ebook-pages-badge">
+                <i class="fas fa-file-pdf" style="color: #b45309; font-size: 12px;"></i> 
+                <span class="page-count" style="font-weight: 600;">${pageCount}</span> 
+                <span style="color: #8b6b4d; font-weight: 400;">pages</span>
+              </span>
             </div>
           </div>
         `;
+
+        // Add this CSS to your stylesheet or in a <style> tag
+        const additionalStyles = `
+          <style>
+            @media (max-width: 480px) {
+              .ebook-header-container {
+                padding: 12px !important;
+                gap: 12px !important;
+              }
+              
+              .ebook-cover-img {
+                width: 60px !important;
+                height: 60px !important;
+              }
+              
+              .ebook-title {
+                font-size: 15px !important;
+                -webkit-line-clamp: 2 !important;
+              }
+              
+              .ebook-author {
+                font-size: 13px !important;
+              }
+              
+              .ebook-readers, .ebook-pages-badge {
+                padding: 6px 12px !important;
+                font-size: 12px !important;
+              }
+              
+              .fullscreen-btn {
+                width: 38px !important;
+                height: 38px !important;
+                margin-top: -8px !important;
+                margin-left: -8px !important;
+                margin-right: 4px !important;
+              }
+            }
+            
+            @media (max-width: 360px) {
+              .ebook-cover-img {
+                width: 50px !important;
+                height: 50px !important;
+              }
+              
+              .ebook-title {
+                font-size: 14px !important;
+              }
+              
+              .ebook-author {
+                font-size: 12px !important;
+              }
+              
+              .ebook-readers, .ebook-pages-badge {
+                padding: 5px 10px !important;
+                font-size: 11px !important;
+              }
+              
+              .fullscreen-btn {
+                width: 34px !important;
+                height: 34px !important;
+                margin-top: -6px !important;
+                margin-left: -6px !important;
+                margin-right: 2px !important;
+              }
+              
+              .ebook-readers span, .ebook-pages-badge span {
+                display: none;
+              }
+              
+              .ebook-readers:after {
+                content: " readers";
+                font-size: 11px;
+                color: #64748b;
+              }
+              
+              .ebook-pages-badge:after {
+                content: " pgs";
+                font-size: 11px;
+                color: #8b6b4d;
+              }
+            }
+
+            /* Hide filename in PDF viewer */
+            #pdf-object, #pdf-embed, embed[type="application/pdf"], object[type="application/pdf"] {
+              toolbar=0;
+              navpanes=0;
+              scrollbar=1;
+              view=FitH;
+              pagemode=none;
+            }
+            
+            /* Target common PDF viewer toolbar elements */
+            object[type="application/pdf"] ~ * [class*="toolbar"],
+            object[type="application/pdf"] ~ * [id*="toolbar"],
+            embed[type="application/pdf"] ~ * [class*="toolbar"],
+            embed[type="application/pdf"] ~ * [id*="toolbar"],
+            #pdf-object ~ * [class*="toolbar"],
+            #pdf-embed ~ * [class*="toolbar"] {
+              display: none !important;
+            }
+            
+            /* Hide any element containing the filename */
+            [class*="filename"]:not(.ebook-title):not(.ebook-author),
+            [id*="filename"]:not(.ebook-title):not(.ebook-author),
+            [class*="document"]:not(.ebook-title):not(.ebook-author),
+            [id*="document"]:not(.ebook-title):not(.ebook-author) {
+              display: none !important;
+            }
+            
+            /* Specific to Chrome's PDF viewer */
+            embed[type="application/pdf"]::-webkit-pdf-toolbar {
+              display: none !important;
+            }
+            
+            /* Hide the top bar in PDF viewers */
+            #pdf-object + * > div:first-child,
+            #pdf-embed + * > div:first-child {
+              display: none !important;
+            }
+            
+            /* Firefox PDF viewer */
+            @-moz-document url-prefix() {
+              embed[type="application/pdf"] ~ * {
+                display: none;
+              }
+            }
+            
+            /* Edge/Chromium PDF viewer */
+            object[type="application/pdf"]::shadow * {
+              display: none !important;
+            }
+          </style>
+        `;
+
+        // Append styles to head if not already present
+        if (!document.querySelector("#ebook-header-styles")) {
+          const styleElement = document.createElement("style");
+          styleElement.id = "ebook-header-styles";
+          styleElement.textContent = additionalStyles
+            .replace("<style>", "")
+            .replace("</style>", "");
+          document.head.appendChild(styleElement);
+        }
 
         ebookHeader.innerHTML = headerHTML;
 
@@ -3546,19 +3802,121 @@
         ebookContent.style.overflow = "auto";
         ebookContent.style.transition = "all 0.3s ease";
 
-        // Create PDF embed
-        const embed = document.createElement("embed");
-        embed.src = book.ebookFile;
-        embed.type = "application/pdf";
-        embed.style.width = "100%";
-        embed.style.height = "100%";
-        embed.style.border = "none";
-        embed.style.borderRadius = "4px";
-        embed.style.boxShadow = "0 4px 6px -1px rgba(0, 0, 0, 0.1)";
-        embed.style.backgroundColor = "white";
-        embed.id = "pdf-embed";
+        // Try multiple PDF viewer approaches
+        const pdfContainer = document.createElement("div");
+        pdfContainer.style.width = "100%";
+        pdfContainer.style.height = "100%";
+        pdfContainer.style.position = "relative";
+        pdfContainer.style.overflow = "hidden";
+        pdfContainer.style.backgroundColor = "#525659";
+        pdfContainer.style.display = "flex";
+        pdfContainer.style.flexDirection = "column";
 
-        ebookContent.appendChild(embed);
+        // Create a message div for errors
+        const errorDiv = document.createElement("div");
+        errorDiv.style.display = "none";
+        errorDiv.style.padding = "20px";
+        errorDiv.style.textAlign = "center";
+        errorDiv.style.color = "white";
+        errorDiv.style.backgroundColor = "#dc2626";
+        errorDiv.style.borderRadius = "4px";
+        errorDiv.style.margin = "20px";
+        errorDiv.id = "pdf-error-message";
+        pdfContainer.appendChild(errorDiv);
+
+        // Try different PDF viewers in order of preference
+
+        // Approach 1: Use iframe with toolbar hidden
+        const iframe = document.createElement("iframe");
+        // Add #toolbar=0 parameter to hide the toolbar
+        iframe.src =
+          book.ebookFile + "#toolbar=0&navpanes=0&scrollbar=1&view=FitH";
+        iframe.style.width = "100%";
+        iframe.style.height = "100%";
+        iframe.style.border = "none";
+        iframe.style.borderRadius = "4px";
+        iframe.id = "pdf-iframe";
+        iframe.setAttribute("allowfullscreen", "true");
+
+        pdfContainer.appendChild(iframe);
+
+        // Add a cover overlay to hide any remaining filename
+        const overlay = document.createElement("div");
+        overlay.style.position = "absolute";
+        overlay.style.top = "0";
+        overlay.style.left = "0";
+        overlay.style.width = "100%";
+        overlay.style.height = "40px"; // Height of typical PDF toolbar
+        overlay.style.backgroundColor = "#525659"; // Match your background
+        overlay.style.zIndex = "1000";
+        overlay.style.pointerEvents = "none"; // Allow clicks to pass through
+        pdfContainer.appendChild(overlay);
+
+        // Check if iframe loaded successfully
+        iframe.addEventListener("load", function () {
+          console.log("PDF iframe loaded successfully");
+          errorDiv.style.display = "none";
+        });
+
+        iframe.addEventListener("error", function () {
+          console.log("PDF iframe failed to load, trying object...");
+          errorDiv.style.display = "block";
+          errorDiv.textContent =
+            "Failed to load PDF. Trying alternative method...";
+
+          // Remove iframe and overlay
+          pdfContainer.removeChild(iframe);
+          pdfContainer.removeChild(overlay);
+
+          // Try object as fallback
+          const object = document.createElement("object");
+          object.data = book.ebookFile;
+          object.type = "application/pdf";
+          object.style.width = "100%";
+          object.style.height = "100%";
+          object.style.border = "none";
+          object.style.borderRadius = "4px";
+          object.id = "pdf-object";
+
+          // Add fallback content inside object
+          const fallbackDiv = document.createElement("div");
+          fallbackDiv.style.padding = "20px";
+          fallbackDiv.style.textAlign = "center";
+          fallbackDiv.style.backgroundColor = "#f8f9fa";
+          fallbackDiv.style.borderRadius = "4px";
+          fallbackDiv.innerHTML = `
+            <p style="margin-bottom: 10px; color: #333;">Your browser doesn't support embedded PDFs.</p>
+            <a href="${book.ebookFile}" target="_blank" style="
+              background: #3b82f6;
+              color: white;
+              padding: 8px 16px;
+              border-radius: 4px;
+              text-decoration: none;
+              display: inline-block;
+            ">Download PDF</a>
+          `;
+          object.appendChild(fallbackDiv);
+
+          pdfContainer.appendChild(object);
+
+          object.addEventListener("error", function () {
+            errorDiv.style.display = "block";
+            errorDiv.innerHTML = `
+              <p style="margin-bottom: 10px;">Failed to display PDF directly.</p>
+              <a href="${book.ebookFile}" target="_blank" style="
+                background: white;
+                color: #dc2626;
+                padding: 8px 16px;
+                border-radius: 4px;
+                text-decoration: none;
+                display: inline-block;
+                font-weight: bold;
+              ">Click here to open PDF</a>
+            `;
+          });
+        });
+
+        ebookContent.appendChild(pdfContainer);
 
         // Show modal
         ebookModal.classList.remove("hidden");
