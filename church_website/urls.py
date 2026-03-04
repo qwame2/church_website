@@ -3,7 +3,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from .views import home, church_news_archive, reading_page, youth_church_landing, gallery, book, map,menfellow,wemenfellow,youth,child,podcast
+from .views import home, church_news_archive, reading_page, youth_church_landing, gallery, book, map,menfellow,wemenfellow,youth,child,podcast,game
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -20,6 +20,7 @@ urlpatterns = [
     path('child/', child, name='child'),
     path('reading/', reading_page, name='reading_page'),
     path('podcast/', podcast, name='podcast'),
+    path('game/', game, name='game'),
     
 ]
 

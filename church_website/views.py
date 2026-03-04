@@ -46,6 +46,9 @@ def my_view(request):
 def podcast(request):
     return render(request, "podcast.html")
 
+def game(request):
+    return render(request, "game.html")
+
 
 
 def extract_text_from_pdf(pdf_path):

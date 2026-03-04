@@ -1,0 +1,73 @@
+<section
+  id="recent-episodes"
+  class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8"
+>
+  <div
+    class="flex flex-col md:flex-row md:items-center justify-between mb-10 gap-6"
+  >
+    <div>
+      <h3 class="text-2xl font-bold text-slate-900 font-serif">
+        Recent Episodes
+      </h3>
+      <span
+        class="block text-xs font-bold text-primary mt-1 uppercase tracking-widest"
+        >Publicly accessible archive • No account needed</span
+      >
+    </div>
+    <div class="flex flex-wrap gap-2" id="category-filters">
+      <button
+        onclick="setCategory('All')"
+        class="cat-btn rounded-full px-4 py-2 text-xs font-bold transition-all bg-primary text-white"
+      >
+        All
+      </button>
+      <button
+        onclick="setCategory('Sermons')"
+        class="cat-btn rounded-full px-4 py-2 text-xs font-bold transition-all bg-white text-slate-600 border border-slate-200 hover:border-primary"
+      >
+        Sermons
+      </button>
+      <button
+        onclick="setCategory('Bible Study')"
+        class="cat-btn rounded-full px-4 py-2 text-xs font-bold transition-all bg-white text-slate-600 border border-slate-200 hover:border-primary"
+      >
+        Bible Study
+      </button>
+      <button
+        onclick="setCategory('Prayer')"
+        class="cat-btn rounded-full px-4 py-2 text-xs font-bold transition-all bg-white text-slate-600 border border-slate-200 hover:border-primary"
+      >
+        Prayer
+      </button>
+      <button
+        onclick="setCategory('Youth')"
+        class="cat-btn rounded-full px-4 py-2 text-xs font-bold transition-all bg-white text-slate-600 border border-slate-200 hover:border-primary"
+      >
+        Youth
+      </button>
+    </div>
+  </div>
+
+  <div class="grid gap-6" id="episodes-list">
+    <!-- Episodes will be rendered here by JS -->
+  </div>
+
+  <div id="load-more-container" class="mt-12 text-center">
+    <button
+      id="load-more-btn"
+      onclick="loadMore()"
+      class="font-bold text-primary flex items-center justify-center mx-auto gap-2 hover:underline"
+    >
+      Load More Episodes
+      <i data-lucide="chevron-down" class="w-5 h-5"></i>
+    </button>
+    <button
+      id="show-less-btn"
+      onclick="showLess()"
+      class="hidden font-bold text-slate-400 flex items-center justify-center mx-auto gap-2 hover:underline hover:text-primary transition-colors"
+    >
+      Show Less
+      <i data-lucide="chevron-up" class="w-5 h-5"></i>
+    </button>
+  </div>
+</section>
