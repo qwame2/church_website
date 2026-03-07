@@ -84,7 +84,7 @@
         ></div>
 
         <div
-          class="flex gap-6 transition-transform duration-500 ease-out will-change-transform py-4"
+          class="flex gap-6 will-change-transform py-4"
           :style="{ transform: `translateX(-${scrollPosition}px)` }"
           x-ref="carousel"
           @mousedown="startDrag"
@@ -503,11 +503,11 @@
 
         // Only resume if popover is not open and not dragging
         if (!this.popoverOpen && !this.isDragging && !this.isTouchDragging) {
-          // Small delay to prevent flickering when moving between cards
+          // Increased delay to 300ms to ensure click events fire on a static element
           this.pauseTimer = setTimeout(() => {
             this.isPaused = false;
             this.pauseTimer = null;
-          }, 50);
+          }, 300);
         }
       },
 
@@ -635,29 +635,19 @@
       endTouch(event) {
         if (!this.isTouchDragging) return;
 
-        const touchEndTime = Date.now();
-        const touchDuration = touchEndTime - this.touchStartTime;
-
-        // Check if it was a tap during endTouch
-        if (event && event.changedTouches && event.changedTouches.length > 0) {
-          const touch = event.changedTouches[0];
-          const deltaX = Math.abs(this.touchStartX - touch.clientX);
-          const deltaY = Math.abs(this.touchStartY - touch.clientY);
-
-          // If it was a tap (minimal movement and short duration)
-          // we don't need to do anything special here, handleCardClick 
-          // will catch the 'click' event since we didn't preventDefault in startTouch
-        }
-
+        // Reset isTouchDragging immediately
         this.isTouchDragging = false;
-        this.hasMovedSignificant = false;
+
+        // Use a small timeout to reset hasMovedSignificant so click handler can still read it
+        setTimeout(() => {
+          this.hasMovedSignificant = false;
+        }, 100);
+
         this.dragProgress = 0;
 
         // Resume auto-scroll after a short delay
         if (!this.popoverOpen) {
-          setTimeout(() => {
-            this.resumeMarquee();
-          }, 100);
+          this.resumeMarquee();
         }
       },
 
@@ -792,6 +782,7 @@
   .line-clamp-2 {
     display: -webkit-box;
     -webkit-line-clamp: 2;
+    line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
