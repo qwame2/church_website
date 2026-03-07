@@ -1,0 +1,159 @@
+/* 
+   ==========================================================================
+   Youth Fellowship - Premium Minimalist Design System
+   Matches Church Landing Aesthetics (bg-gray-50 foundation)
+   ========================================================================== 
+*/
+
+:root {
+    --y-midnight: #1e1b4b;
+    /* Navy */
+    --y-gold-deep: #b45309;
+    /* Burnished Gold */
+    --y-gold-light: #f59e0b;
+    /* Bright Gold */
+    --y-bone: #f9fafb;
+    /* Pearl White / gray-50 */
+    --y-text-main: #111827;
+    /* Slate 900 */
+    --y-text-muted: #4b5563;
+    /* Gray 600 */
+    --y-glass: rgba(255, 255, 255, 0.9);
+}
+
+body {
+    background-color: var(--y-bone);
+    color: var(--y-text-main);
+    font-family: 'Inter', sans-serif;
+}
+
+/* --- Typography --- */
+.text-elegant {
+    font-weight: 300;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.heading-premium {
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    color: var(--y-midnight);
+}
+
+/* --- Hero Section (Cinematic) --- */
+.youth-hero {
+    position: relative;
+    height: 85vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: var(--y-midnight);
+}
+
+.hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(30, 27, 75, 0.4), var(--y-midnight));
+    z-index: 2;
+}
+
+.hero-slider {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+}
+
+.hero-slider img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    animation: kenBurns 20s infinite alternate;
+}
+
+@keyframes kenBurns {
+    from {
+        transform: scale(1) translate(0, 0);
+    }
+
+    to {
+        transform: scale(1.1) translate(-2%, -2%);
+    }
+}
+
+/* --- Premium Cards --- */
+.card-elegant {
+    background: white;
+    border: 1px solid rgba(30, 27, 75, 0.05);
+    border-radius: 1.25rem;
+    padding: 2.5rem;
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.card-elegant:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 25px 50px -12px rgba(30, 27, 75, 0.1);
+    border-color: var(--y-gold-light);
+}
+
+/* --- Buttons --- */
+.btn-premium {
+    padding: 1rem 2.5rem;
+    border-radius: 9999px;
+    font-weight: 600;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    letter-spacing: 0.05em;
+}
+
+.btn-premium-primary {
+    background: var(--y-midnight);
+    color: white;
+}
+
+.btn-premium-primary:hover {
+    background: var(--y-gold-deep);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(180, 83, 9, 0.2);
+}
+
+/* --- Scroll Reveal (Smooth) --- */
+.reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* --- Section Accents --- */
+.accent-line {
+    width: 60px;
+    height: 3px;
+    background: var(--y-gold-light);
+    margin: 1.5rem auto;
+}
+
+/* --- Swiper Customization --- */
+.youth-swiper {
+    padding-bottom: 60px !important;
+}
+
+.swiper-slide {
+    height: 450px;
+    border-radius: 1.5rem;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.swiper-pagination-bullet-active {
+    background: var(--y-midnight) !important;
+}

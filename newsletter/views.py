@@ -1,6 +1,7 @@
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Subscriber, WebsiteContent
+import os
 import json
 from django.views.decorators.csrf import csrf_protect
 
@@ -31,7 +32,7 @@ def subscribe(request):
 
 
 # Admin login function
-DEFAULT_PASSWORD = "1234567890"
+DEFAULT_PASSWORD = os.getenv("ADMIN_PASSWORD", "fallback-password-dev-only")
 
 def admin_login(request):
     if request.method == "POST":
