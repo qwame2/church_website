@@ -109,33 +109,28 @@
     <nav
       class="fixed top-0 left-0 right-0 z-40 border-b border-white/40 bg-white/60 backdrop-blur-xl transition-all duration-300"
     >
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center justify-between h-20">
-          <div class="flex items-center gap-3">
+      <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16 sm:h-20">
+          <div class="flex items-center gap-2 sm:gap-3">
             <div
-              class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500 to-purple-600 flex items-center justify-center text-white shadow-lg shadow-brand-500/30"
+              class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center text-white shadow-lg bg-white p-0.5"
             >
-              <div class="relative w-10 h-10">
-                <div
-                  class="absolute inset-0 bg-primary rounded-lg rotate-6 group-hover:rotate-12 transition-transform"
-                ></div>
-                <img
-                  src="{% static 'img/logo.png' %}"
-                  class="absolute inset-0 w-full h-full object-contain rounded-lg bg-white p-1"
-                  alt="Logo"
-                />
-              </div>
+              <img
+                src="{% static 'img/logo.png' %}"
+                class="w-full h-full object-contain"
+                alt="Logo"
+              />
             </div>
             <div>
-              <h1 class="text-xl font-bold tracking-tight text-slate-900">
+              <h1 class="text-base sm:text-xl font-bold tracking-tight text-slate-900">
                 Gallery
               </h1>
-              <p class="text-xs text-slate-500 font-medium">Captured Moments</p>
+              <p class="hidden sm:block text-xs text-slate-500 font-medium">Captured Moments</p>
             </div>
           </div>
           <button
             onclick="window.history.back()"
-            class="group flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium text-slate-600 hover:bg-white/80 hover:text-slate-900 hover:shadow-sm transition-all border border-transparent hover:border-slate-200"
+            class="group flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs sm:text-sm font-medium text-slate-600 hover:bg-white/80 hover:text-slate-900 transition-all border border-slate-200"
           >
             <i
               class="ri-arrow-left-line transition-transform group-hover:-translate-x-1"
@@ -147,39 +142,39 @@
     </nav>
 
     <main
-      class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-20 relative z-10"
+      class="max-w-7xl mx-auto px-0.5 sm:px-6 lg:px-8 pt-24 sm:pt-32 pb-20 relative z-10"
     >
       <div
-        class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12 animate-fade-in"
+        class="flex flex-col md:flex-row md:items-center justify-between gap-4 sm:gap-6 mb-6 sm:mb-12 animate-fade-in px-4 sm:px-0"
       >
         <div class="flex flex-wrap gap-2" id="filter-container">
           <button
             data-filter="all"
-            class="filter-btn active px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 bg-slate-900 text-white shadow-lg shadow-slate-900/20 ring-2 ring-transparent ring-offset-2 transform hover:-translate-y-0.5"
+            class="filter-btn active px-4 sm:px-5 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 bg-slate-900 text-white shadow shadow-slate-900/20 transform hover:-translate-y-0.5"
           >
-            All Photos
+            All
           </button>
           <button
             data-filter="anagkazo"
-            class="filter-btn px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 bg-white/80 backdrop-blur text-slate-600 hover:bg-white shadow-sm border border-slate-200 hover:border-brand-200 hover:text-brand-600 transform hover:-translate-y-0.5"
+            class="filter-btn px-4 sm:px-5 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 bg-white/80 backdrop-blur text-slate-600 hover:bg-white shadow-sm border border-slate-200 hover:text-brand-600 transform hover:-translate-y-0.5"
           >
-            Anagkazo (2025)
+            Anagkazo
           </button>
           <button
             data-filter="youthInPraise"
-            class="filter-btn px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 bg-white/80 backdrop-blur text-slate-600 hover:bg-white shadow-sm border border-slate-200 hover:border-brand-200 hover:text-brand-600 transform hover:-translate-y-0.5"
+            class="filter-btn px-4 sm:px-5 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 bg-white/80 backdrop-blur text-slate-600 hover:bg-white shadow-sm border border-slate-200 hover:text-brand-600 transform hover:-translate-y-0.5"
           >
-            YouthInPraise (2024)
+            YouthInPraise
           </button>
           <button
             data-filter="events"
-            class="filter-btn px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 bg-white/80 backdrop-blur text-slate-600 hover:bg-white shadow-sm border border-slate-200 hover:border-brand-200 hover:text-brand-600 transform hover:-translate-y-0.5"
+            class="filter-btn px-4 sm:px-5 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 bg-white/80 backdrop-blur text-slate-600 hover:bg-white shadow-sm border border-slate-200 hover:text-brand-600 transform hover:-translate-y-0.5"
           >
             Events
           </button>
         </div>
         <div
-          class="text-sm text-slate-500 font-medium bg-white/50 px-3 py-1 rounded-full backdrop-blur-sm border border-white/20"
+          class="hidden sm:block text-sm text-slate-500 font-medium bg-white/50 px-3 py-1 rounded-full backdrop-blur-sm border border-white/20"
         >
           Showing
           <span id="count-display" class="text-slate-900 font-bold">All</span>
@@ -188,7 +183,7 @@
       </div>
 
       <div
-        class="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6"
+        class="grid grid-cols-3 sm:grid-cols-2 lg:grid-cols-3 gap-0.5 sm:gap-6"
         id="gallery-grid"
       >
         <!-- Include all category files -->
