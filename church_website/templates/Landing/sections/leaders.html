@@ -427,7 +427,8 @@
       touchStartY: 0,
       touchStartTime: 0,
       isTouchDragging: false,
-      touchThreshold: 10, // pixels of movement to consider as drag
+      hasMovedSignificant: false,
+      touchThreshold: 10,
 
       init() {
         this.updateCardWidth();
@@ -572,6 +573,7 @@
       // Touch handlers
       startTouch(event) {
         this.isTouchDragging = true;
+        this.hasMovedSignificant = false;
         this.pauseMarquee();
 
         const touch = event.touches[0];
@@ -580,25 +582,33 @@
         this.touchStartTime = Date.now();
         this.dragStartScroll = this.scrollPosition;
 
-        // Prevent default to avoid page scroll
-        event.preventDefault();
+        // IMPORTANT: Do NOT call event.preventDefault() here as it blocks click events on mobile
       },
 
       onTouchMove(event) {
         if (!this.isTouchDragging) return;
 
-        // Prevent default to avoid page scroll
-        event.preventDefault();
-
         const touch = event.touches[0];
         const deltaX = this.touchStartX - touch.clientX;
-        const deltaY = Math.abs(this.touchStartY - touch.clientY);
+        const deltaY = this.touchStartY - touch.clientY;
 
-        // If vertical movement is significant, don't handle as horizontal drag
-        if (deltaY > 20) {
-          this.endTouch();
-          return;
+        // Determine if this is a horizontal drag or a vertical scroll
+        if (!this.hasMovedSignificant) {
+          if (Math.abs(deltaX) > this.touchThreshold) {
+            this.hasMovedSignificant = true;
+          } else if (Math.abs(deltaY) > this.touchThreshold) {
+            // This is a vertical scroll, cancel the marquee touch handling
+            this.isTouchDragging = false;
+            this.resumeMarquee();
+            return;
+          } else {
+            // Not enough movement yet to decide
+            return;
+          }
         }
+
+        // It's a horizontal drag - prevent page scroll
+        if (event.cancelable) event.preventDefault();
 
         // Calculate new scroll position
         const maxScroll = (this.cardWidth + 24) * this.leaders.length;
@@ -628,22 +638,19 @@
         const touchEndTime = Date.now();
         const touchDuration = touchEndTime - this.touchStartTime;
 
-        // Get the final touch position if event exists
+        // Check if it was a tap during endTouch
         if (event && event.changedTouches && event.changedTouches.length > 0) {
           const touch = event.changedTouches[0];
           const deltaX = Math.abs(this.touchStartX - touch.clientX);
           const deltaY = Math.abs(this.touchStartY - touch.clientY);
 
-          // Check if this was a tap (short duration, minimal movement)
-          if (touchDuration < 300 && deltaX < 10 && deltaY < 10) {
-            // This was a tap, but we need to let the card click handler deal with it
-            console.log(
-              "Tap detected, but letting card click handler handle it",
-            );
-          }
+          // If it was a tap (minimal movement and short duration)
+          // we don't need to do anything special here, handleCardClick 
+          // will catch the 'click' event since we didn't preventDefault in startTouch
         }
 
         this.isTouchDragging = false;
+        this.hasMovedSignificant = false;
         this.dragProgress = 0;
 
         // Resume auto-scroll after a short delay
@@ -656,14 +663,13 @@
 
       // Card click handler - works for both mouse and touch
       handleCardClick(leader, event) {
-        // Don't open if we were dragging
-        if (this.isDragging || this.isTouchDragging) {
-          console.log("Not opening popover because dragging");
+        // Don't open if we moved significantly (was a drag)
+        if (this.hasMovedSignificant) {
           return;
         }
 
-        // Prevent default to avoid any issues
-        event.preventDefault();
+        // Stop propagation to prevent immediate closing if clicking nested items
+        event.stopPropagation();
 
         console.log("Card clicked/tapped:", leader.name);
         this.openPopover(leader);
