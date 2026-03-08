@@ -527,16 +527,35 @@
   function openImageModal(src) {
     const modal = document.getElementById("imageModal");
     const img = document.getElementById("lightboxImage");
+    const blur = document.getElementById("imageModalBlur");
+    
     img.src = src;
     modal.classList.remove("opacity-0", "pointer-events-none");
-    setTimeout(() => img.classList.remove("scale-90"), 50);
+    
+    // Add overflow hidden to body to prevent scroll
+    document.body.style.overflow = "hidden";
+    
+    setTimeout(() => {
+      img.classList.remove("scale-90");
+      img.classList.add("scale-100");
+    }, 50);
   }
 
   function closeImageModal() {
     const modal = document.getElementById("imageModal");
     const img = document.getElementById("lightboxImage");
+    
     img.classList.add("scale-90");
+    img.classList.remove("scale-100");
     modal.classList.add("opacity-0", "pointer-events-none");
+    
+    // Re-enable scroll
+    document.body.style.overflow = "";
+    
+    // Reset transform if it was scaled during swipe
+    setTimeout(() => {
+      img.style.transform = "";
+    }, 300);
   }
 
   // Stats Animation

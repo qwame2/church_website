@@ -32,15 +32,39 @@
 
 <div
   id="imageModal"
-  class="fixed inset-0 z-[70] flex items-center justify-center bg-black/95 p-4 opacity-0 pointer-events-none transition-opacity duration-300"
-  onclick="closeImageModal()"
+  class="fixed inset-0 z-[100] flex items-center justify-center p-0 opacity-0 pointer-events-none transition-all duration-500 overflow-hidden"
+  x-data="{ touchStartY: 0, touchMoveY: 0, deltaY: 0 }"
+  x-on:touchstart="touchStartY = $event.touches[0].clientY; deltaY = 0"
+  x-on:touchmove="touchMoveY = $event.touches[0].clientY; deltaY = Math.max(0, touchMoveY - touchStartY); if(deltaY > 50) { $el.querySelector('#lightboxImage').style.transform = `translateY(${deltaY}px) scale(${1 - Math.min(0.2, deltaY/1000)})` }"
+  x-on:touchend="if(deltaY > 150) { closeImageModal() } else { $el.querySelector('#lightboxImage').style.transform = '' }; deltaY = 0"
 >
-  <img
-    id="lightboxImage"
-    src=""
-    class="max-w-full max-h-[90vh] rounded shadow-2xl scale-90 transition-transform duration-300"
-  />
-  <button class="absolute top-4 right-4 text-white hover:text-gray-300">
-    <i class="ri-close-line text-4xl"></i>
+  <!-- Blurred Background with click-to-close -->
+  <div 
+    class="absolute inset-0 bg-black/60 backdrop-blur-2xl transition-opacity duration-500"
+    id="imageModalBlur"
+    onclick="closeImageModal()"
+  ></div>
+
+  <!-- Close Button -->
+  <button 
+    onclick="closeImageModal()"
+    class="absolute top-6 right-6 z-[110] w-12 h-12 flex items-center justify-center bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-full text-white transition-all sm:flex hidden"
+  >
+    <i class="ri-close-line text-2xl"></i>
   </button>
+
+  <!-- Mobile Drag handle -->
+  <div class="absolute top-4 left-1/2 -translate-x-1/2 w-12 h-1.5 bg-white/30 rounded-full sm:hidden z-[110]"></div>
+
+  <!-- Image Container -->
+  <div 
+    id="lightboxContainer"
+    class="relative w-full h-full flex items-center justify-center p-4 pointer-events-none"
+  >
+    <img
+      id="lightboxImage"
+      src=""
+      class="max-w-full max-h-[85vh] md:max-h-[90vh] rounded-xl md:rounded-2xl shadow-[0_30px_60px_-15px_rgba(0,0,0,0.7)] scale-90 transition-all duration-500 pointer-events-auto"
+    />
+  </div>
 </div>
