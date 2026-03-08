@@ -299,16 +299,42 @@
         </div>
       </div>
       
-      <!-- Action Buttons -->
-      <div class="absolute bottom-10 left-0 right-0 flex justify-center z-[110] px-4">
+      // Action Buttons & Navigation Indicators
+      <div class="absolute bottom-10 left-0 right-0 flex flex-col items-center gap-6 z-[110] px-4 pointer-events-none">
+        <!-- Pagination Dots like iPhone -->
+        <div class="flex gap-1.5 p-1.5 rounded-full bg-white/10 backdrop-blur-md">
+            <template x-for="(item, index) in items" :key="index">
+                <div 
+                    class="w-1.5 h-1.5 rounded-full transition-all duration-300"
+                    :class="index === currentIndex ? 'bg-white w-3' : 'bg-white/30'"
+                ></div>
+            </template>
+        </div>
+
         <button
           @click="download()"
-          class="flex items-center gap-2 px-8 py-3 bg-brand-600 hover:bg-brand-500 text-white rounded-full font-bold transition-all shadow-xl shadow-brand-500/20 active:scale-95"
+          class="flex items-center gap-2 px-8 py-3 bg-white text-black rounded-full font-bold transition-all shadow-xl active:scale-95 pointer-events-auto"
         >
           <i class="ri-download-line text-xl"></i>
-          <span>Download</span>
+          <span>Save Image</span>
         </button>
       </div>
+
+      <!-- Navigation Arrows (Desktop) -->
+      <button 
+        @click="prev()" 
+        class="absolute left-6 top-1/2 -translate-y-1/2 z-[110] p-4 text-white/50 hover:text-white transition-colors sm:block hidden"
+        x-show="currentIndex > 0"
+      >
+        <i class="ri-arrow-left-s-line text-5xl"></i>
+      </button>
+      <button 
+        @click="next()" 
+        class="absolute right-6 top-1/2 -translate-y-1/2 z-[110] p-4 text-white/50 hover:text-white transition-colors sm:block hidden"
+        x-show="currentIndex < items.length - 1"
+      >
+        <i class="ri-arrow-right-s-line text-5xl"></i>
+      </button>
     </div>
 
     <script>
@@ -374,33 +400,94 @@
           mediaSrc: '',
           isVideo: false,
           touchStartY: 0,
+          touchStartX: 0,
           deltaY: 0,
+          deltaX: 0,
           isSwiping: false,
+          isSwipingHorizontal: false,
+          currentIndex: 0,
+          items: [],
 
           open(triggerElement) {
-            const parent = triggerElement.closest(".masonry-item") || triggerElement.closest(".group");
-            const media = parent.querySelector("img, video");
-            this.mediaSrc = media.getAttribute("data-full") || media.src;
-            this.isVideo = media.tagName === "VIDEO";
+            // Collect all visible items for navigation
+            const allVisibleItems = Array.from(document.querySelectorAll('.masonry-item'))
+              .filter(item => item.style.display !== 'none');
+            
+            this.items = allVisibleItems.map(item => {
+              const media = item.querySelector('img, video');
+              return {
+                src: media.getAttribute('data-full') || media.src,
+                type: media.tagName.toLowerCase()
+              };
+            });
+
+            const parent = triggerElement.closest(".masonry-item");
+            this.currentIndex = allVisibleItems.indexOf(parent);
+            this.updateMedia();
+            
             this.isOpen = true;
             document.body.style.overflow = "hidden";
             
-            // Pop effect
             this.$nextTick(() => {
               const content = document.getElementById('lightbox-content');
-              content.style.transform = 'scale(0.5)';
+              const rect = triggerElement.getBoundingClientRect();
+              
+              // iPhone style: Fly in from the clicked thumbnail
+              content.style.transition = 'none';
+              content.style.transform = `translate(${rect.left - (window.innerWidth/2 - rect.width/2)}px, ${rect.top - (window.innerHeight/2 - rect.height/2)}px) scale(${rect.width / window.innerWidth})`;
               content.style.opacity = '0';
+              
               setTimeout(() => {
-                content.style.transform = 'scale(1)';
+                content.style.transition = 'all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1)';
+                content.style.transform = 'scale(1) translate(0px, 0px)';
                 content.style.opacity = '1';
-              }, 50);
+              }, 10);
             });
+          },
+
+          updateMedia() {
+            const item = this.items[this.currentIndex];
+            if (item) {
+              this.mediaSrc = item.src;
+              this.isVideo = item.type === 'video';
+            }
+          },
+
+          next() {
+            if (this.currentIndex < this.items.length - 1) {
+              this.currentIndex++;
+              this.updateMedia();
+            } else {
+              // Elastic bounce at end
+              this.bounceEffect('next');
+            }
+          },
+
+          prev() {
+            if (this.currentIndex > 0) {
+              this.currentIndex--;
+              this.updateMedia();
+            } else {
+              // Elastic bounce at start
+              this.bounceEffect('prev');
+            }
+          },
+
+          bounceEffect(dir) {
+             const content = document.getElementById('lightbox-content');
+             content.style.transition = 'transform 0.3s ease';
+             content.style.transform = dir === 'next' ? 'translateX(-50px)' : 'translateX(50px)';
+             setTimeout(() => {
+               content.style.transform = 'translateX(0)';
+             }, 300);
           },
 
           close() {
             const content = document.getElementById('lightbox-content');
-            content.style.transform = 'scale(0.5)';
+            content.style.transition = 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+            content.style.transform = 'scale(0.8) translateY(20px)';
             content.style.opacity = '0';
+            
             setTimeout(() => {
               this.isOpen = false;
               this.mediaSrc = '';
@@ -410,30 +497,65 @@
 
           startTouch(e) {
             this.touchStartY = e.touches[0].clientY;
+            this.touchStartX = e.touches[0].clientX;
             this.isSwiping = true;
+            this.isSwipingHorizontal = false;
+            this.deltaY = 0;
+            this.deltaX = 0;
             document.getElementById('lightbox-content').style.transition = 'none';
           },
 
           moveTouch(e) {
             if (!this.isSwiping) return;
             const currentY = e.touches[0].clientY;
-            this.deltaY = Math.max(0, currentY - this.touchStartY);
-            if (this.deltaY > 0) {
-              const scale = 1 - Math.min(0.2, this.deltaY / 1000);
-              document.getElementById('lightbox-content').style.transform = `translateY(${this.deltaY}px) scale(${scale})`;
+            const currentX = e.touches[0].clientX;
+            this.deltaY = currentY - this.touchStartY;
+            this.deltaX = currentX - this.touchStartX;
+
+            // Determine if horizontal or vertical swipe (iPhone style detection)
+            if (!this.isSwipingHorizontal && Math.abs(this.deltaX) > Math.abs(this.deltaY) && Math.abs(this.deltaX) > 10) {
+                this.isSwipingHorizontal = true;
+            }
+
+            if (this.isSwipingHorizontal) {
+              // Horizontal navigation drag
+              document.getElementById('lightbox-content').style.transform = `translateX(${this.deltaX}px)`;
+            } else {
+              // Vertical swipe to dismiss
+              if (this.deltaY > 0) {
+                const scale = 1 - Math.min(0.3, this.deltaY / 1000);
+                document.getElementById('lightbox-content').style.transform = `translateY(${this.deltaY}px) scale(${scale})`;
+              }
             }
           },
 
           endTouch() {
             this.isSwiping = false;
             const content = document.getElementById('lightbox-content');
-            content.style.transition = 'all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)';
-            if (this.deltaY > 150) {
-              this.close();
+            content.style.transition = 'all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1)';
+            
+            if (this.isSwipingHorizontal) {
+              if (this.deltaX < -80) {
+                this.next();
+              } else if (this.deltaX > 80) {
+                this.prev();
+              } else {
+                content.style.transform = 'translateX(0px)';
+              }
+              // Reset transform after updateMedia if navigation happened
+              setTimeout(() => {
+                if (!this.isOpen) return;
+                content.style.transform = 'scale(1) translateY(0px)';
+              }, 50);
             } else {
-              content.style.transform = 'scale(1) translateY(0px)';
-              this.deltaY = 0;
+              if (this.deltaY > 150) {
+                this.close();
+              } else {
+                content.style.transform = 'scale(1) translateY(0px) translateX(0px)';
+              }
             }
+            this.deltaY = 0;
+            this.deltaX = 0;
           },
 
           download() {

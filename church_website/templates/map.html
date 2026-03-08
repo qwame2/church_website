@@ -493,80 +493,13 @@
       }
 
       .user-location-pin {
-        width: 36px;
-        height: 36px;
+        width: 24px;
+        height: 24px;
         background: #10b981;
         border: 3px solid white;
         border-radius: 50%;
-        box-shadow: 0 0 20px rgba(16, 185, 129, 0.5);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-size: 1.1rem;
-        z-index: 1000;
-        transition: transform 0.2s linear;
-        position: relative;
-      }
-
-      /* Navigation Beam (Google Maps Style) */
-      .user-location-pin::before {
-        content: '';
-        position: absolute;
-        top: -40px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 0;
-        height: 0;
-        border-left: 20px solid transparent;
-        border-right: 20px solid transparent;
-        border-bottom: 50px solid rgba(16, 185, 129, 0.3);
-        z-index: -1;
-        opacity: 0;
-        transition: opacity 0.3s;
-      }
-
-      .user-location-pin.has-heading::before {
-        opacity: 1;
-      }
-
-      .user-location-pin.simulation-mode {
-        background: #2563eb;
-        box-shadow: 0 0 20px rgba(37, 99, 235, 0.6);
-      }
-
-      .user-location-pin.simulation-mode::before {
-        border-bottom-color: rgba(37, 99, 235, 0.3);
-      }
-
-      .user-location-pin i {
-        transition: transform 0.3s ease;
-      }
-
-      /* Tracking Button */
-      #track-me-btn {
-        position: absolute;
-        bottom: 90px;
-        right: 20px;
-        z-index: 1000;
-        width: 56px;
-        height: 56px;
-        border-radius: 50%;
-        background: white;
-        color: #2563eb;
-        border: none;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.3rem;
-        transition: all 0.2s;
-      }
-
-      #track-me-btn.active {
-        background: #2563eb;
-        color: white;
+        box-shadow: 0 0 20px #10b981;
+        animation: pulse 2s infinite;
       }
 
       @media (min-width: 640px) {
@@ -760,11 +693,6 @@
       <div class="route-summary" id="routeSummary"></div>
       <div class="instructions-container" id="instructions"></div>
     </div>
-
-    <!-- Center on Me Button -->
-    <button id="track-me-btn" title="Center on my location">
-      <i class="fas fa-location-crosshairs"></i>
-    </button>
 
     <!-- Back Button -->
     <button id="back-button" onclick="window.history.back()">
@@ -1061,96 +989,46 @@
       }
 
       // Geolocation
-      let isTracking = false;
-
-      // Handle Center-on-me button
-      const trackBtn = document.getElementById('track-me-btn');
-      trackBtn.addEventListener('click', () => {
-        isTracking = !isTracking;
-        trackBtn.classList.toggle('active', isTracking);
-        
-        if (isTracking && userLocation) {
-          map.setView([userLocation.lat, userLocation.lng], 16);
-        }
-      });
-
       if (navigator.geolocation) {
         navigator.geolocation.watchPosition(
           (position) => {
-            const { latitude, longitude, heading } = position.coords;
+            const { latitude, longitude } = position.coords;
             userLocation = { lat: latitude, lng: longitude };
-
-            // Don't update marker if simulation is running
-            if (simulationInterval) return;
 
             // Create or update user marker
             if (!userMarker) {
               const userIcon = L.divIcon({
-                html: '<div class="user-location-pin"><i class="fas fa-person-walking"></i></div>',
+                html: '<div class="user-location-pin"></div>',
                 className: "user-marker",
-                iconSize: [36, 36],
-                iconAnchor: [18, 18],
+                iconSize: [24, 24],
+                iconAnchor: [12, 12],
               });
               userMarker = L.marker([latitude, longitude], {
                 icon: userIcon,
               }).addTo(map);
               userMarker.bindPopup("Your current location").openPopup();
+
+              // Only center on first location if not already centered
+              if (map.getZoom() < 10) {
+                map.setView([latitude, longitude], 13);
+              }
             } else {
               userMarker.setLatLng([latitude, longitude]);
-            }
-
-            // If tracking is enabled, follow the user
-            if (isTracking) {
-              map.panTo([latitude, longitude]);
-            }
-
-            // Handle heading if available from GPS
-            if (heading !== null && heading !== undefined) {
-              updatePinRotation(heading);
             }
           },
           (error) => {
             console.error("Geolocation error:", error);
+            // Silent fail on mobile to avoid annoying alerts
+            if (!/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+              alert("Please enable location access to use routing features.");
+            }
           },
           {
             enableHighAccuracy: true,
-            timeout: 5000,
-            maximumAge: 0,
+            timeout: 10000,
+            maximumAge: 30000,
           },
         );
-      }
-
-      // Handle Device Orientation (Compass) for Direction
-      window.addEventListener('deviceorientationabsolute', handleOrientation, true);
-      window.addEventListener('deviceorientation', handleOrientation, true);
-
-      function handleOrientation(event) {
-        // Skip orientation during simulation
-        if (simulationInterval) return;
-
-        let alpha = event.alpha;
-        if (event.webkitCompassHeading) {
-          alpha = event.webkitCompassHeading; // iOS support
-        }
-        
-        if (alpha !== null && alpha !== undefined) {
-          updatePinRotation(alpha);
-        }
-      }
-
-      function updatePinRotation(degree) {
-        const pin = document.querySelector('.user-location-pin');
-        if (pin) {
-          pin.classList.add('has-heading');
-          // Rotate the container for the beam and the icon for movement
-          pin.style.transform = `rotate(${degree}deg)`;
-          
-          // Counter-rotate the icon inside so the person doesn't rotate with the map direction symbol
-          const icon = pin.querySelector('i');
-          if (icon && !pin.classList.contains('simulation-mode')) {
-            icon.style.transform = `rotate(${-degree}deg)`;
-          }
-        }
       }
 
       // Route fetching with OSRM
@@ -1272,15 +1150,12 @@
 
           document.getElementById("instructions").innerHTML = instructionsHtml;
 
-          // Fit map to show entire route
+          // Fit map to show entire route with padding for mobile
           const bounds = L.latLngBounds([userLocation, destination]);
           map.fitBounds(bounds, {
             padding: [80, 80],
             maxZoom: 16,
           });
-
-          // SIMULATION: Move user marker along the route
-          simulateJourney(route.geometry.coordinates);
         } catch (error) {
           alert("Failed to fetch route. Please try again.");
           document.getElementById("routePanel").classList.add("hidden");
@@ -1416,54 +1291,6 @@
         },
         { passive: true },
       );
-
-      // Journey simulation logic
-      let simulationInterval = null;
-
-      function simulateJourney(coordinates) {
-        if (!userMarker || !coordinates || coordinates.length === 0) return;
-
-        // Clear existing simulation
-        if (simulationInterval) clearInterval(simulationInterval);
-
-        const pin = userMarker.getElement().querySelector(".user-location-pin");
-        pin.classList.add("simulation-mode");
-        const icon = pin.querySelector("i");
-        icon.className = "fas fa-person-running"; // Change icon to running
-
-        let step = 0;
-        const totalSteps = coordinates.length;
-
-        simulationInterval = setInterval(() => {
-          if (step >= totalSteps) {
-            clearInterval(simulationInterval);
-            pin.classList.remove("simulation-mode");
-            icon.className = "fas fa-person-walking";
-            // Open destination popup when reached
-            const lastCoord = coordinates[totalSteps - 1];
-            userMarker.setLatLng([lastCoord[1], lastCoord[0]]);
-            userMarker.bindPopup("You have arrived at your destination!").openPopup();
-            return;
-          }
-
-          const currentPos = coordinates[step];
-          const nextPos =
-            step < totalSteps - 1 ? coordinates[step + 1] : currentPos;
-
-          // Rotate icon based on direction
-          if (step < totalSteps - 1) {
-            const angle = Math.atan2(
-              nextPos[1] - currentPos[1],
-              nextPos[0] - currentPos[0],
-            );
-            const degree = (angle * 180) / Math.PI;
-            icon.style.transform = `rotate(${degree}deg)`;
-          }
-
-          userMarker.setLatLng([currentPos[1], currentPos[0]]);
-          step++;
-        }, 100); // 100ms per step for smooth visual
-      }
 
       console.log(
         "Map initialized successfully with",
