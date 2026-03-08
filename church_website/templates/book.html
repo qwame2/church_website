@@ -3815,6 +3815,22 @@
             bottom: 20px;
             padding: 12px 20px;
           }
+
+          /* Show indicators as icons only on mobile */
+          .audio-indicator, .ebook-indicator {
+            width: 28px !important;
+            height: 28px !important;
+            padding: 0 !important;
+            justify-content: center !important;
+            border-radius: 50% !important;
+            gap: 0 !important;
+            top: 8px !important;
+            left: 8px !important;
+          }
+          .audio-indicator i, .ebook-indicator i {
+            margin: 0 !important;
+            font-size: 12px !important;
+          }
         }
         
         /* Desktop/General PDF Viewer Tweaks */
@@ -3887,10 +3903,10 @@
       // Function to create library card HTML
       function createLibraryCard(book, index) {
         const audioIndicator = book.hasAudio
-          ? `<div class="audio-indicator"><i class="fas fa-headphones"></i> Audiobook</div>`
+          ? `<div class="audio-indicator" title="Audiobook"><i class="fas fa-headphones"></i> <span class="hidden sm:inline">Audiobook</span></div>`
           : "";
         const ebookIndicator = book.hasEbook
-          ? `<div class="ebook-indicator"><i class="fas fa-tablet-alt"></i> E-book</div>`
+          ? `<div class="ebook-indicator" title="E-book"><i class="fas fa-tablet-alt"></i> <span class="hidden sm:inline">E-book</span></div>`
           : "";
 
         return `
