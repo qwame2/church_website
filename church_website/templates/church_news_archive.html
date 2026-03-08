@@ -12,6 +12,8 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&family=Pacifico&display=swap"
       rel="stylesheet"
     />
+    <!-- Alpine.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link
       href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css"
       rel="stylesheet"
@@ -179,10 +181,46 @@
             </div>
           </div>
 
-          <div class="flex items-center gap-3">
-            <button class="md:hidden w-10 h-10 flex items-center justify-center rounded-xl bg-gray-50 text-gray-400">
-               <i class="ri-search-line"></i>
+          <div class="flex items-center gap-3" x-data="{ mobileSearchOpen: false }">
+            <button 
+              @click="mobileSearchOpen = true; $nextTick(() => $refs.mobileSearchInput.focus())"
+              class="md:hidden w-10 h-10 flex items-center justify-center rounded-xl bg-gray-50 text-gray-400 hover:text-primary hover:bg-primary/5 transition-all"
+            >
+               <i class="ri-search-line text-xl"></i>
             </button>
+            
+            <!-- Mobile Search Overlay -->
+            <template x-teleport="body">
+                <div 
+                    x-show="mobileSearchOpen" 
+                    x-transition.opacity
+                    class="fixed inset-0 z-[100] bg-gray-900/40 backdrop-blur-md flex flex-col p-4 md:hidden"
+                >
+                    <div class="bg-white rounded-2xl shadow-2xl p-4 flex flex-col gap-4">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-black uppercase tracking-widest text-gray-400">Search News</span>
+                            <button @click="mobileSearchOpen = false" class="text-gray-400"><i class="ri-close-line text-2xl"></i></button>
+                        </div>
+                        <div class="relative">
+                            <input 
+                                x-ref="mobileSearchInput"
+                                type="text" 
+                                placeholder="Type to search..."
+                                class="w-full pl-10 pr-4 py-3 bg-gray-50 border-none rounded-xl focus:ring-2 focus:ring-primary/20 text-sm"
+                                @input="searchTerm = $event.target.value.toLowerCase(); updateSuggestions(searchTerm, 'mobile-suggestions'); renderNews()"
+                            >
+                            <i class="ri-search-line absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                            
+                            <!-- Mobile Suggestions Box -->
+                            <div 
+                                id="mobile-suggestions"
+                                class="absolute w-full mt-2 bg-white rounded-xl shadow-xl border border-gray-100 hidden z-[110] overflow-hidden"
+                            ></div>
+                        </div>
+                    </div>
+                </div>
+            </template>
+
             <a
               href="/"
               class="flex items-center gap-2 px-5 py-2.5 bg-gray-900 text-white rounded-xl text-sm font-semibold hover:bg-primary shadow-lg shadow-gray-200 hover:shadow-primary/30 active:scale-95 transition-all"
@@ -502,8 +540,8 @@
         document.getElementById("closeModal").addEventListener("click", closeModal);
       }
 
-      function updateSuggestions(term) {
-        const box = document.getElementById("searchSuggestions");
+      function updateSuggestions(term, boxId = "searchSuggestions") {
+        const box = document.getElementById(boxId);
         if (!term) {
           box.classList.add("hidden");
           return;
@@ -516,7 +554,7 @@
         }
 
         box.innerHTML = hits.map(news => `
-          <div class="p-3 hover:bg-gray-50 cursor-pointer flex items-center gap-3 border-b border-gray-50 last:border-none" onclick="quickSelectSuggestion('${news.title}')">
+          <div class="p-3 hover:bg-gray-50 cursor-pointer flex items-center gap-3 border-b border-gray-50 last:border-none" onclick="quickSelectSuggestion('${news.title.replace(/'/g, "\\'")}')">
             <img src="${news.image}" class="w-10 h-10 rounded-lg object-cover">
             <div class="flex flex-col">
               <span class="text-xs font-bold text-gray-900 line-clamp-1">${news.title}</span>
@@ -528,9 +566,15 @@
       }
 
       window.quickSelectSuggestion = (title) => {
-        document.getElementById("searchInput").value = title;
+        const dInput = document.getElementById("searchInput");
+        const mInput = document.querySelector('[x-ref="mobileSearchInput"]');
+        if (dInput) dInput.value = title;
+        if (mInput) mInput.value = title;
+        
         searchTerm = title.toLowerCase();
         document.getElementById("searchSuggestions").classList.add("hidden");
+        const mBox = document.getElementById("mobile-suggestions");
+        if (mBox) mBox.classList.add("hidden");
         renderNews();
       };
 
