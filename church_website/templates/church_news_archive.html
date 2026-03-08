@@ -293,7 +293,7 @@
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
       
       <!-- Featured Highlight (Hero) -->
-      <section id="featured-hero" class="mb-16 hidden lg:block">
+      <section id="featured-hero" class="mb-16">
         <!-- Will be populated by JS if a featured article exists -->
       </section>
 
@@ -609,7 +609,7 @@
         document.getElementById("closeModal").addEventListener("click", closeModal);
       }
 
-      function updateSuggestions(term, boxId = "searchSuggestions") {
+      window.updateSuggestions = function(term, boxId = "searchSuggestions") {
         const box = document.getElementById(boxId);
         if (!term) {
           box.classList.add("hidden");
@@ -623,7 +623,7 @@
         }
 
         box.innerHTML = hits.map(news => `
-          <div class="p-3 hover:bg-gray-50 cursor-pointer flex items-center gap-3 border-b border-gray-50 last:border-none" onclick="quickSelectSuggestion('${news.title.replace(/'/g, "\\'")}')">
+          <div class="p-3 hover:bg-gray-50 cursor-pointer flex items-center gap-3 border-b border-gray-50 last:border-none" onclick="window.quickSelectSuggestion('${news.title.replace(/'/g, "\\'")}')">
             <img src="${news.image}" class="w-10 h-10 rounded-lg object-cover">
             <div class="flex flex-col">
               <span class="text-xs font-bold text-gray-900 line-clamp-1">${news.title}</span>
@@ -640,11 +640,11 @@
         if (dInput) dInput.value = title;
         if (mInput) mInput.value = title;
         
-        searchTerm = title.toLowerCase();
+        window.searchTerm = title.toLowerCase();
         document.getElementById("searchSuggestions").classList.add("hidden");
         const mBox = document.getElementById("mobile-suggestions");
         if (mBox) mBox.classList.add("hidden");
-        renderNews();
+        window.renderNews();
       };
 
       window.renderNews = function() {
@@ -685,25 +685,25 @@
           heroSection.innerHTML = `
             <div class="relative group overflow-hidden rounded-[2.5rem] shadow-2xl shadow-primary/10 border border-gray-100 bg-white">
               <div class="grid lg:grid-cols-2 gap-0">
-                <div class="aspect-[16/10] overflow-hidden cursor-pointer" onclick="showModal(${featured.id})">
+                <div class="aspect-[16/10] sm:aspect-video lg:aspect-[16/10] overflow-hidden cursor-pointer" onclick="window.showModal(${featured.id})">
                    <img src="${featured.image}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000">
                 </div>
-                <div class="p-8 sm:p-12 flex flex-col justify-center relative">
+                <div class="p-6 sm:p-12 flex flex-col justify-center relative">
                    <div class="flex items-center gap-2 mb-4">
                       <span class="featured-badge px-3 py-1 rounded-lg text-[10px] font-black text-white uppercase tracking-widest">Featured Spotlight</span>
                       <span class="h-1 w-1 rounded-full bg-gray-300"></span>
                       <span class="text-xs font-bold text-gray-400">${featured.readTime}</span>
                    </div>
-                   <h2 class="text-3xl sm:text-5xl font-black font-display text-gray-900 mb-6 leading-tight hover:text-primary transition-colors cursor-pointer" onclick="showModal(${featured.id})">${featured.title}</h2>
-                   <p class="text-gray-500 text-lg mb-8 line-clamp-3 leading-relaxed">${featured.excerpt}</p>
+                   <h2 class="text-2xl sm:text-5xl font-black font-display text-gray-900 mb-6 leading-tight hover:text-primary transition-colors cursor-pointer" onclick="window.showModal(${featured.id})">${featured.title}</h2>
+                   <p class="text-gray-500 text-base sm:text-lg mb-8 line-clamp-3 leading-relaxed">${featured.excerpt}</p>
                    
-                   <div class="flex flex-wrap items-center gap-4 mb-8">
-                      <button onclick="showModal(${featured.id})" class="flex items-center gap-2 px-8 py-4 bg-gray-900 text-white rounded-2xl text-sm font-bold hover:bg-primary transition-all active:scale-95 shadow-lg shadow-gray-200 hover:shadow-primary/30">
+                   <div class="flex flex-wrap items-center gap-3 sm:gap-4 mb-8">
+                      <button onclick="window.showModal(${featured.id})" class="flex-1 sm:flex-initial flex items-center justify-center gap-2 px-6 sm:px-8 py-3 sm:py-4 bg-gray-900 text-white rounded-2xl text-sm font-bold hover:bg-primary transition-all active:scale-95 shadow-lg shadow-gray-200 hover:shadow-primary/30">
                          <i class="ri-book-open-line"></i>
                          Read Story
                       </button>
                       ${featured.audioUrl ? `
-                      <button onclick="window.dispatchEvent(new CustomEvent('play-news', { detail: { url: '${featured.audioUrl}', title: '${featured.title.replace(/'/g, "\\'")}' } }))" class="flex items-center gap-2 px-8 py-4 bg-white border-2 border-primary/20 text-primary rounded-2xl text-sm font-bold hover:bg-primary/5 transition-all active:scale-95">
+                      <button onclick="window.dispatchEvent(new CustomEvent('play-news', { detail: { url: '${featured.audioUrl}', title: '${featured.title.replace(/'/g, "\\'")}' } }))" class="flex-1 sm:flex-initial flex items-center justify-center gap-2 px-6 sm:px-8 py-3 sm:py-4 bg-white border-2 border-primary/20 text-primary rounded-2xl text-sm font-bold hover:bg-primary/5 transition-all active:scale-95">
                          <i class="ri-play-circle-line"></i>
                          Listen Now
                       </button>
@@ -729,18 +729,18 @@
         // Render Grid
         grid.innerHTML = filtered.map(news => `
           <div class="news-card bg-white rounded-[2rem] p-4 flex flex-col h-full shadow-sm hover:shadow-xl transition-all">
-             <div class="relative w-full aspect-video rounded-2xl overflow-hidden mb-5 cursor-pointer" onclick="showModal(${news.id})">
+             <div class="relative w-full aspect-video rounded-2xl overflow-hidden mb-5 cursor-pointer" onclick="window.showModal(${news.id})">
                 <img src="${news.image}" class="w-full h-full object-cover">
                 <div class="absolute top-3 left-3">
                    <span class="px-3 py-1.5 rounded-xl bg-white/90 backdrop-blur-md text-[10px] font-black uppercase text-primary shadow-sm">${news.category}</span>
                 </div>
              </div>
              <div class="px-2 flex flex-col flex-1">
-                <h3 class="text-xl font-bold font-display text-gray-900 mb-3 line-clamp-2 leading-snug hover:text-primary transition-colors cursor-pointer" onclick="showModal(${news.id})">${news.title}</h3>
+                <h3 class="text-xl font-bold font-display text-gray-900 mb-3 line-clamp-2 leading-snug hover:text-primary transition-colors cursor-pointer" onclick="window.showModal(${news.id})">${news.title}</h3>
                 <p class="text-gray-500 text-sm line-clamp-2 mb-6 leading-relaxed">${news.excerpt}</p>
                 
                 <div class="flex items-center gap-2 mb-6">
-                   <button onclick="showModal(${news.id})" class="flex-1 px-4 py-2.5 bg-gray-50 text-gray-900 rounded-xl text-xs font-bold hover:bg-gray-100 transition-all active:scale-95">
+                   <button onclick="window.showModal(${news.id})" class="flex-1 px-4 py-2.5 bg-gray-50 text-gray-900 rounded-xl text-xs font-bold hover:bg-gray-100 transition-all active:scale-95">
                       Read Story
                    </button>
                    ${news.audioUrl ? `
@@ -761,7 +761,7 @@
         `).join('');
       }
 
-      function showModal(id) {
+      window.showModal = function(id) {
         const news = mockNews.find(n => n.id === id);
         if (!news) return;
 
@@ -794,7 +794,7 @@
         }, 10);
       }
 
-      function closeModal() {
+      window.closeModal = function() {
         const modal = document.getElementById("newsModal");
         modal.querySelector(".modal").classList.add("opacity-0", "scale-95");
         modal.querySelector(".modal").classList.remove("opacity-100", "scale-100");
@@ -805,6 +805,9 @@
           modal.classList.remove("flex");
         }, 400);
       }
+      
+      // Update event listener to use window.closeModal
+      document.getElementById("closeModal").addEventListener("click", window.closeModal);
     </script>
     
     <!-- Footer -->
