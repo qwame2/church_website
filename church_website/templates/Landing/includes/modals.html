@@ -36,31 +36,96 @@
   class="fixed inset-0 z-[100] flex items-center justify-center p-0 opacity-0 pointer-events-none transition-all duration-500 overflow-hidden"
   x-data="{ 
     isOpen: false,
+    mediaSrc: '',
+    isVideo: false,
     touchStartY: 0, 
+    touchStartX: 0,
     deltaY: 0,
+    deltaX: 0,
     isSwiping: false,
+    isSwipingHorizontal: false,
+    currentIndex: 0,
+    items: [],
     
-    open(src) {
-      const img = document.getElementById('lightboxImage');
-      img.src = src;
-      img.style.transform = 'scale(0.5) translateY(0px)';
-      img.style.opacity = '0';
+    open(src, triggerEl) {
+      // Collect all images/videos in the gallery section for navigation
+      const gallerySection = document.getElementById('gallery');
+      const allMedia = Array.from(gallerySection.querySelectorAll('.group img, .group video'));
+      
+      this.items = allMedia.map(el => ({
+        src: el.src,
+        type: el.tagName.toLowerCase()
+      }));
+
+      // Find current index
+      this.currentIndex = this.items.findIndex(item => item.src === src);
+      this.updateMedia();
       
       this.isOpen = true;
       $el.classList.remove('opacity-0', 'pointer-events-none');
       $el.classList.add('opacity-100', 'pointer-events-auto');
       document.body.style.overflow = 'hidden';
       
+      this.$nextTick(() => {
+        const content = document.getElementById('lightboxMedia');
+        const rect = triggerEl ? triggerEl.getBoundingClientRect() : { top: window.innerHeight/2, left: window.innerWidth/2, width: 0, height: 0 };
+        
+        // Fly-in from thumbnail
+        content.style.transition = 'none';
+        content.style.transform = `translate(${rect.left - (window.innerWidth/2 - rect.width/2)}px, ${rect.top - (window.innerHeight/2 - rect.height/2)}px) scale(${rect.width / window.innerWidth})`;
+        content.style.opacity = '0';
+        
+        // Use double RAF for reliable animation on mobile
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            content.style.transition = 'all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1)';
+            content.style.transform = 'scale(1) translate(0px, 0px)';
+            content.style.opacity = '1';
+          });
+        });
+      });
+    },
+
+    updateMedia() {
+      const item = this.items[this.currentIndex];
+      if (item) {
+        this.mediaSrc = item.src;
+        this.isVideo = item.type === 'video';
+      }
+    },
+
+    next() {
+      if (this.currentIndex < this.items.length - 1) {
+        this.currentIndex++;
+        this.updateMedia();
+      } else {
+        this.bounceEffect('next');
+      }
+    },
+
+    prev() {
+      if (this.currentIndex > 0) {
+        this.currentIndex--;
+        this.updateMedia();
+      } else {
+        this.bounceEffect('prev');
+      }
+    },
+
+    bounceEffect(dir) {
+      const content = document.getElementById('lightboxMedia');
+      content.style.transition = 'transform 0.3s ease';
+      content.style.transform = dir === 'next' ? 'translateX(-50px)' : 'translateX(50px)';
       setTimeout(() => {
-        img.style.transform = 'scale(1) translateY(0px)';
-        img.style.opacity = '1';
-      }, 50);
+        content.style.transform = 'translateX(0)';
+      }, 300);
     },
     
     close() {
-      const img = document.getElementById('lightboxImage');
-      img.style.transform = 'scale(0.5)';
-      img.style.opacity = '0';
+      const content = document.getElementById('lightboxMedia');
+      content.style.transition = 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+      content.style.transform = 'scale(0.8) translateY(20px)';
+      content.style.opacity = '0';
       
       this.isOpen = false;
       $el.classList.add('opacity-0', 'pointer-events-none');
@@ -69,76 +134,140 @@
       
       setTimeout(() => {
         this.deltaY = 0;
-        img.style.transform = '';
-      }, 500);
+        this.deltaX = 0;
+        this.mediaSrc = '';
+        content.style.transform = '';
+      }, 400);
     },
 
     handleTouchStart(e) {
+      // Don't intercept swipe if touching video controls
+      const target = e.target;
+      if (this.isVideo && (target.tagName === 'VIDEO' || target.closest('.video-controls'))) return;
+
       this.touchStartY = e.touches[0].clientY;
+      this.touchStartX = e.touches[0].clientX;
       this.isSwiping = true;
-      document.getElementById('lightboxImage').style.transition = 'none';
+      this.isSwipingHorizontal = false;
+      document.getElementById('lightboxMedia').style.transition = 'none';
     },
 
     handleTouchMove(e) {
       if (!this.isSwiping) return;
       const currentY = e.touches[0].clientY;
-      this.deltaY = Math.max(0, currentY - this.touchStartY);
-      
-      if (this.deltaY > 0) {
+      const currentX = e.touches[0].clientX;
+      this.deltaY = currentY - this.touchStartY;
+      this.deltaX = currentX - this.touchStartX;
+
+      if (!this.isSwipingHorizontal && Math.abs(this.deltaX) > Math.abs(this.deltaY) && Math.abs(this.deltaX) > 10) {
+        this.isSwipingHorizontal = true;
+      }
+
+      const content = document.getElementById('lightboxMedia');
+      if (this.isSwipingHorizontal) {
+        content.style.transform = `translateX(${this.deltaX}px)`;
+      } else if (this.deltaY > 0) {
         const scale = 1 - Math.min(0.3, this.deltaY / 1000);
-        document.getElementById('lightboxImage').style.transform = `translateY(${this.deltaY}px) scale(${scale})`;
-        // Dim the background as we swipe
-        const opacity = 1 - Math.min(0.5, this.deltaY / 500);
-        $el.querySelector('.bg-black').style.opacity = opacity;
+        content.style.transform = `translateY(${this.deltaY}px) scale(${scale})`;
+        $el.querySelector('.bg-black').style.opacity = 1 - Math.min(0.5, this.deltaY / 500);
       }
     },
 
     handleTouchEnd() {
       this.isSwiping = false;
-      const img = document.getElementById('lightboxImage');
-      img.style.transition = 'all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)';
+      const content = document.getElementById('lightboxMedia');
+      content.style.transition = 'all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1)';
       
-      if (this.deltaY > 120) {
-        this.close();
+      if (this.isSwipingHorizontal) {
+        if (this.deltaX < -80) this.next();
+        else if (this.deltaX > 80) this.prev();
+        else content.style.transform = 'translateX(0px)';
+        
+        setTimeout(() => {
+          if (!this.isOpen) return;
+          content.style.transform = 'scale(1) translateY(0px)';
+        }, 50);
       } else {
-        img.style.transform = 'scale(1) translateY(0px)';
-        $el.querySelector('.bg-black').style.opacity = '1';
-        this.deltaY = 0;
+        if (this.deltaY > 120) this.close();
+        else {
+          content.style.transform = 'scale(1) translateY(0px)';
+          $el.querySelector('.bg-black').style.opacity = '1';
+        }
       }
+      this.deltaY = 0;
+      this.deltaX = 0;
+    },
+
+    download() {
+      const link = document.createElement("a");
+      link.href = this.mediaSrc;
+      link.download = this.mediaSrc.split("/").pop();
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     }
   }"
-  x-init="window.openImageModal = (src) => open(src); window.closeImageModal = () => close()"
+  x-init="window.openImageModal = (src, el) => open(src, el); window.closeImageModal = () => close()"
   @touchstart="handleTouchStart($event)"
   @touchmove="handleTouchMove($event)"
   @touchend="handleTouchEnd()"
+  @keydown.escape.window="close()"
 >
   <!-- Deep Blurred Background -->
   <div 
-    class="absolute inset-0 bg-black/90 backdrop-blur-2xl transition-opacity duration-500"
+    class="absolute inset-0 bg-black/95 backdrop-blur-3xl transition-opacity duration-500"
     onclick="closeImageModal()"
   ></div>
 
-  <!-- Desktop Close Button -->
-  <button 
-    onclick="closeImageModal()"
-    class="absolute top-6 right-6 z-[110] w-12 h-12 flex items-center justify-center bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-full text-white transition-all sm:flex hidden"
-  >
-    <i class="ri-close-line text-2xl"></i>
+  <!-- Pagination Dots -->
+  <div class="absolute bottom-28 left-0 right-0 flex justify-center gap-1.5 z-[110] pointer-events-none">
+    <template x-for="(item, index) in items" :key="index">
+      <div 
+        class="w-1.5 h-1.5 rounded-full transition-all duration-300"
+        :class="index === currentIndex ? 'bg-white w-3' : 'bg-white/30'"
+      ></div>
+    </template>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="absolute bottom-10 left-0 right-0 flex flex-col items-center gap-6 z-[110] px-4">
+    <button
+      @click="download()"
+      class="flex items-center gap-2 px-8 py-3 bg-white text-black rounded-full font-bold transition-all shadow-xl active:scale-95 pointer-events-auto"
+    >
+      <i class="ri-download-line text-xl"></i>
+      <span>Save to Device</span>
+    </button>
+  </div>
+
+  <!-- Desktop Navigation -->
+  <button @click="prev()" class="absolute left-6 top-1/2 -translate-y-1/2 z-[110] p-4 text-white/50 hover:text-white sm:block hidden pointer-events-auto" x-show="currentIndex > 0">
+    <i class="ri-arrow-left-s-line text-5xl"></i>
+  </button>
+  <button @click="next()" class="absolute right-6 top-1/2 -translate-y-1/2 z-[110] p-4 text-white/50 hover:text-white sm:block hidden pointer-events-auto" x-show="currentIndex < items.length - 1">
+    <i class="ri-arrow-right-s-line text-5xl"></i>
   </button>
 
-  <!-- Mobile Drag handle -->
+  <!-- Media Container -->
   <div 
-    class="absolute top-4 left-1/2 -translate-x-1/2 w-12 h-1.5 bg-white/30 rounded-full sm:hidden z-[110]"
-  ></div>
-
-  <!-- Image Container with 20px padding -->
-  <div class="relative w-full h-full flex items-center justify-center p-5 pointer-events-none">
-    <img
-      id="lightboxImage"
-      src=""
-      class="max-w-full max-h-full rounded-xl shadow-[0_40px_100px_-20px_rgba(0,0,0,0.9)] transition-all duration-500 pointer-events-auto object-contain"
-      style="transition-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);"
-      @click.stop
-    />
+    id="lightboxMedia"
+    class="relative w-full h-full flex items-center justify-center p-5 sm:p-20 pointer-events-none"
+  >
+    <template x-if="!isVideo">
+      <img
+        :src="mediaSrc"
+        class="max-w-full max-h-full rounded-2xl shadow-2xl pointer-events-auto object-contain"
+        @click.stop
+      />
+    </template>
+    <template x-if="isVideo">
+      <video
+        :src="mediaSrc"
+        class="max-w-full max-h-full rounded-2xl shadow-2xl pointer-events-auto object-contain"
+        controls
+        autoplay
+        @click.stop
+      ></video>
+    </template>
   </div>
 </div>

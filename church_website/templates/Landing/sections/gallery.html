@@ -45,7 +45,7 @@
       <!-- Item 1 -->
       <div
         class="relative group cursor-pointer"
-        onclick="openImageModal(this.querySelector('img').src)"
+        onclick="openImageModal(this.querySelector('img').src, this)"
         data-aos="fade-up"
         data-aos-delay="100"
       >
@@ -71,7 +71,7 @@
       <!-- Item 2 -->
       <div
         class="relative group cursor-pointer"
-        onclick="openImageModal(this.querySelector('img').src)"
+        onclick="openImageModal(this.querySelector('img').src, this)"
         data-aos="fade-up"
         data-aos-delay="150"
       >
@@ -95,14 +95,18 @@
       </div>
 
       <!-- Item 3 - Video -->
-      <div class="relative group" data-aos="fade-up" data-aos-delay="200">
+      <div 
+        class="relative group cursor-pointer" 
+        onclick="openImageModal(this.querySelector('video').src, this)"
+        data-aos="fade-up" 
+        data-aos-delay="200"
+      >
         <div
           class="relative overflow-hidden rounded-lg sm:rounded-xl md:rounded-2xl border border-white shadow-sm group-hover:shadow-md transition-all duration-300 group-hover:-translate-y-0.5 sm:group-hover:-translate-y-1 md:group-hover:-translate-y-2 bg-black"
         >
           <video
             src="{% static 'img/710830b.mp4' %}"
             class="w-full h-24 sm:h-32 md:h-40 lg:h-52 object-cover opacity-90 group-hover:opacity-100 transition-opacity"
-            controls
             preload="metadata"
           ></video>
           <div
@@ -116,6 +120,12 @@
               >LIVE</span
             >
           </div>
+          <!-- Play Icon Overlay -->
+          <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+            <div class="w-10 h-10 rounded-full bg-white/30 backdrop-blur-md flex items-center justify-center border border-white/20">
+              <i class="ri-play-fill text-white text-xl"></i>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -123,7 +133,7 @@
       <!-- Item 4 -->
       <div
         class="relative group cursor-pointer"
-        onclick="openImageModal(this.querySelector('img').src)"
+        onclick="openImageModal(this.querySelector('img').src, this)"
         data-aos="fade-up"
         data-aos-delay="250"
       >
@@ -149,7 +159,7 @@
       <!-- Item 5 -->
       <div
         class="relative group cursor-pointer"
-        onclick="openImageModal(this.querySelector('img').src)"
+        onclick="openImageModal(this.querySelector('img').src, this)"
         data-aos="fade-up"
         data-aos-delay="300"
       >
