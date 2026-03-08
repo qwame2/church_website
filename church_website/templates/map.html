@@ -493,13 +493,29 @@
       }
 
       .user-location-pin {
-        width: 24px;
-        height: 24px;
+        width: 36px;
+        height: 36px;
         background: #10b981;
         border: 3px solid white;
         border-radius: 50%;
-        box-shadow: 0 0 20px #10b981;
-        animation: pulse 2s infinite;
+        box-shadow: 0 0 20px rgba(16, 185, 129, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.1rem;
+        z-index: 1000;
+        transition: transform 0.2s linear;
+      }
+
+      .user-location-pin.simulation-mode {
+        background: #2563eb;
+        box-shadow: 0 0 20px rgba(37, 99, 235, 0.6);
+      }
+
+      .user-location-pin i {
+        /* Rotate icon based on direction if needed */
+        transition: transform 0.3s ease;
       }
 
       @media (min-width: 640px) {
@@ -998,10 +1014,10 @@
             // Create or update user marker
             if (!userMarker) {
               const userIcon = L.divIcon({
-                html: '<div class="user-location-pin"></div>',
+                html: '<div class="user-location-pin"><i class="fas fa-person-walking"></i></div>',
                 className: "user-marker",
-                iconSize: [24, 24],
-                iconAnchor: [12, 12],
+                iconSize: [36, 36],
+                iconAnchor: [18, 18],
               });
               userMarker = L.marker([latitude, longitude], {
                 icon: userIcon,
@@ -1150,12 +1166,15 @@
 
           document.getElementById("instructions").innerHTML = instructionsHtml;
 
-          // Fit map to show entire route with padding for mobile
+          // Fit map to show entire route
           const bounds = L.latLngBounds([userLocation, destination]);
           map.fitBounds(bounds, {
             padding: [80, 80],
             maxZoom: 16,
           });
+
+          // SIMULATION: Move user marker along the route
+          simulateJourney(route.geometry.coordinates);
         } catch (error) {
           alert("Failed to fetch route. Please try again.");
           document.getElementById("routePanel").classList.add("hidden");
@@ -1291,6 +1310,54 @@
         },
         { passive: true },
       );
+
+      // Journey simulation logic
+      let simulationInterval = null;
+
+      function simulateJourney(coordinates) {
+        if (!userMarker || !coordinates || coordinates.length === 0) return;
+
+        // Clear existing simulation
+        if (simulationInterval) clearInterval(simulationInterval);
+
+        const pin = userMarker.getElement().querySelector(".user-location-pin");
+        pin.classList.add("simulation-mode");
+        const icon = pin.querySelector("i");
+        icon.className = "fas fa-person-running"; // Change icon to running
+
+        let step = 0;
+        const totalSteps = coordinates.length;
+
+        simulationInterval = setInterval(() => {
+          if (step >= totalSteps) {
+            clearInterval(simulationInterval);
+            pin.classList.remove("simulation-mode");
+            icon.className = "fas fa-person-walking";
+            // Open destination popup when reached
+            const lastCoord = coordinates[totalSteps - 1];
+            userMarker.setLatLng([lastCoord[1], lastCoord[0]]);
+            userMarker.bindPopup("You have arrived at your destination!").openPopup();
+            return;
+          }
+
+          const currentPos = coordinates[step];
+          const nextPos =
+            step < totalSteps - 1 ? coordinates[step + 1] : currentPos;
+
+          // Rotate icon based on direction
+          if (step < totalSteps - 1) {
+            const angle = Math.atan2(
+              nextPos[1] - currentPos[1],
+              nextPos[0] - currentPos[0],
+            );
+            const degree = (angle * 180) / Math.PI;
+            icon.style.transform = `rotate(${degree}deg)`;
+          }
+
+          userMarker.setLatLng([currentPos[1], currentPos[0]]);
+          step++;
+        }, 100); // 100ms per step for smooth visual
+      }
 
       console.log(
         "Map initialized successfully with",

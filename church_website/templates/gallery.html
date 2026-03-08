@@ -100,6 +100,13 @@
           display: none !important; /* iPhone style: clean grid, info on tap only */
         }
       }
+      .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+      }
+      .scrollbar-hide {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
     </style>
   </head>
 
@@ -166,28 +173,28 @@
       <div
         class="flex flex-col md:flex-row md:items-center justify-between gap-4 sm:gap-6 mb-6 sm:mb-12 animate-fade-in px-4 sm:px-0"
       >
-        <div class="flex flex-wrap gap-2" id="filter-container">
+        <div class="flex flex-nowrap overflow-x-auto scrollbar-hide gap-1.5 sm:gap-2 pb-2 sm:pb-0" id="filter-container">
           <button
             data-filter="all"
-            class="filter-btn active px-4 sm:px-5 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 bg-slate-900 text-white shadow shadow-slate-900/20 transform hover:-translate-y-0.5"
+            class="filter-btn active flex-shrink-0 px-4 sm:px-5 py-2 rounded-full text-[10px] sm:text-sm font-bold transition-all duration-300 bg-slate-900 text-white shadow shadow-slate-900/20 transform hover:-translate-y-0.5"
           >
             All
           </button>
           <button
             data-filter="anagkazo"
-            class="filter-btn px-4 sm:px-5 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 bg-white/80 backdrop-blur text-slate-600 hover:bg-white shadow-sm border border-slate-200 hover:text-brand-600 transform hover:-translate-y-0.5"
+            class="filter-btn flex-shrink-0 px-4 sm:px-5 py-2 rounded-full text-[10px] sm:text-sm font-bold transition-all duration-300 bg-white/80 backdrop-blur text-slate-600 hover:bg-white shadow-sm border border-slate-200 hover:text-brand-600 transform hover:-translate-y-0.5"
           >
             Anagkazo
           </button>
           <button
             data-filter="youthInPraise"
-            class="filter-btn px-4 sm:px-5 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 bg-white/80 backdrop-blur text-slate-600 hover:bg-white shadow-sm border border-slate-200 hover:text-brand-600 transform hover:-translate-y-0.5"
+            class="filter-btn flex-shrink-0 px-4 sm:px-5 py-2 rounded-full text-[10px] sm:text-sm font-bold transition-all duration-300 bg-white/80 backdrop-blur text-slate-600 hover:bg-white shadow-sm border border-slate-200 hover:text-brand-600 transform hover:-translate-y-0.5"
           >
             YouthInPraise
           </button>
           <button
             data-filter="events"
-            class="filter-btn px-4 sm:px-5 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 bg-white/80 backdrop-blur text-slate-600 hover:bg-white shadow-sm border border-slate-200 hover:text-brand-600 transform hover:-translate-y-0.5"
+            class="filter-btn flex-shrink-0 px-4 sm:px-5 py-2 rounded-full text-[10px] sm:text-sm font-bold transition-all duration-300 bg-white/80 backdrop-blur text-slate-600 hover:bg-white shadow-sm border border-slate-200 hover:text-brand-600 transform hover:-translate-y-0.5"
           >
             Events
           </button>
