@@ -17,36 +17,44 @@
 
   // Typewriter Effect
   const words = ["YOUTH.", "PASSION.", "FAMILY.", "FUTURE."];
-  let i = 0;
+  let wordIndex = 0;
 
   function typeWriter() {
     const heading = document.getElementById("typewriter");
     if (!heading) return;
-    let currentWord = words[i];
-    let j = 0;
-    heading.innerHTML = "";
+    
+    let currentWord = words[wordIndex];
+    let charIndex = 0;
+    let isDeleting = false;
 
-    function type() {
-      if (j < currentWord.length) {
-        heading.innerHTML += currentWord.charAt(j);
-        j++;
-        setTimeout(type, 150);
+    function animate() {
+      currentWord = words[wordIndex];
+      
+      if (!isDeleting) {
+        heading.innerHTML = currentWord.substring(0, charIndex + 1);
+        charIndex++;
+        
+        if (charIndex === currentWord.length) {
+          isDeleting = true;
+          setTimeout(animate, 2000); // Wait before starting to delete
+          return;
+        }
+        setTimeout(animate, 150);
       } else {
-        setTimeout(erase, 2000);
+        heading.innerHTML = currentWord.substring(0, charIndex - 1);
+        charIndex--;
+        
+        if (charIndex === 0) {
+          isDeleting = false;
+          wordIndex = (wordIndex + 1) % words.length;
+          setTimeout(animate, 500); // Wait before typing next word
+          return;
+        }
+        setTimeout(animate, 100);
       }
     }
-
-    function erase() {
-      if (j > 0) {
-        heading.innerHTML = currentWord.substring(0, j - 1);
-        j--;
-        setTimeout(erase, 100);
-      } else {
-        i = (i + 1) % words.length;
-        typeWriter();
-      }
-    }
-    type();
+    
+    animate();
   }
 
   // Counter Animation for Stats
