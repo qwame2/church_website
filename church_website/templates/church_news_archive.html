@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&family=Pacifico&display=swap"
       rel="stylesheet"
     />
     <link
@@ -22,7 +22,26 @@
           extend: {
             colors: {
               primary: "#8E6FF7",
+              brand: {
+                50: "#f5f3ff",
+                100: "#ede9fe",
+                200: "#ddd6fe",
+                300: "#c4b5fd",
+                400: "#a78bfa",
+                500: "#8b5cf6",
+                600: "#7c3aed",
+                700: "#6d28d9",
+                800: "#5b21b6",
+                900: "#4c1d95",
+                950: "#2e1065",
+              },
               secondary: "#F3F4F6",
+              dark: "#0f172a",
+            },
+            fontFamily: {
+              sans: ["Inter", "sans-serif"],
+              display: ["Outfit", "sans-serif"],
+              hand: ["Pacifico", "cursive"],
             },
             borderRadius: {
               none: "0px",
@@ -34,112 +53,142 @@
               "2xl": "24px",
               "3xl": "32px",
               full: "9999px",
-              button: "8px",
+              button: "0.75rem",
             },
           },
         },
       };
     </script>
     <style>
-      :where([class^="ri-"])::before {
-        content: "\f3c2";
+      body {
+        font-family: "Inter", sans-serif;
+      }
+      h1, h2, h3, h4, .font-display {
+        font-family: "Outfit", sans-serif;
       }
       .modal {
-        transition: opacity 0.3s ease-out, transform 0.3s ease-out;
-      }
-      #newsGrid {
-        transition: opacity 0.3s ease;
-      }
-      #sortDropdown {
-        transform-origin: top;
-        transition: all 0.2s ease-out;
-        opacity: 1;
-        transform: scaleY(1);
-      }
-      #sortDropdown.hidden {
-        opacity: 0;
-        transform: scaleY(0);
-      }
-      .suggestion-item {
-        transition: background-color 0.2s ease;
-      }
-      .suggestion-item:not(:last-child) {
-        border-bottom: 1px solid #f3f4f6;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
       }
       .news-card {
-        transition: transform 0.2s ease;
+        transition: all 0.3s ease;
+        border: 1px solid transparent;
       }
       .news-card:hover {
-        transform: scale(1.02);
+        transform: translateY(-8px);
+        box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        border-color: rgba(139, 92, 246, 0.1);
       }
-      #categoryDropdown {
-        transform-origin: top;
-        transition: all 0.2s ease-out;
+      .news-card img {
+        transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
       }
-      #categoryDropdown.hidden {
-        transform: scaleY(0);
-        opacity: 0;
+      .news-card:hover img {
+        transform: scale(1.05);
       }
-      #categoryDropdown:not(.hidden) {
-        transform: scaleY(1);
-        opacity: 1;
+      .glass-header {
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
       }
-      .category-tooltip {
+      .scrolled .glass-header {
+        background: rgba(255, 255, 255, 0.95);
+        box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
+      }
+      .custom-scrollbar::-webkit-scrollbar {
+        width: 6px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #e5e7eb;
+        border-radius: 10px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: #d1d5db;
+      }
+      .featured-badge {
+        background: linear-gradient(135deg, #8E6FF7 0%, #7c3aed 100%);
+      }
+      .shine-effect {
+        position: relative;
+        overflow: hidden;
+      }
+      .shine-effect::after {
+        content: "";
         position: absolute;
-        background: white;
-        padding: 0.5rem;
-        border-radius: 0.5rem;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        z-index: 20;
-        width: max-content;
-        max-width: 250px;
-        display: none;
+        top: -110%;
+        left: -210%;
+        width: 200%;
+        height: 200%;
+        opacity: 0;
+        transform: rotate(30deg);
+        background: rgba(255, 255, 255, 0.13);
+        background: linear-gradient(to right, 
+          rgba(255, 255, 255, 0.13) 0%, 
+          rgba(255, 255, 255, 0.13) 77%, 
+          rgba(255, 255, 255, 0.5) 92%, 
+          rgba(255, 255, 255, 0.0) 100%);
       }
-      .category-item:hover .category-tooltip {
-        display: block;
+      .shine-effect:hover::after {
+        opacity: 1;
+        top: -30%;
+        left: -30%;
+        transition-property: left, top, opacity;
+        transition-duration: 0.7s, 0.7s, 0.15s;
+        transition-timing-function: ease;
       }
     </style>
   </head>
-  <body class="bg-white min-h-screen">
+  <body class="bg-gray-50/50 min-h-screen selection:bg-primary/10">
     <!-- Navbar -->
-    <nav class="bg-white shadow-sm">
+    <nav class="sticky top-0 z-[60] glass-header border-b border-gray-100/50">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16">
-          <div class="flex items-center">
-            <img
-              src="{% static 'img/logo.png' %}"
-              class="w-auto h-[50px]"
-              alt="Worship Night"
-            />
+        <div class="flex justify-between items-center h-20">
+          <div class="flex items-center gap-4">
+            <a href="/" class="flex items-center gap-3 group">
+              <div class="relative w-11 h-11 shrink-0">
+                <div class="absolute inset-0 bg-primary/20 rounded-xl rotate-6 group-hover:rotate-12 transition-transform"></div>
+                <img
+                  src="{% static 'img/logo.png' %}"
+                  class="absolute inset-0 w-full h-full object-contain rounded-xl bg-white p-1 shadow-sm border border-gray-100"
+                  alt="Logo"
+                />
+              </div>
+              <div class="flex flex-col">
+                <span class="text-xl font-bold font-display text-gray-900 tracking-tight leading-none">Church News</span>
+                <span class="text-[10px] font-black tracking-[0.2em] uppercase text-primary mt-1">Archive portal</span>
+              </div>
+            </a>
           </div>
-          <div class="flex items-center space-x-4">
-            <!-- Search Input -->
-            <div class="relative">
+
+          <div class="hidden md:flex flex-1 max-w-xl mx-8">
+            <div class="relative w-full group">
               <input
                 type="text"
                 id="searchInput"
-                placeholder="Search news..."
-                class="pl-10 pr-4 py-2 w-48 sm:w-64 rounded-button border border-gray-200 focus:outline-none focus:border-primary text-sm"
+                placeholder="Search articles, announcements or events..."
+                class="w-full pl-12 pr-4 py-3 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-primary/20 focus:bg-white text-sm transition-all placeholder:text-gray-400"
               />
-              <div
-                class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 flex items-center justify-center"
-              >
-                <i class="ri-search-line text-gray-400"></i>
+              <div class="absolute left-4 top-1/2 -translate-y-1/2">
+                <i class="ri-search-2-line text-gray-400 group-focus-within:text-primary transition-colors text-lg"></i>
               </div>
               <div
                 id="searchSuggestions"
-                class="absolute w-full bg-white mt-1 rounded-lg shadow-lg border border-gray-200 hidden z-20"
+                class="absolute w-full mt-2 bg-white rounded-2xl shadow-xl border border-gray-100 hidden z-50 overflow-hidden"
               ></div>
             </div>
           </div>
-          <!-- Back Button -->
-          <div class="flex items-center">
+
+          <div class="flex items-center gap-3">
+            <button class="md:hidden w-10 h-10 flex items-center justify-center rounded-xl bg-gray-50 text-gray-400">
+               <i class="ri-search-line"></i>
+            </button>
             <a
-              href="{% url 'youth_church_landing' %}"
-              class="flex items-center space-x-2 px-3 py-2 bg-gray-200 rounded-lg text-gray-600 hover:bg-gray-300 transition"
+              href="/"
+              class="flex items-center gap-2 px-5 py-2.5 bg-gray-900 text-white rounded-xl text-sm font-semibold hover:bg-primary shadow-lg shadow-gray-200 hover:shadow-primary/30 active:scale-95 transition-all"
             >
-              <i class="ri-arrow-left-line text-lg"></i>
-              <span class="hidden sm:inline">Back</span>
+              <i class="ri-arrow-left-line"></i>
+              <span>Back to Home</span>
             </a>
           </div>
         </div>
@@ -147,107 +196,60 @@
     </nav>
 
     <!-- Main Content -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div class="flex justify-between items-center mb-8">
-        <h1 class="text-2xl sm:text-3xl font-semibold text-gray-900">
-          Church News Archive
-        </h1>
-        <div class="flex items-center space-x-4">
-          <!-- Category Filter -->
-          <div class="relative">
-            <button
-              id="categoryFilter"
-              class="px-4 py-2 bg-white border border-gray-200 rounded-button text-sm flex items-center space-x-2 cursor-pointer"
-            >
-              <span id="selectedCategories">All Categories</span>
-              <i class="ri-arrow-down-s-line"></i>
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      
+      <!-- Featured Highlight (Hero) -->
+      <section id="featured-hero" class="mb-16 hidden lg:block">
+        <!-- Will be populated by JS if a featured article exists -->
+      </section>
+
+      <!-- Advanced Filter Bar -->
+      <div class="sticky top-24 z-40 bg-white/70 backdrop-blur-md rounded-3xl border border-gray-100 p-2 mb-10 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
+        <div class="flex items-center gap-2 overflow-x-auto no-scrollbar py-1 px-2 w-full sm:w-auto" id="category-pills">
+            <button class="category-pill active px-5 py-2 rounded-2xl text-sm font-bold transition-all whitespace-nowrap bg-primary text-white" data-category="all">
+                All Stories
             </button>
-            <div
-              id="categoryDropdown"
-              class="hidden absolute top-full mt-1 w-48 sm:w-64 bg-white border border-gray-200 rounded shadow-lg z-10"
-            >
-              <div class="py-1">
-                <label
-                  class="category-item flex items-center px-4 py-2 hover:bg-gray-50 cursor-pointer relative"
-                >
-                  <input
-                    type="checkbox"
-                    class="form-checkbox h-4 w-4 text-primary rounded border-gray-300"
-                    value="all"
-                    checked
-                  />
-                  <span class="ml-2 text-sm">All Categories</span>
-                  <div class="category-tooltip left-full ml-2">
-                    All articles from all categories
-                  </div>
-                </label>
-                <label
-                  class="category-item flex items-center px-4 py-2 hover:bg-gray-50 cursor-pointer relative"
-                  data-category="Events"
-                >
-                  <input
-                    type="checkbox"
-                    class="form-checkbox h-4 w-4 text-primary rounded border-gray-300"
-                    value="Events"
-                  />
-                  <span class="ml-2 text-sm">Events (1)</span>
-                  <div class="category-tooltip left-full ml-2">
-                    Recent: Easter Sunday Service 2025
-                  </div>
-                </label>
-                <label
-                  class="category-item flex items-center px-4 py-2 hover:bg-gray-50 cursor-pointer relative"
-                  data-category="Announcements"
-                >
-                  <input
-                    type="checkbox"
-                    class="form-checkbox h-4 w-4 text-primary rounded border-gray-300"
-                    value="Announcements"
-                  />
-                  <span class="ml-2 text-sm">Announcements (1)</span>
-                  <div class="category-tooltip left-full ml-2">
-                    Recent: Youth Group Mission Trip Announcement
-                  </div>
-                </label>
-                <label
-                  class="category-item flex items-center px-4 py-2 hover:bg-gray-50 cursor-pointer relative"
-                  data-category="Community"
-                >
-                  <input
-                    type="checkbox"
-                    class="form-checkbox h-4 w-4 text-primary rounded border-gray-300"
-                    value="Community"
-                  />
-                  <span class="ml-2 text-sm">Community (1)</span>
-                  <div class="category-tooltip left-full ml-2">
-                    Recent: Spring Food Drive Success
-                  </div>
-                </label>
-              </div>
-            </div>
-          </div>
-          <!-- Sort Filter -->
-          <div class="relative">
-            <button
-              id="sortFilter"
-              class="px-4 py-2 bg-white border border-gray-200 rounded-button text-sm flex items-center space-x-2 cursor-pointer"
-            >
-              <span id="currentSort">Latest First</span>
-              <i class="ri-arrow-down-s-line"></i>
+            <button class="category-pill px-5 py-2 rounded-2xl text-sm font-bold transition-all whitespace-nowrap text-gray-500 hover:bg-gray-100" data-category="Events">
+                Events
             </button>
-            <ul
-              id="sortFilterDropdown"
-              class="hidden absolute mt-1 w-40 bg-white shadow-md border rounded-md"
-            >
-              <li class="px-4 py-2 cursor-pointer hover:bg-gray-200">
-                Latest First
-              </li>
-              <li class="px-4 py-2 cursor-pointer hover:bg-gray-200">
-                Oldest First
-              </li>
-            </ul>
-          </div>
+            <button class="category-pill px-5 py-2 rounded-2xl text-sm font-bold transition-all whitespace-nowrap text-gray-500 hover:bg-gray-100" data-category="Announcements">
+                Announcements
+            </button>
+            <button class="category-pill px-5 py-2 rounded-2xl text-sm font-bold transition-all whitespace-nowrap text-gray-500 hover:bg-gray-100" data-category="Community">
+                Community
+            </button>
         </div>
+
+        <div class="flex items-center gap-3 pr-2 w-full sm:w-auto justify-end">
+            <div class="h-8 w-[1px] bg-gray-100 hidden sm:block"></div>
+            <div class="relative" id="sort-container">
+                <button
+                    id="sortFilter"
+                    class="flex items-center gap-2 px-4 py-2 text-sm font-bold text-gray-600 hover:text-primary transition-colors"
+                >
+                    <i class="ri-sort-desc text-lg"></i>
+                    <span id="currentSort">Latest First</span>
+                    <i class="ri-arrow-down-s-line"></i>
+                </button>
+                <ul
+                    id="sortFilterDropdown"
+                    class="hidden absolute right-0 mt-2 w-48 bg-white shadow-2xl border border-gray-100 rounded-2xl overflow-hidden z-50 py-2"
+                >
+                    <li class="px-4 py-2 text-sm font-medium cursor-pointer hover:bg-gray-50 hover:text-primary transition-colors flex items-center gap-2" data-sort="latest">
+                        <i class="ri-history-line"></i> Latest First
+                    </li>
+                    <li class="px-4 py-2 text-sm font-medium cursor-pointer hover:bg-gray-50 hover:text-primary transition-colors flex items-center gap-2" data-sort="oldest">
+                        <i class="ri-clockwise-2-line"></i> Oldest First
+                    </li>
+                </ul>
+            </div>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3 mb-8">
+          <div class="h-6 w-1 rounded-full bg-primary"></div>
+          <h2 class="text-2xl font-black font-display text-gray-900 tracking-tight">Recent Stories</h2>
+          <div class="h-[1px] flex-1 bg-gray-100"></div>
       </div>
 
       <!-- News Grid -->
@@ -288,37 +290,71 @@
       </div>
     </div>
 
-    <!-- Modal -->
+    <!-- Modal (Reading Interface) -->
     <div
       id="newsModal"
-      class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50"
+      class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm hidden items-center justify-center z-[100]"
     >
       <div
-        class="modal bg-white rounded-lg max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto transform scale-95 opacity-0"
+        class="modal bg-white rounded-3xl max-w-5xl w-full mx-4 max-h-[90vh] overflow-hidden flex flex-col shadow-2xl transform scale-95 opacity-0"
       >
-        <div class="p-4 sm:p-6">
-          <div class="flex justify-between items-start mb-4">
-            <div>
-              <span
-                id="modalCategory"
-                class="inline-block px-3 py-1 rounded-full text-xs font-medium bg-primary text-white mb-2"
-                >Category</span
-              >
-              <h2
-                id="modalTitle"
-                class="text-xl sm:text-2xl font-semibold text-gray-900"
-              ></h2>
-              <p id="modalDate" class="text-sm text-gray-500 mt-1"></p>
-            </div>
-            <button id="closeModal" class="text-gray-400 hover:text-gray-500">
+        <!-- Modal Sticky Header -->
+        <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-white/80 backdrop-blur-md sticky top-0 z-20">
+           <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+                 <i class="ri-book-read-line text-xl"></i>
+              </div>
+              <span class="text-xs font-black uppercase tracking-widest text-gray-400">Article Reader</span>
+           </div>
+           <button id="closeModal" class="w-10 h-10 flex items-center justify-center rounded-xl bg-gray-50 text-gray-400 hover:text-primary hover:bg-primary/5 transition-all">
               <i class="ri-close-line text-2xl"></i>
-            </button>
+           </button>
+        </div>
+
+        <div class="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar">
+          <!-- Hero Image -->
+          <div class="relative w-full h-64 sm:h-[450px]">
+             <img id="modalImage" class="w-full h-full object-cover" />
+             <div class="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-white to-transparent"></div>
+             <div class="absolute bottom-6 left-8">
+                <span id="modalCategory" class="px-4 py-1.5 rounded-xl text-xs font-black uppercase tracking-widest bg-primary text-white shadow-lg shadow-primary/30">Category</span>
+             </div>
           </div>
-          <img
-            id="modalImage"
-            class="w-full h-48 sm:h-[400px] object-cover rounded-lg mb-6"
-          />
-          <div id="modalContent" class="prose max-w-none"></div>
+
+          <div class="px-6 py-8 sm:px-12 sm:pb-16 max-w-4xl mx-auto">
+             <h2 id="modalTitle" class="text-3xl sm:text-5xl font-black font-display text-gray-900 mb-6 leading-[1.1] tracking-tight">Title</h2>
+             
+             <div class="flex flex-wrap items-center gap-6 mb-10 pb-8 border-b border-gray-100">
+                <div class="flex items-center gap-3">
+                   <div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-400 border border-gray-200">
+                      <i class="ri-user-3-line"></i>
+                   </div>
+                   <div>
+                      <p class="text-xs text-gray-400 font-bold uppercase tracking-tighter">Author</p>
+                      <p class="text-sm font-bold text-gray-900">Church Editorial</p>
+                   </div>
+                </div>
+                <div class="h-8 w-[1px] bg-gray-100 hidden sm:block"></div>
+                <div class="flex items-center gap-3">
+                   <div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-400 border border-gray-200">
+                      <i class="ri-calendar-line"></i>
+                   </div>
+                   <div>
+                      <p class="text-xs text-gray-400 font-bold uppercase tracking-tighter">Published</p>
+                      <p id="modalDate" class="text-sm font-bold text-gray-900">Date</p>
+                   </div>
+                </div>
+                <div class="ml-auto flex items-center gap-2">
+                   <button class="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-gray-400 hover:text-[#1877F2] hover:bg-[#1877F2]/10 transition-all"><i class="ri-facebook-fill"></i></button>
+                   <button class="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-gray-400 hover:text-[#1DA1F2] hover:bg-[#1DA1F2]/10 transition-all"><i class="ri-twitter-x-fill"></i></button>
+                   <button class="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-gray-400 hover:text-[#25D366] hover:bg-[#25D366]/10 transition-all"><i class="ri-whatsapp-line"></i></button>
+                </div>
+             </div>
+
+             <div id="modalContent" class="prose prose-purple max-w-none text-gray-600 leading-relaxed space-y-6 text-lg">
+                <!-- Content here -->
+             </div>
+          </div>
         </div>
       </div>
     </div>
@@ -326,386 +362,311 @@
     <!-- Scripts -->
     {% load static %}
     <script>
-      function getExpirationDate() {
-        const now = new Date();
-        now.setMonth(now.getMonth() + 9);
-        return now.toLocaleDateString();
-      }
-
-      const staticUrl = "{{ STATIC_URL }}";
-
-      // Sample news data
+      // Enhanced Mock Data with dummy content
       let mockNews = [
         {
           id: 1,
-          title:
-            "Easter Sunday Service 2025: A Celebration of Hope and Renewal",
-          excerpt:
-            "Join us for a special Easter Sunday service filled with worship...",
-          content:
-            "Join us for a special Easter Sunday service filled with worship, fellowship...",
+          title: "Easter Sunday Service 2025: A Celebration of Hope and Renewal",
+          excerpt: "Join us for a special Easter Sunday service filled with worship, reflection, and a message of profound hope as we celebrate the resurrection.",
+          content: `
+            <p>We are delighted to invite you and your family to our 2025 Easter Sunday Service. This year's theme, "Hope Rising," focuses on the power of renewal in our daily lives.</p>
+            <p>Our service will feature a special choral performance, a testimony from our youth outreach program, and a powerful message from Pastor Johnathan. Following the service, we will host a community brunch in the fellowship hall.</p>
+            <p>Whether you've been part of our community for years or are visiting for the first time, you are welcome here. Come as you are and celebrate with us.</p>
+          `,
           category: "Events",
-          date: new Date().toLocaleDateString(), // Show only the date
-          expirationDate: getExpirationDate(),
+          date: "Mar 10, 2025",
+          readTime: "4 min read",
+          isFeatured: true,
           image: "/static/img/easter.jpg",
         },
         {
           id: 2,
-          title: "Community Outreach: Spring Food Drive Success",
-          excerpt:
-            "Thanks to your generous donations, we provided meals to 200 families...",
-          content:
-            "Our Spring Food Drive has concluded with overwhelming success!",
+          title: "Community Outreach: Spring Food Drive Surpasses All Expectations",
+          excerpt: "Through the incredible generosity of our congregation, we've successfully collected over 2,500 pounds of non-perishable food items.",
+          content: `
+            <p>The results are in for our 2025 Spring Food Drive, and the impact is truly staggering. Initially aiming to support 100 families, the overwhelming response allowed us to provide full meal kits to over 250 households in our local area.</p>
+            <p>Special thanks to the volunteer logistics team who spent countless hours sorting and distributing the donations. This success is a testament to the compassionate heart of our church.</p>
+          `,
           category: "Community",
-          date: new Date().toLocaleDateString(), // Show only the date
-          expirationDate: getExpirationDate(),
+          date: "Feb 28, 2025",
+          readTime: "3 min read",
           image: "/static/img/Community.jpg",
         },
         {
           id: 3,
-          title: "Youth Group Mission Trip Announcement",
-          excerpt:
-            "This summer, our youth group will embark on a mission trip...",
-          content:
-            "This summer, our youth group will be traveling to Guatemala...",
+          title: "Expanding Our Reach: Youth Mission Trip to Guatemala Announced",
+          excerpt: "Our Youth Fellowship is preparing for a transformative mission trip this coming August to help build a local school.",
+          content: `
+            <p>The SM Church Youth Fellowship is excited to announce our next international mission trip. This summer, a team of 15 youth members and 4 supervisors will travel to Quetzaltenango, Guatemala.</p>
+            <p>The mission will focus on assisting in the final stages of a new elementary school building and organizing a 3-day community sports camp. We are now accepting registrations and starting our fundraising initiatives.</p>
+          `,
           category: "Announcements",
-          date: new Date().toLocaleDateString(), // Show only the date
-          expirationDate: getExpirationDate(),
+          date: "Feb 15, 2025",
+          readTime: "5 min read",
           image: "/static/img/43.jpg",
         },
         {
           id: 4,
-          title: "Youth Group Summer Camp Registration Open",
-          excerpt: "Don't miss out on our exciting summer camp for youth...",
-          content: "Registration for our summer youth camp is now open...",
+          title: "New Digital Library Features: More E-books and Audiobooks Added",
+          excerpt: "We've added 50 new titles to our digital library to support your spiritual growth and theological study.",
+          content: "<p>Our Digital Library continues to grow! We have recently added several new theological commentaries, inspirational biographies, and a full series of audio children's Bible stories.</p>",
           category: "Announcements",
-          date: new Date().toLocaleDateString(), // Show only the date
-          expirationDate: getExpirationDate(),
-          image: "/static/img/43.jpg",
+          date: "Jan 20, 2025",
+          readTime: "2 min read",
+          image: "/static/img/news.jpg",
         },
+        {
+          id: 5,
+          title: "Worship Night: An Evening of Sacred Music and Fellowship",
+          excerpt: "Join the SM Choir for an unforgettable evening of worship and soulful melodies this Friday.",
+          content: "<p>Prepare your hearts for an evening of deep worship. The SM Choir will be leading us through a carefully curated selection of hymns and contemporary worship songs.</p>",
+          category: "Events",
+          date: "Jan 12, 2025",
+          readTime: "3 min read",
+          image: "/static/img/news.jpg",
+        }
       ];
 
-      console.log(mockNews);
+      let currentCategory = "all";
+      let currentSort = "latest";
+      let searchTerm = "";
 
-      document.getElementById("closeModal").addEventListener("click", () => {
+      // Initialize Page
+      document.addEventListener("DOMContentLoaded", () => {
+        setupEventListeners();
+        renderNews();
+        
+        // Add scroll effect for navbar
+        window.addEventListener('scroll', () => {
+          if (window.scrollY > 20) {
+            document.body.classList.add('scrolled');
+          } else {
+            document.body.classList.remove('scrolled');
+          }
+        });
+      });
+
+      function setupEventListeners() {
+        // Search Input with suggestions
+        const searchInput = document.getElementById("searchInput");
+        const suggestionsBox = document.getElementById("searchSuggestions");
+        
+        searchInput.addEventListener("input", (e) => {
+          searchTerm = e.target.value.toLowerCase();
+          updateSuggestions(searchTerm);
+          renderNews();
+        });
+
+        // Category Pills
+        document.querySelectorAll(".category-pill").forEach(pill => {
+          pill.addEventListener("click", () => {
+            document.querySelectorAll(".category-pill").forEach(p => p.classList.remove("active", "bg-primary", "text-white"));
+            document.querySelectorAll(".category-pill").forEach(p => p.classList.add("text-gray-500", "hover:bg-gray-100"));
+            
+            pill.classList.add("active", "bg-primary", "text-white");
+            pill.classList.remove("text-gray-500", "hover:bg-gray-100");
+            
+            currentCategory = pill.dataset.category;
+            renderNews();
+          });
+        });
+
+        // Sort Dropdown
+        const sortBtn = document.getElementById("sortFilter");
+        const sortDropdown = document.getElementById("sortFilterDropdown");
+        
+        sortBtn.addEventListener("click", () => {
+          sortDropdown.classList.toggle("hidden");
+        });
+
+        document.querySelectorAll("#sortFilterDropdown li").forEach(item => {
+          item.addEventListener("click", () => {
+            currentSort = item.dataset.sort;
+            document.getElementById("currentSort").textContent = item.textContent.trim();
+            sortDropdown.classList.add("hidden");
+            renderNews();
+          });
+        });
+
+        // Close dropdowns on outside click
+        document.addEventListener("click", (e) => {
+          if (!sortBtn.contains(e.target) && !sortDropdown.contains(e.target)) {
+            sortDropdown.classList.add("hidden");
+          }
+          if (!searchInput.contains(e.target)) {
+            suggestionsBox.classList.add("hidden");
+          }
+        });
+
+        // Close Modal
+        document.getElementById("closeModal").addEventListener("click", closeModal);
+      }
+
+      function updateSuggestions(term) {
+        const box = document.getElementById("searchSuggestions");
+        if (!term) {
+          box.classList.add("hidden");
+          return;
+        }
+
+        const hits = mockNews.filter(n => n.title.toLowerCase().includes(term)).slice(0, 5);
+        if (hits.length === 0) {
+          box.classList.add("hidden");
+          return;
+        }
+
+        box.innerHTML = hits.map(news => `
+          <div class="p-3 hover:bg-gray-50 cursor-pointer flex items-center gap-3 border-b border-gray-50 last:border-none" onclick="quickSelectSuggestion('${news.title}')">
+            <img src="${news.image}" class="w-10 h-10 rounded-lg object-cover">
+            <div class="flex flex-col">
+              <span class="text-xs font-bold text-gray-900 line-clamp-1">${news.title}</span>
+              <span class="text-[10px] text-primary uppercase font-bold">${news.category}</span>
+            </div>
+          </div>
+        `).join('');
+        box.classList.remove("hidden");
+      }
+
+      window.quickSelectSuggestion = (title) => {
+        document.getElementById("searchInput").value = title;
+        searchTerm = title.toLowerCase();
+        document.getElementById("searchSuggestions").classList.add("hidden");
+        renderNews();
+      };
+
+      function renderNews() {
+        const grid = document.getElementById("newsGrid");
+        const heroSection = document.getElementById("featured-hero");
+        
+        // Filter and Sort
+        let filtered = mockNews.filter(n => {
+          const matchCat = currentCategory === "all" || n.category === currentCategory;
+          const matchSearch = n.title.toLowerCase().includes(searchTerm) || n.excerpt.toLowerCase().includes(searchTerm);
+          return matchCat && matchSearch;
+        });
+
+        filtered.sort((a, b) => {
+          const d1 = new Date(a.date);
+          const d2 = new Date(b.date);
+          return currentSort === "latest" ? d2 - d1 : d1 - d2;
+        });
+
+        // Render Hero Only on 'All' or if it matches
+        const featured = filtered.find(n => n.isFeatured);
+        if (featured && currentCategory === "all" && !searchTerm) {
+          heroSection.innerHTML = `
+            <div class="relative group cursor-pointer overflow-hidden rounded-[2.5rem] shadow-2xl shadow-primary/10 border border-gray-100" onclick="showModal(${featured.id})">
+              <div class="grid lg:grid-cols-2 gap-0">
+                <div class="aspect-[16/10] overflow-hidden">
+                   <img src="${featured.image}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000">
+                </div>
+                <div class="p-8 sm:p-12 flex flex-col justify-center bg-white border-l border-gray-100 relative">
+                   <div class="absolute top-0 right-0 p-8">
+                      <div class="w-12 h-12 rounded-full border border-gray-100 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all">
+                         <i class="ri-arrow-right-up-line text-2xl"></i>
+                      </div>
+                   </div>
+                   <div class="flex items-center gap-2 mb-4">
+                      <span class="featured-badge px-3 py-1 rounded-lg text-[10px] font-black text-white uppercase tracking-widest">Featured Spotlight</span>
+                      <span class="h-1 w-1 rounded-full bg-gray-300"></span>
+                      <span class="text-xs font-bold text-gray-400">${featured.readTime}</span>
+                   </div>
+                   <h2 class="text-3xl sm:text-5xl font-black font-display text-gray-900 mb-6 leading-tight group-hover:text-primary transition-colors">${featured.title}</h2>
+                   <p class="text-gray-500 text-lg mb-8 line-clamp-3 leading-relaxed">${featured.excerpt}</p>
+                   <div class="flex items-center gap-4">
+                      <div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-400"><i class="ri-calendar-line"></i></div>
+                      <div>
+                         <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Published On</p>
+                         <p class="text-sm font-bold text-gray-900">${featured.date}</p>
+                      </div>
+                   </div>
+                </div>
+              </div>
+            </div>
+          `;
+          heroSection.classList.remove("hidden");
+        } else {
+          heroSection.classList.add("hidden");
+        }
+
+        // Render Grid
+        grid.innerHTML = filtered.map(news => `
+          <div class="news-card bg-white rounded-[2rem] p-4 flex flex-col h-full shadow-sm hover:shadow-xl active:scale-[0.98] transition-all cursor-pointer" onclick="showModal(${news.id})">
+             <div class="relative w-full aspect-video rounded-2xl overflow-hidden mb-5">
+                <img src="${news.image}" class="w-full h-full object-cover">
+                <div class="absolute top-3 left-3">
+                   <span class="px-3 py-1.5 rounded-xl bg-white/90 backdrop-blur-md text-[10px] font-black uppercase text-primary shadow-sm">${news.category}</span>
+                </div>
+             </div>
+             <div class="px-2 flex flex-col flex-1">
+                <h3 class="text-xl font-bold font-display text-gray-900 mb-3 line-clamp-2 leading-snug group-hover:text-primary transition-colors">${news.title}</h3>
+                <p class="text-gray-500 text-sm line-clamp-2 mb-6 leading-relaxed">${news.excerpt}</p>
+                <div class="mt-auto pt-4 border-t border-gray-50 flex items-center justify-between">
+                   <div class="flex items-center gap-2">
+                      <i class="ri-time-line text-gray-400"></i>
+                      <span class="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">${news.date} • ${news.readTime}</span>
+                   </div>
+                   <div class="flex items-center gap-1 text-primary font-black text-[10px] uppercase tracking-widest group">
+                      Read <i class="ri-arrow-right-line transition-transform group-hover:translate-x-1"></i>
+                   </div>
+                </div>
+             </div>
+          </div>
+        `).join('');
+      }
+
+      function showModal(id) {
+        const news = mockNews.find(n => n.id === id);
+        if (!news) return;
+
         const modal = document.getElementById("newsModal");
-        modal
-          .querySelector(".modal")
-          .classList.remove("opacity-100", "scale-100");
+        document.getElementById("modalTitle").textContent = news.title;
+        document.getElementById("modalCategory").textContent = news.category;
+        document.getElementById("modalDate").textContent = news.date;
+        document.getElementById("modalImage").src = news.image;
+        document.getElementById("modalContent").innerHTML = news.content;
+
+        modal.classList.remove("hidden");
+        modal.classList.add("flex");
+        document.body.style.overflow = 'hidden';
+        
+        setTimeout(() => {
+          modal.querySelector(".modal").classList.add("opacity-100", "scale-100");
+          modal.querySelector(".modal").classList.remove("scale-95", "opacity-0");
+        }, 10);
+      }
+
+      function closeModal() {
+        const modal = document.getElementById("newsModal");
+        modal.querySelector(".modal").classList.add("opacity-0", "scale-95");
+        modal.querySelector(".modal").classList.remove("opacity-100", "scale-100");
+        document.body.style.overflow = '';
+        
         setTimeout(() => {
           modal.classList.add("hidden");
           modal.classList.remove("flex");
-        }, 300);
-      });
-
-      // Function to render news dynamically
-      function renderNews() {
-        const newsContainer = document.getElementById("news-container");
-        newsContainer.innerHTML = ""; // Clear existing content
-
-        mockNews.forEach((news) => {
-          const newsItem = document.createElement("div");
-          newsItem.className = "news-item";
-          newsItem.id = `news-${news.id}`;
-          newsItem.innerHTML = `
-            <div class="news-card">
-              <img src="${news.image}" alt="${news.title}">
-              <h3>${news.title}</h3>
-              <p>${news.excerpt}</p>
-              <small><strong>Category:</strong> ${news.category}</small>
-              <br>
-              <small><strong>Date:</strong> ${news.date}</small>
-            </div>
-          `;
-          newsContainer.appendChild(newsItem);
-        });
+        }, 400);
       }
-
-      // Function to remove expired news items from both the array and UI
-      function removeExpiredNews() {
-        const now = new Date();
-
-        // Filter out expired news
-        mockNews = mockNews.filter(
-          (news) => new Date(news.expirationDate) > now
-        );
-
-        // Update UI
-        renderNews();
-      }
-
-      // Run the cleanup function every 24 hours
-      setInterval(removeExpiredNews, 24 * 60 * 60 * 1000);
-
-      // Initial render
-      document.addEventListener("DOMContentLoaded", () => {
-        renderNews();
-        removeExpiredNews(); // Cleanup on page load
-      });
-
-      console.log(mockNews);
-
-      let selectedCategories = ["all"];
-      function updateSelectedCategories() {
-        const checkboxes = document.querySelectorAll(
-          '#categoryDropdown input[type="checkbox"]'
-        );
-        const allCategoriesCheckbox = document.querySelector(
-          '#categoryDropdown input[value="all"]'
-        );
-        const selectedCategoriesSpan =
-          document.getElementById("selectedCategories");
-        selectedCategories = Array.from(checkboxes)
-          .filter((cb) => cb.checked && cb.value !== "all")
-          .map((cb) => cb.value);
-        if (allCategoriesCheckbox.checked || selectedCategories.length === 0) {
-          selectedCategories = ["all"];
-          selectedCategoriesSpan.textContent = "All Categories";
-        } else {
-          selectedCategoriesSpan.textContent =
-            selectedCategories.length === 1
-              ? selectedCategories[0]
-              : `${selectedCategories.length} Categories`;
-        }
-        renderNews();
-      }
-      let currentSort = "latest";
-      let searchTerm = "";
-      document.getElementById("searchInput").addEventListener("input", (e) => {
-        searchTerm = e.target.value.toLowerCase();
-        const suggestionsContainer =
-          document.getElementById("searchSuggestions");
-        if (searchTerm.length > 0) {
-          const suggestions = mockNews
-            .filter(
-              (news) =>
-                news.title.toLowerCase().includes(searchTerm) ||
-                news.content.toLowerCase().includes(searchTerm) ||
-                news.category.toLowerCase().includes(searchTerm)
-            )
-            .slice(0, 5);
-          if (suggestions.length > 0) {
-            suggestionsContainer.innerHTML = suggestions
-              .map(
-                (news) => `
-      <div class="suggestion-item rounded p-3 hover:border-[2px] cursor-pointer flex items-center">
-      <div class="w-12 h-12 rounded overflow-hidden mr-3 flex-shrink-0">
-      <img src="${news.image}" class="w-full h-full object-cover">
-      </div>
-      <div class="flex-grow">
-      <div class="text-sm font-medium text-gray-900">${news.title}</div>
-      <div class="text-xs text-gray-500">${news.category}</div>
-      </div>
-      </div>
-      `
-              )
-              .join("");
-            suggestionsContainer.classList.remove("hidden");
-            document
-              .querySelectorAll(".suggestion-item")
-              .forEach((item, index) => {
-                item.addEventListener("click", () => {
-                  document.getElementById("searchInput").value =
-                    suggestions[index].title;
-                  searchTerm = suggestions[index].title.toLowerCase();
-                  suggestionsContainer.classList.add("hidden");
-                  renderNews();
-                });
-              });
-          } else {
-            suggestionsContainer.classList.add("hidden");
-          }
-        } else {
-          suggestionsContainer.classList.add("hidden");
-        }
-        renderNews();
-      });
-      document.addEventListener("click", (e) => {
-        const suggestionsContainer =
-          document.getElementById("searchSuggestions");
-        const searchInput = document.getElementById("searchInput");
-        if (
-          !searchInput.contains(e.target) &&
-          !suggestionsContainer.contains(e.target)
-        ) {
-          suggestionsContainer.classList.add("hidden");
-        }
-      });
-      function renderNews() {
-        const newsGrid = document.getElementById("newsGrid");
-        const pagination = document.getElementById("pagination");
-        newsGrid.innerHTML = "";
-        let filteredNews = selectedCategories.includes("all")
-          ? [...mockNews]
-          : mockNews.filter((news) =>
-              selectedCategories.includes(news.category)
-            );
-        if (searchTerm) {
-          filteredNews = filteredNews.filter(
-            (news) =>
-              news.title.toLowerCase().includes(searchTerm) ||
-              news.content.toLowerCase().includes(searchTerm) ||
-              news.excerpt.toLowerCase().includes(searchTerm) ||
-              news.category.toLowerCase().includes(searchTerm)
-          );
-        }
-        filteredNews.sort((a, b) => {
-          const dateA = new Date(a.date);
-          const dateB = new Date(b.date);
-          return currentSort === "latest" ? dateB - dateA : dateA - dateB;
-        });
-        filteredNews.forEach((news) => {
-          const card = document.createElement("div");
-          card.className =
-            "news-card bg-white rounded-lg shadow-sm overflow-hidden cursor-pointer";
-          card.innerHTML = `
-      <img src="${news.image}" class="w-full h-48 object-cover">
-      <div class="p-4">
-      <span class="inline-block px-3 py-1 rounded-full text-xs font-medium bg-primary text-white mb-2">${news.category}</span>
-      <h3 class="text-lg font-semibold text-gray-900 mb-2">${news.title}</h3>
-      <p class="text-sm text-gray-500 mb-4">${news.excerpt}</p>
-      <div class="flex justify-between items-center">
-      <span class="text-sm text-gray-400">${news.date}</span>
-      <button class="text-primary text-sm font-medium hover:text-primary-dark">Read More</button>
-      </div>
-      </div>
-      `;
-          card.addEventListener("click", () => showModal(news));
-          newsGrid.appendChild(card);
-        });
-        const itemsPerPage = 6;
-        const totalPages = Math.ceil(filteredNews.length / itemsPerPage);
-        pagination.classList.toggle(
-          "hidden",
-          filteredNews.length <= itemsPerPage
-        );
-        if (filteredNews.length > itemsPerPage) {
-          const paginationNav = pagination.querySelector("nav");
-          paginationNav.innerHTML = "";
-          // Previous button
-          const prevButton = document.createElement("button");
-          prevButton.className =
-            "px-3 py-2 rounded-button border border-gray-200 text-sm hover:bg-gray-50 cursor-pointer";
-          prevButton.textContent = "Previous";
-          paginationNav.appendChild(prevButton);
-          // Page numbers
-          for (let i = 1; i <= totalPages; i++) {
-            const pageButton = document.createElement("button");
-            pageButton.className = `px-3 py-2 rounded-button text-sm cursor-pointer ${
-              i === 1
-                ? "bg-primary text-white"
-                : "border border-gray-200 hover:bg-gray-50"
-            }`;
-            pageButton.textContent = i;
-            paginationNav.appendChild(pageButton);
-          }
-          // Next button
-          const nextButton = document.createElement("button");
-          nextButton.className =
-            "px-3 py-2 rounded-button border border-gray-200 text-sm hover:bg-gray-50 cursor-pointer";
-          nextButton.textContent = "Next";
-          paginationNav.appendChild(nextButton);
-        }
-        // Only show first page items
-        filteredNews = filteredNews.slice(0, itemsPerPage);
-      }
-      function showModal(news) {
-        const modal = document.getElementById("newsModal");
-        const modalContent = {
-          title: document.getElementById("modalTitle"),
-          category: document.getElementById("modalCategory"),
-          date: document.getElementById("modalDate"),
-          image: document.getElementById("modalImage"),
-          content: document.getElementById("modalContent"),
-        };
-        modalContent.title.textContent = news.title;
-        modalContent.category.textContent = news.category;
-        modalContent.date.textContent = news.date;
-        modalContent.image.src = news.image;
-        modalContent.content.innerHTML = `<p>${news.content}</p>`;
-        modal.classList.remove("hidden");
-        modal.classList.add("flex");
-        setTimeout(() => {
-          modal
-            .querySelector(".modal")
-            .classList.add("opacity-100", "scale-100");
-        }, 10);
-      }
-      // Function to sort news articles
-      function sortNews(order) {
-        if (order === "Latest First") {
-          mockNews.sort((a, b) => new Date(b.date) - new Date(a.date)); // Newest first
-        } else if (order === "Oldest First") {
-          mockNews.sort((a, b) => new Date(a.date) - new Date(b.date)); // Oldest first
-        }
-        renderNews(); // Update UI
-      }
-
-      // Dropdown selection event
-      document.getElementById("sortFilter").addEventListener("click", () => {
-        const dropdown = document.getElementById("sortFilterDropdown");
-        dropdown.classList.toggle("hidden");
-      });
-
-      // Handle sorting selection
-      document.querySelectorAll("#sortFilterDropdown li").forEach((item) => {
-        item.addEventListener("click", () => {
-          const selectedSort = item.textContent.trim();
-          document.getElementById("currentSort").textContent = selectedSort;
-          sortNews(selectedSort); // Call sorting function
-        });
-      });
-
-      // Add click handlers for sort options
-      document.querySelectorAll(".sort-option").forEach((option) => {
-        option.addEventListener("click", () => {
-          updateSort(option.dataset.sort);
-        });
-      });
-      document
-        .querySelectorAll('#categoryDropdown input[type="checkbox"]')
-        .forEach((checkbox) => {
-          checkbox.addEventListener("change", (e) => {
-            const allCategoriesCheckbox = document.querySelector(
-              '#categoryDropdown input[value="all"]'
-            );
-            const categoryCheckboxes = document.querySelectorAll(
-              '#categoryDropdown input[type="checkbox"]:not([value="all"])'
-            );
-            const categoryLabel = e.target.closest("label");
-            if (e.target.value === "all") {
-              categoryCheckboxes.forEach((cb) => {
-                cb.checked = false;
-                cb.disabled = e.target.checked;
-                cb.closest("label").classList.toggle(
-                  "opacity-50",
-                  e.target.checked
-                );
-              });
-            } else {
-              const checkedCategories = Array.from(categoryCheckboxes).filter(
-                (cb) => cb.checked
-              );
-              allCategoriesCheckbox.checked = checkedCategories.length === 0;
-            }
-            if (e.target.checked) {
-              categoryLabel.classList.add("bg-primary", "bg-opacity-10");
-            } else {
-              categoryLabel.classList.remove("bg-primary", "bg-opacity-10");
-            }
-            updateSelectedCategories();
-          });
-        });
-      document
-        .getElementById("categoryFilter")
-        .addEventListener("click", () => {
-          const dropdown = document.getElementById("categoryDropdown");
-          dropdown.classList.toggle("hidden");
-          if (!dropdown.classList.contains("hidden")) {
-            dropdown.style.display = "block";
-          }
-        });
-      renderNews();
     </script>
+    
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-100 py-12 mt-20">
+       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div class="flex flex-col items-center gap-4">
+             <div class="flex items-center gap-2 group">
+                <img src="{% static 'img/logo.png' %}" class="w-8 h-8 object-contain" alt="Logo">
+                <span class="text-sm font-black font-display text-gray-900 tracking-tighter uppercase">The Church Of Christ</span>
+             </div>
+             <p class="text-xs text-gray-400 font-medium max-w-md">The News Archive Portal for the Church Community. Stay informed, stay connected, and grow in faith.</p>
+             <div class="flex items-center gap-6 mt-4">
+                <a href="#" class="text-gray-400 hover:text-primary transition-colors"><i class="ri-facebook-circle-fill text-xl"></i></a>
+                <a href="#" class="text-gray-400 hover:text-primary transition-colors"><i class="ri-twitter-x-fill text-xl"></i></a>
+                <a href="#" class="text-gray-400 hover:text-primary transition-colors"><i class="ri-instagram-line text-xl"></i></a>
+                <a href="#" class="text-gray-400 hover:text-primary transition-colors"><i class="ri-youtube-fill text-xl"></i></a>
+             </div>
+             <p class="text-[10px] text-gray-400 font-bold uppercase tracking-[0.2em] mt-8">&copy; 2025 SM CHURCH. ALL RIGHTS RESERVED.</p>
+          </div>
+       </div>
+    </footer>
   </body>
 </html>
