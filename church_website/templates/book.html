@@ -3341,24 +3341,30 @@
         }
       }
 
-      // Modified openEbookReader function with optimized layout for mobile
-      function openEbookReader(book) {
-        // Clear previous content
+      // Improved openEbookReader function with Vertical Scrolling and Lazy Loading
+      async function openEbookReader(book) {
+        // Clear previous content and show loader
         ebookHeader.innerHTML = "";
         ebookContent.innerHTML = "";
+        ebookContent.className = "flex-1 relative overflow-y-auto bg-slate-700 p-4 sm:p-8 flex flex-col items-center gap-6 scroll-smooth";
+        
+        const loader = document.createElement("div");
+        loader.id = "pdf-loader";
+        loader.className = "absolute inset-0 flex flex-col items-center justify-center bg-slate-800 text-white z-50";
+        loader.innerHTML = `
+          <div class="w-16 h-16 border-4 border-white/10 border-t-amber-400 rounded-full animate-spin mb-4"></div>
+          <p class="text-sm font-bold tracking-widest uppercase animate-pulse">Initializing Reader...</p>
+        `;
+        ebookContent.appendChild(loader);
 
-        const pageCount = book.ebookFile && pdfPageCountCache.has(book.ebookFile) 
-          ? pdfPageCountCache.get(book.ebookFile) 
-          : (book.pages || "?");
-
-        // Create book header with optimized structure
+        // Header Structure
         const headerHTML = `
           <div class="ebook-header-inner p-4 pr-14 sm:p-6 sm:pr-20 flex flex-col gap-4">
             <div class="flex items-start gap-4">
               <img 
                 src="${book.cover}" 
                 alt="${book.title}" 
-                class="w-12 h-16 sm:w-16 sm:h-24 rounded shadow-lg object-cover flex-shrink-0 border border-gray-100"
+                class="w-12 h-16 sm:w-16 sm:h-24 rounded shadow-2xl object-cover flex-shrink-0 border border-white/20"
               >
               <div class="flex-1 min-width-0">
                 <h3 class="text-base sm:text-xl font-bold text-slate-900 leading-tight mb-1 line-clamp-2">
@@ -3370,212 +3376,220 @@
               </div>
             </div>
 
-            <div class="flex flex-wrap items-center gap-2 sm:gap-4 border-t border-slate-50 pt-4">
+            <div class="flex flex-wrap items-center gap-2 sm:gap-4 border-t border-slate-100 pt-4">
               <button
                 onclick="toggleFullScreen()"
-                class="flex items-center justify-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-full text-xs sm:text-sm font-semibold transition-colors"
+                class="flex items-center justify-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-full text-xs sm:text-sm font-bold transition-all"
                 title="Toggle full screen"
               >
                 <i class="fas fa-expand" id="fullscreen-icon"></i>
-                <span class="hidden xs:inline">Full Screen</span>
+                <span class="hidden xs:inline">FULL SCREEN</span>
               </button>
               
-              <div class="flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 bg-amber-50 text-amber-700 rounded-full text-xs sm:text-sm font-semibold">
-                <i class="fas fa-file-pdf text-amber-400"></i> 
-                <span id="ebook-page-info">${pageCount} pages</span>
+              <div class="flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 bg-amber-50 text-amber-700 rounded-full text-xs sm:text-sm font-bold">
+                <i class="fas fa-book-open text-amber-500"></i> 
+                <span id="ebook-page-total">Loading pages...</span>
+              </div>
+
+              <!-- Read Aloud Control -->
+              <button 
+                id="btn-read-aloud" 
+                class="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-full text-xs font-bold shadow-lg transition-transform active:scale-95 hidden"
+              >
+                <i class="fas fa-volume-up"></i>
+                <span>READ ALOUD</span>
+              </button>
+              
+              <div id="reading-controls" class="hidden flex items-center gap-2">
+                <button id="btn-pause-speech" class="w-10 h-10 flex items-center justify-center bg-amber-400 text-slate-900 rounded-full shadow-lg"><i class="fas fa-pause"></i></button>
+                <button id="btn-stop-speech" class="w-10 h-10 flex items-center justify-center bg-red-500 text-white rounded-full shadow-lg"><i class="fas fa-stop"></i></button>
               </div>
             </div>
+          </div>
+        `;
+        ebookHeader.innerHTML = headerHTML;
 
-            <!-- Read Aloud Controls -->
-            <div id="read-aloud-bar" class="flex items-center gap-3 p-2 bg-slate-50 rounded-lg border border-slate-100 hidden">
-               <button id="btn-read-aloud" class="p-2 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors" title="Read Page Aloud">
-                  <i class="fas fa-volume-up"></i>
-               </button>
-               <button id="btn-pause-speech" class="p-2 text-slate-600 hover:bg-slate-100 rounded-lg transition-colors hidden" title="Pause">
-                  <i class="fas fa-pause"></i>
-               </button>
-               <button id="btn-stop-speech" class="p-2 text-red-600 hover:bg-red-100 rounded-lg transition-colors hidden" title="Stop">
-                  <i class="fas fa-stop"></i>
-               </button>
-               <div class="h-4 w-px bg-slate-200"></div>
-               <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Read Aloud</span>
+        // Navigation floating bar
+        const floatingNav = document.createElement("div");
+        floatingNav.className = "fixed bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-6 bg-slate-900/90 backdrop-blur-xl px-8 py-4 rounded-full shadow-[0_20px_50px_rgba(0,0,0,0.5)] z-[100000] border border-white/10 opacity-0 translate-y-10 transition-all duration-500";
+        floatingNav.id = "ebook-floating-nav";
+        floatingNav.innerHTML = `
+          <div class="flex flex-col items-center">
+            <span class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-1">Current Page</span>
+            <div class="flex items-center gap-3">
+              <span id="floating-current-pg" class="text-xl font-black text-amber-400">1</span>
+              <span class="text-slate-600 text-lg">/</span>
+              <span id="floating-total-pgs" class="text-lg font-bold text-slate-300">?</span>
             </div>
           </div>
         `;
+        document.body.appendChild(floatingNav);
 
-        ebookHeader.innerHTML = headerHTML;
-
-        // Reset e-book reader state
+        // PDF JS State
         let pdfDoc = null;
-        let pageNum = 1;
-        let pageIsRendering = false;
-        let pageNumIsPending = null;
-        const scale = 1.5;
+        const pageCache = new Map();
+        const observedPages = new Set();
+        let currentUtterance = null;
+        const synth = window.speechSynthesis;
 
-        const canvas = document.createElement("canvas");
-        canvas.className = "max-w-full h-auto mx-auto shadow-xl bg-white";
-        const ctx = canvas.getContext("2d");
+        // Helper to update current page indicator based on scroll
+        const updatePageIndicator = () => {
+          const containers = document.querySelectorAll(".pdf-page-container");
+          let mostVisiblePage = 1;
+          let maxVisibleHeight = 0;
 
-        // Add loading indicator
-        const loader = document.createElement("div");
-        loader.className = "absolute inset-0 flex flex-col items-center justify-center bg-slate-800 text-white gap-4";
-        loader.innerHTML = `
-          <div class="w-12 h-12 border-4 border-white/20 border-t-white rounded-full animate-spin"></div>
-          <p class="text-sm font-medium animate-pulse">Loading Document...</p>
-        `;
-        ebookContent.appendChild(loader);
+          containers.forEach(container => {
+            const rect = container.getBoundingClientRect();
+            const visibleHeight = Math.min(rect.bottom, window.innerHeight) - Math.max(rect.top, 0);
+            if (visibleHeight > maxVisibleHeight) {
+              maxVisibleHeight = visibleHeight;
+              mostVisiblePage = parseInt(container.dataset.pageNumber);
+            }
+          });
 
-        // Add navigation controls for canvas
-        const navControls = document.createElement("div");
-        navControls.className = "fixed bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-4 bg-white/95 backdrop-blur px-6 py-3 rounded-full shadow-[0_8px_30px_rgb(0,0,0,0.2)] z-[100000]";
-        navControls.innerHTML = `
-          <button id="prev-page" class="w-10 h-10 flex items-center justify-center text-slate-700 hover:bg-slate-100 rounded-full transition-colors disabled:opacity-30 disabled:cursor-not-allowed">
-            <i class="fas fa-chevron-left text-lg"></i>
-          </button>
-          <div class="flex items-center gap-2 text-sm font-bold text-slate-900 min-w-[80px] justify-center tracking-tight">
-            <span id="current-pg" class="text-blue-600">1</span>
-            <span class="text-slate-300">/</span>
-            <span id="total-pgs">?</span>
-          </div>
-          <button id="next-page" class="w-10 h-10 flex items-center justify-center text-slate-700 hover:bg-slate-100 rounded-full transition-colors disabled:opacity-30 disabled:cursor-not-allowed">
-            <i class="fas fa-chevron-right text-lg"></i>
-          </button>
-        `;
+          const indicator = document.getElementById("floating-current-pg");
+          if (indicator) indicator.textContent = mostVisiblePage;
+        };
 
-        // Render Page
-        const renderPage = num => {
-          pageIsRendering = true;
+        ebookContent.addEventListener("scroll", updatePageIndicator);
+
+        // Rendering logic
+        const renderPage = async (num, container) => {
+          if (pageCache.has(num)) return;
           
-          pdfDoc.getPage(num).then(page => {
-            // Adjust scale based on screen width for mobile performance
-            const mobileScale = window.innerWidth < 640 ? 1.0 : 1.5;
+          try {
+            const page = await pdfDoc.getPage(num);
+            const mobileScale = window.innerWidth < 640 ? 1.2 : 1.8;
             const viewport = page.getViewport({ scale: mobileScale });
+            
+            const canvas = document.createElement("canvas");
+            const ctx = canvas.getContext("2d");
             canvas.height = viewport.height;
             canvas.width = viewport.width;
-
-            const renderCtx = {
-              canvasContext: ctx,
-              viewport: viewport
-            };
-
-            page.render(renderCtx).promise.then(() => {
-              pageIsRendering = false;
-              if (pageNumIsPending !== null) {
-                renderPage(pageNumIsPending);
-                pageNumIsPending = null;
-              }
-              document.getElementById("current-pg").textContent = num;
-              
-              const prevBtn = document.getElementById("prev-page");
-              const nextBtn = document.getElementById("next-page");
-              if (prevBtn) prevBtn.disabled = num <= 1;
-              if (nextBtn) nextBtn.disabled = num >= pdfDoc.numPages;
-            });
-          });
-        };
-
-        // Queue Render
-        const queueRenderPage = num => {
-          if (pageIsRendering) {
-            pageNumIsPending = num;
-          } else {
-            renderPage(num);
+            canvas.className = "w-full h-auto shadow-2xl rounded-sm";
+            
+            container.innerHTML = ""; // Remove placeholder
+            container.appendChild(canvas);
+            
+            const renderCtx = { canvasContext: ctx, viewport: viewport };
+            await page.render(renderCtx).promise;
+            pageCache.set(num, true);
+          } catch (err) {
+            console.error(`Error rendering page ${num}:`, err);
           }
         };
 
-        // Text to Speech logic
-        let synth = window.speechSynthesis;
-        let utterance = null;
+        // Intersection Observer for Lazy Loading
+        const observerOptions = {
+          root: ebookContent,
+          rootMargin: "500px 0px", // Load pages ahead of time
+          threshold: 0.1
+        };
 
-        const stopSpeech = () => {
-          if (synth.speaking) {
+        const pageObserver = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              const num = parseInt(entry.target.dataset.pageNumber);
+              renderPage(num, entry.target);
+            }
+          });
+        }, observerOptions);
+
+        // Load PDF using fetch for better reliability
+        try {
+          const response = await fetch(book.ebookFile);
+          if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+          const data = await response.arrayBuffer();
+          
+          pdfDoc = await pdfjsLib.getDocument({ data: data }).promise;
+          
+          document.getElementById("ebook-page-total").textContent = `${pdfDoc.numPages} Pages`;
+          document.getElementById("floating-total-pgs").textContent = pdfDoc.numPages;
+          
+          // Remove loader
+          const activeLoader = document.getElementById("pdf-loader");
+          if (activeLoader) activeLoader.remove();
+          
+          // Create page containers for all pages
+          for (let i = 1; i <= pdfDoc.numPages; i++) {
+            const container = document.createElement("div");
+            container.className = "pdf-page-container w-full max-w-4xl bg-slate-600/50 rounded-lg min-h-[400px] flex items-center justify-center transition-all duration-700 opacity-60";
+            container.dataset.pageNumber = i;
+            
+            // Placeholder content
+            container.innerHTML = `<div class="text-white/20 font-black text-6xl italic">${i}</div>`;
+            
+            ebookContent.appendChild(container);
+            pageObserver.observe(container);
+            
+            // Animate in observation
+            const appearanceObserver = new IntersectionObserver((entries) => {
+              if (entries[0].isIntersecting) {
+                container.classList.remove("opacity-60");
+                container.classList.add("opacity-100");
+                appearanceObserver.disconnect();
+              }
+            }, { threshold: 0.1 });
+            appearanceObserver.observe(container);
+          }
+
+          // Show floating nav
+          floatingNav.classList.remove("opacity-0", "translate-y-10");
+
+          // Enable Read Aloud
+          const readBtn = document.getElementById("btn-read-aloud");
+          readBtn.classList.remove("hidden");
+          
+          const stopRead = () => {
             synth.cancel();
-            document.getElementById("btn-pause-speech").classList.add("hidden");
-            document.getElementById("btn-stop-speech").classList.add("hidden");
+            document.getElementById("reading-controls").classList.add("hidden");
             document.getElementById("btn-read-aloud").classList.remove("hidden");
-          }
-        };
+          };
 
-        const speakPage = num => {
-          pdfDoc.getPage(num).then(page => {
-            page.getTextContent().then(textContent => {
-              const text = textContent.items.map(item => item.str).join(" ");
-              if (text.trim().length > 0) {
-                utterance = new SpeechSynthesisUtterance(text);
-                utterance.onend = stopSpeech;
-                utterance.onerror = stopSpeech;
-                synth.speak(utterance);
-                
-                document.getElementById("btn-read-aloud").classList.add("hidden");
-                document.getElementById("btn-pause-speech").classList.remove("hidden");
-                document.getElementById("btn-stop-speech").classList.remove("hidden");
-              } else {
-                alert("No readable text found on this page.");
-              }
-            });
-          });
-        };
+          readBtn.onclick = async () => {
+            const currentPage = parseInt(document.getElementById("floating-current-pg").textContent);
+            const page = await pdfDoc.getPage(currentPage);
+            const textContent = await page.getTextContent();
+            const text = textContent.items.map(item => item.str).join(" ");
+            
+            if (text.trim()) {
+              currentUtterance = new SpeechSynthesisUtterance(text);
+              currentUtterance.onend = stopRead;
+              synth.speak(currentUtterance);
+              
+              document.getElementById("btn-read-aloud").classList.add("hidden");
+              document.getElementById("reading-controls").classList.remove("hidden");
+            } else {
+              alert("No readable text found on this page.");
+            }
+          };
 
-        // Get PDF Document
-        pdfjsLib.getDocument(book.ebookFile).promise.then(pdf => {
-          pdfDoc = pdf;
-          document.getElementById("total-pgs").textContent = pdf.numPages;
-          document.getElementById("ebook-page-info").textContent = `${pdf.numPages} pages`;
+          document.getElementById("btn-pause-speech").onclick = () => {
+            if (synth.paused) synth.resume(); else synth.pause();
+            document.getElementById("btn-pause-speech").querySelector("i").className = synth.paused ? "fas fa-play" : "fas fa-pause";
+          };
           
-          ebookContent.innerHTML = "";
-          ebookContent.appendChild(canvas);
-          ebookContent.appendChild(navControls);
-          
-          // Show read aloud bar
-          document.getElementById("read-aloud-bar").classList.remove("hidden");
+          document.getElementById("btn-stop-speech").onclick = stopRead;
 
-          renderPage(pageNum);
-
-          // Listeners
-          document.getElementById("prev-page").addEventListener("click", () => {
-             if (pageNum <= 1) return;
-             pageNum--;
-             stopSpeech();
-             queueRenderPage(pageNum);
-          });
-
-          document.getElementById("next-page").addEventListener("click", () => {
-             if (pageNum >= pdfDoc.numPages) return;
-             pageNum++;
-             stopSpeech();
-             queueRenderPage(pageNum);
-          });
-
-          document.getElementById("btn-read-aloud").addEventListener("click", () => {
-             if (synth.paused) {
-                synth.resume();
-                document.getElementById("btn-read-aloud").classList.add("hidden");
-                document.getElementById("btn-pause-speech").classList.remove("hidden");
-             } else {
-                speakPage(pageNum);
-             }
-          });
-
-          document.getElementById("btn-pause-speech").addEventListener("click", () => {
-             synth.pause();
-             document.getElementById("btn-pause-speech").classList.add("hidden");
-             document.getElementById("btn-read-aloud").classList.remove("hidden");
-          });
-
-          document.getElementById("btn-stop-speech").addEventListener("click", stopSpeech);
-        }).catch(err => {
-          console.error("PDF loading error:", err);
-          loader.innerHTML = `
-            <i class="fas fa-exclamation-triangle text-3xl text-red-500"></i>
-            <p class="text-sm font-bold text-red-400">Failed to load e-book</p>
-            <button onclick="window.open('${book.ebookFile}', '_blank')" class="mt-2 px-4 py-2 bg-white text-slate-900 rounded-lg font-bold text-xs uppercase tracking-wider">Open in Browser</button>
+        } catch (err) {
+          console.error("PDF Load Failed:", err);
+          ebookContent.innerHTML = `
+            <div class="flex flex-col items-center justify-center p-12 text-center h-full">
+              <div class="w-24 h-24 bg-red-500/10 rounded-full flex items-center justify-center mb-6">
+                <i class="fas fa-file-excel text-4xl text-red-500"></i>
+              </div>
+              <h4 class="text-2xl font-bold text-white mb-2">Access Denied or File Not Found</h4>
+              <p class="text-slate-400 max-w-sm mb-8">We couldn't load this e-book directly in the library. This might be due to security restrictions or a missing file.</p>
+              <div class="flex gap-4">
+                <button onclick="closeEbookReader()" class="px-6 py-3 bg-white/10 hover:bg-white/20 text-white rounded-xl font-bold transition-all underline">Go Back</button>
+              </div>
+            </div>
           `;
-        });
+        }
 
         // Show modal
         ebookModal.classList.remove("hidden");
         document.body.style.overflow = "hidden";
-
         setTimeout(() => {
           ebookBackdrop.classList.remove("opacity-0");
           ebookModalContent.classList.remove("opacity-0", "scale-95");
@@ -3585,26 +3599,24 @@
 
 
 
+
       function closeEbookReader() {
-        // Exit full screen if active
-        if (isFullScreen) {
-          if (document.exitFullscreen) {
-            document.exitFullscreen();
-          } else if (document.webkitExitFullscreen) {
-            document.webkitExitFullscreen();
-          } else if (document.msExitFullscreen) {
-            document.msExitFullscreen();
-          }
-        }
+        // Stop any speech
+        window.speechSynthesis.cancel();
+
+        // Exit full screen
+        if (isFullScreen) exitFullscreen();
+
+        // Hide floating nav
+        const floatingNav = document.getElementById("ebook-floating-nav");
+        if (floatingNav) floatingNav.remove();
 
         ebookBackdrop.classList.add("opacity-0");
-        ebookModalContent.classList.remove("opacity-100", "scale-100");
         ebookModalContent.classList.add("opacity-0", "scale-95");
-
+        
         setTimeout(() => {
           ebookModal.classList.add("hidden");
           document.body.style.overflow = "";
-          // Clear content
           ebookHeader.innerHTML = "";
           ebookContent.innerHTML = "";
         }, 300);
@@ -3643,13 +3655,13 @@
         /* Fullscreen styles */
         #ebook-modal-content.is-fullscreen {
           width: 100vw !important;
-          height: 100dvh !important;
+          height: 100vh !important;
           max-width: none !important;
           max-height: none !important;
-          border-radius: 0 !important;
           margin: 0 !important;
-          top: 0 !important;
+          border-radius: 0 !important;
           left: 0 !important;
+          top: 0 !important;
           position: fixed !important;
           z-index: 9999 !important;
         }
@@ -3670,6 +3682,22 @@
           flex: 1 !important;
         }
 
+        #ebook-content::-webkit-scrollbar {
+          width: 10px;
+        }
+        #ebook-content::-webkit-scrollbar-track {
+          background: rgba(15, 23, 42, 0.5);
+        }
+        #ebook-content::-webkit-scrollbar-thumb {
+          background: rgba(148, 163, 184, 0.3);
+          border-radius: 5px;
+          border: 2px solid transparent;
+          background-clip: content-box;
+        }
+        #ebook-content::-webkit-scrollbar-thumb:hover {
+          background: rgba(148, 163, 184, 0.5);
+          background-clip: content-box;
+        }
         
         /* Responsive styles for ebook container */
         @media (max-width: 480px) {
@@ -3769,6 +3797,19 @@
             border-radius: 8px !important;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
           }
+
+          #ebook-content {
+            padding: 1rem !important;
+            gap: 1rem !important;
+          }
+          .pdf-page-container {
+             min-height: 250px !important;
+          }
+          #ebook-floating-nav {
+            width: 90%;
+            bottom: 20px;
+            padding: 12px 20px;
+          }
         }
         
         /* PDF Viewer Tweaks */
@@ -3790,6 +3831,11 @@
         /* Improve touch scrolling on mobile */
         #ebook-content {
           -webkit-overflow-scrolling: touch;
+        }
+
+        .pdf-page-container canvas {
+          display: block;
+          margin: 0 auto;
         }
       `;
       document.head.appendChild(style);

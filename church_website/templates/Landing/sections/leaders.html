@@ -428,7 +428,7 @@
       touchStartTime: 0,
       isTouchDragging: false,
       hasMovedSignificant: false,
-      touchThreshold: 10,
+      touchThreshold: 20, // Increased threshold
 
       init() {
         this.updateCardWidth();
@@ -602,7 +602,6 @@
             this.resumeMarquee();
             return;
           } else {
-            // Not enough movement yet to decide
             return;
           }
         }
@@ -654,7 +653,9 @@
       // Card click handler - works for both mouse and touch
       handleCardClick(leader, event) {
         // Don't open if we moved significantly (was a drag)
-        if (this.hasMovedSignificant) {
+        // A typical tap is fast and doesn't move much
+        const timeDiff = Date.now() - this.touchStartTime;
+        if (this.hasMovedSignificant && timeDiff > 100) {
           return;
         }
 

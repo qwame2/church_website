@@ -81,6 +81,25 @@
       .animation-delay-4000 {
         animation-delay: 4s;
       }
+      
+      @media (max-width: 640px) {
+        #gallery-grid {
+          grid-template-columns: repeat(3, 1fr) !important;
+          gap: 2px !important;
+          padding: 2px !important;
+          background: #f8fafc;
+        }
+        .masonry-item {
+          margin-bottom: 0 !important;
+          border-radius: 0 !important;
+        }
+        .masonry-item img {
+          border-radius: 0 !important;
+        }
+        .masonry-item p, .masonry-item div.absolute {
+          display: none !important; /* iPhone style: clean grid, info on tap only */
+        }
+      }
     </style>
   </head>
 
