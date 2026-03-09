@@ -1,443 +1,1152 @@
 {% load static %}
-<!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!doctype html>
+<html lang="en" class="scroll-smooth overflow-x-hidden">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Youth Fellowship | Igniting Hearts, Transforming Lives</title>
-    
-    <!-- External Resources -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Swiper CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
-    
-    <style>
-        body {
-            font-family: 'Inter', 'Outfit', sans-serif;
-            background-color: #F9FAFB; /* bg-gray-50 */
-        }
-        
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        
-        .ken-burns {
-            animation: kenBurns 20s infinite alternate;
-        }
-    </style>
-</head>
-<body class="no-scrollbar bg-gray-50 text-slate-900">
 
-    <!-- Navigation Overlay -->
-    <nav class="fixed top-0 w-full z-50 p-6 transition-all duration-500" id="main-nav">
-        <div class="max-auto flex justify-between items-center px-4 md:px-8">
-            <a href="/" class="text-2xl font-bold text-white flex items-center gap-3">
-                <img src="{% static 'img/logo.png' %}" class="w-10 h-10 object-contain" alt="Logo">
-                <span class="text-elegant tracking-widest text-lg">Youth Fellowship</span>
-            </a>
-            <div class="hidden md:flex gap-8 text-white font-medium">
-                <a href="#about" class="hover:text-indigo-300 transition-colors">About</a>
-                <a href="#activities" class="hover:text-indigo-300 transition-colors">Activities</a>
-                <a href="#leadership" class="hover:text-indigo-300 transition-colors">Leadership</a>
-                <a href="#contact" class="hover:text-indigo-300 transition-colors">Join Us</a>
-            </div>
-            <button class="md:hidden text-white text-2xl">
-                <i class="fas fa-bars"></i>
+    <!-- Core Resources -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
+    ></script>
+
+    <!-- Swiper CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
+    />
+
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: "#4F46E5", // Indigo 600
+              secondary: "#F59E0B", // Amber 500
+              dark: "#020617", // Slate 950
+              accent: {
+                100: "#EEF2FF",
+                200: "#E0E7FF",
+                600: "#4F46E5",
+              },
+            },
+            fontFamily: {
+              sans: ["Inter", "sans-serif"],
+              display: ["Outfit", "sans-serif"],
+            },
+            animation: {
+              float: "float 6s ease-in-out infinite",
+              "pulse-slow": "pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+            },
+            keyframes: {
+              float: {
+                "0%, 100%": { transform: "translateY(0)" },
+                "50%": { transform: "translateY(-20px)" },
+              },
+            },
+          },
+        },
+      };
+    </script>
+
+    <style>
+      @layer base {
+        body {
+          @apply font-sans antialiased bg-slate-50 text-slate-900;
+        }
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+          @apply font-display;
+        }
+      }
+
+      .glass-nav {
+        @apply bg-white border-b border-slate-100;
+      }
+
+      .text-gradient {
+        @apply bg-clip-text text-transparent bg-gradient-to-r from-primary via-indigo-500 to-primary;
+        background-size: 200% auto;
+        animation: shine 4s linear infinite;
+      }
+
+      @keyframes shine {
+        to {
+          background-position: 200% center;
+        }
+      }
+
+      .premium-card {
+        @apply bg-white rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-200/50 hover:shadow-2xl hover:shadow-primary/10 transition-all duration-500;
+      }
+
+      .btn-premium {
+        @apply px-8 py-4 rounded-2xl font-bold transition-all duration-300 active:scale-95 flex items-center gap-2;
+      }
+
+      .btn-primary {
+        @apply bg-primary text-white shadow-lg shadow-primary/30 hover:shadow-primary/50 hover:-translate-y-1 hover:bg-indigo-700;
+      }
+
+      .btn-ghost {
+        @apply border-2 border-slate-200 text-slate-900 hover:border-primary hover:text-primary;
+      }
+
+      .custom-scrollbar::-webkit-scrollbar {
+        width: 6px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-track {
+        @apply bg-transparent;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+        @apply bg-slate-200 rounded-full hover:bg-slate-300;
+      }
+
+      .reveal {
+        opacity: 0;
+        transform: translateY(30px);
+        transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .reveal.active {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .youth-gradient {
+        background:
+          radial-gradient(
+            circle at top right,
+            rgba(79, 70, 229, 0.08),
+            transparent 400px
+          ),
+          radial-gradient(
+            circle at bottom left,
+            rgba(245, 158, 11, 0.05),
+            transparent 400px
+          );
+      }
+
+      /* Premium App Animations */
+      @keyframes pop-in {
+        0% { transform: scale(0.9) translateY(20px); opacity: 0; }
+        100% { transform: scale(1) translateY(0); opacity: 1; }
+      }
+      .animate-pop-in {
+        animation: pop-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+      }
+      
+      .nav-active-pill {
+        @apply absolute -bottom-1 w-1 h-1 bg-primary rounded-full;
+      }
+
+      @keyframes float-3d {
+        0%, 100% { transform: perspective(1000px) translateZ(0) rotateX(0) rotateY(0) rotateZ(0); }
+        25% { transform: perspective(1000px) translateZ(80px) rotateX(15deg) rotateY(15deg) rotateZ(2deg); }
+        50% { transform: perspective(1000px) translateZ(40px) rotateX(-10deg) rotateY(-15deg) rotateZ(-2deg); }
+        75% { transform: perspective(1000px) translateZ(100px) rotateX(10deg) rotateY(20deg) rotateZ(3deg); }
+      }
+
+      .animate-float-3d {
+        animation: float-3d 8s ease-in-out infinite;
+        transform-style: preserve-3d;
+      }
+
+      .animate-float-3d-slow {
+        animation: float-3d 12s ease-in-out infinite reverse;
+        transform-style: preserve-3d;
+      }
+
+      .activity-card-3d {
+        transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+      .activity-card-3d:hover {
+        transform: perspective(1000px) translateZ(30px) rotateX(5deg);
+      }
+    </style>
+  </head>
+  <body x-data="{ mobileMenuOpen: false, activeTab: 'home' }" class="selection:bg-primary/10 youth-gradient overflow-x-hidden bg-white">
+    <!-- Side Drawer -->
+    <div 
+        class="fixed inset-0 bg-slate-950/20 backdrop-blur-sm z-[250] transition-opacity duration-500 pointer-events-none opacity-0" 
+        :class="{ 'opacity-100 pointer-events-auto': mobileMenuOpen }" 
+        @click="mobileMenuOpen = false"
+    ></div>
+    <aside 
+        class="fixed inset-y-0 right-0 w-80 bg-white shadow-2xl z-[300] transform transition-transform duration-500 ease-out p-10 translate-x-full" 
+        :class="{ 'translate-x-0': mobileMenuOpen }"
+    >
+        <div class="flex justify-between items-center mb-12">
+            <span class="text-xs font-black uppercase tracking-widest text-slate-400">Navigation</span>
+            <button @click="mobileMenuOpen = false" class="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center">
+                <i class="ri-close-line text-xl"></i>
             </button>
         </div>
+        <nav class="flex flex-col gap-8">
+            <template x-for="item in ['About', 'Activities', 'Leadership', 'Contact']">
+                <a :href="'#' + item.toLowerCase()" @click="mobileMenuOpen = false" class="group flex items-center justify-between">
+                    <span class="text-2xl font-black text-slate-900 group-hover:text-primary transition-colors" x-text="item"></span>
+                    <i class="ri-arrow-right-s-line text-slate-300 group-hover:text-primary transition-all"></i>
+                </a>
+            </template>
+        </nav>
+        <div class="mt-20 pt-10 border-t border-slate-100">
+            <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-6">Connect Direct</p>
+            <div class="flex gap-4">
+                <a href="#" class="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary"><i class="ri-whatsapp-line text-xl"></i></a>
+                <a href="#" class="w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-900"><i class="ri-instagram-line text-xl"></i></a>
+            </div>
+        </div>
+    </aside>
+
+
+
+    <!-- Navigation -->
+    <nav
+      id="main-nav"
+      class="fixed top-0 w-full z-[100] transition-all duration-500 py-6 bg-white border-b border-transparent"
+    >
+      <div class="max-w-7xl mx-auto px-6 flex justify-between items-center">
+        <a href="/" class="flex items-center gap-3 group">
+          <div class="relative w-12 h-12">
+            <div
+              class="absolute inset-0 bg-primary/20 rounded-2xl rotate-6 group-hover:rotate-12 transition-transform duration-500"
+            ></div>
+            <img
+              src="{% static 'img/logo.png' %}"
+              class="absolute inset-0 w-full h-full object-contain bg-white rounded-2xl p-1.5 shadow-sm border border-slate-100"
+              alt="Logo"
+            />
+          </div>
+          <div class="flex flex-col">
+            <span
+              class="text-xl font-black font-display tracking-tight text-slate-900"
+              >YOUTH
+              <span class="text-primary italic font-serif leading-none"
+                >f.</span
+              ></span
+            >
+            <span
+              class="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400"
+              >Est. 1994</span
+            >
+          </div>
+        </a>
+
+        <div class="hidden md:flex items-center gap-10">
+          <template
+            x-for="item in ['About', 'Activities', 'Leadership', 'Join']"
+          >
+            <a
+              :href="'#' + item.toLowerCase()"
+              class="text-sm font-bold uppercase tracking-widest transition-colors hover:text-primary text-slate-600"
+            >
+              <span x-text="item"></span>
+            </a>
+          </template>
+          <a href="#contact" class="btn-premium btn-primary py-3 px-6 text-sm">
+            Connect Now
+            <i class="ri-arrow-right-up-line"></i>
+          </a>
+        </div>
+
+        <button
+          @click="mobileMenuOpen = true"
+          class="md:hidden w-12 h-12 rounded-2xl flex items-center justify-center text-slate-900 bg-slate-50 border border-slate-100"
+        >
+          <i class="ri-menu-5-line text-2xl"></i>
+        </button>
+      </div>
     </nav>
 
     <!-- Hero Section -->
-    <section class="youth-hero">
-        <div class="hero-overlay"></div>
-        
-        <!-- Hero Background Slider -->
-        <div class="swiper hero-slider">
-            <div class="swiper-wrapper">
-                <div class="swiper-slide">
-                    <img src="{% static 'img/youth-worship.jpg' %}" alt="Worship" class="scale-110">
-                </div>
-                <div class="swiper-slide">
-                    <img src="{% static 'img/Community.jpg' %}" alt="Community">
-                </div>
-                <div class="swiper-slide">
-                    <img src="{% static 'img/1.jpg' %}" alt="Fellowship">
-                </div>
-                <div class="swiper-slide">
-                    <img src="{% static 'img/2.jpg' %}" alt="Learning">
-                </div>
-                <div class="swiper-slide">
-                    <img src="{% static 'img/youth_fellowship/hero.png' %}" alt="Faith">
-                </div>
+    <section
+      class="relative min-h-[95vh] flex items-center overflow-hidden bg-white pt-20 overflow-x-hidden"
+    >
+      <!-- Abstract Background Elements -->
+      <div
+        class="absolute top-0 right-0 w-2/3 h-full bg-gradient-to-l from-primary/5 via-transparent to-transparent opacity-50"
+      ></div>
+      <div
+        class="absolute -top-24 -right-24 w-96 h-96 bg-primary/10 rounded-full blur-[120px] animate-pulse-slow"
+      ></div>
+      <div
+        class="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-white to-transparent z-10"
+      ></div>
+
+      <div
+        class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center relative z-20"
+      >
+        <div class="reveal active">
+          <div class="flex items-center gap-3 mb-8">
+            <span class="w-12 h-[2px] bg-primary"></span>
+            <span
+              class="text-xs font-black text-primary uppercase tracking-[0.4em]"
+              >Inspiring the next generation</span
+            >
+          </div>
+          <h1
+            class="text-6xl lg:text-8xl font-black text-slate-950 leading-[0.95] tracking-tighter mb-8"
+          >
+            Igniting <span class="text-gradient">Hearts</span>.<br />
+            Redefining
+            <span class="relative italic font-serif text-slate-900/90"
+              >Purpose.</span
+            >
+          </h1>
+          <p class="text-xl text-slate-400 leading-relaxed mb-12 max-w-lg">
+            Join a movement that empowers youth through faith, fellowship, and
+            visionary leadership. Your journey to significance starts here.
+          </p>
+          <div class="flex flex-wrap items-center gap-6">
+            <a href="#contact" class="btn-premium btn-primary">
+              JOIN THE MOVEMENT
+              <i class="ri-flashlight-line"></i>
+            </a>
+            <a
+              href="#about"
+              class="btn-premium bg-slate-50 text-slate-900 border border-slate-100 hover:bg-slate-100"
+            >
+              LEARN OUR STORY
+              <i class="ri-play-line"></i>
+            </a>
+          </div>
+
+          <div class="mt-20 flex items-center gap-12">
+            <div class="flex -space-x-4">
+              <img
+                src="{% static 'img/Community.jpg' %}"
+                class="w-12 h-12 rounded-full border-4 border-white object-cover shadow-2xl"
+                alt="Member"
+              />
+              <img
+                src="{% static 'img/1.jpg' %}"
+                class="w-12 h-12 rounded-full border-4 border-white object-cover shadow-2xl"
+                alt="Member"
+              />
+              <img
+                src="{% static 'img/2.jpg' %}"
+                class="w-12 h-12 rounded-full border-4 border-white object-cover shadow-2xl"
+                alt="Member"
+              />
+              <div
+                class="w-12 h-12 rounded-full border-4 border-white bg-primary flex items-center justify-center text-[10px] font-black text-white shadow-2xl"
+              >
+                +500
+              </div>
             </div>
+            <p
+              class="text-sm text-slate-500 font-bold uppercase tracking-widest"
+            >
+              Lives Impacted Worldwide
+            </p>
+          </div>
         </div>
 
-        <div class="container mx-auto hero-content">
-            <div class="relative z-10 text-center px-4">
-            <h1 class="text-elegant text-white/60 mb-4 reveal">Est. 1994</h1>
-            <h1 class="heading-premium text-white text-5xl md:text-7xl mb-8 reveal">
-                Igniting Hearts.<br><span class="text-amber-500">Transforming</span><br>Lives.
-            </h1>
-            <p class="text-lg md:text-xl text-white/70 mb-12 max-w-2xl mx-auto reveal" style="transition-delay: 200ms;">
-                A community of purpose, faith, and forward-thinking youth.
-            </p>
-            <div class="flex flex-wrap justify-center gap-8 reveal" style="transition-delay: 400ms;">
-                <a href="#contact" class="btn-premium btn-premium-primary">
-                    JOIN THE MOVEMENT
-                    <i class="fas fa-arrow-right text-sm"></i>
-                </a>
-                <a href="#activities" class="btn-premium bg-white/5 backdrop-blur-md text-white border border-white/10 hover:bg-white/10">
-                    OUR STORY
-                </a>
+        <div class="relative hidden md:block reveal reveal-right active">
+          <div
+            class="relative z-20 rounded-[3rem] overflow-hidden border border-white/10 shadow-2xl group"
+          >
+            <div class="swiper hero-slider h-[600px]">
+              <div class="swiper-wrapper">
+                <div class="swiper-slide">
+                  <img
+                    src="{% static 'img/youth-worship.jpg' %}"
+                    class="w-full h-full object-cover transition-transform duration-[5000ms] group-hover:scale-110"
+                    alt="Worship"
+                  />
+                </div>
+                <div class="swiper-slide">
+                  <img
+                    src="{% static 'img/Community.jpg' %}"
+                    class="w-full h-full object-cover"
+                    alt="Community"
+                  />
+                </div>
+                <div class="swiper-slide">
+                  <img
+                    src="{% static 'img/1.jpg' %}"
+                    class="w-full h-full object-cover"
+                    alt="Fellowship"
+                  />
+                </div>
+              </div>
             </div>
-        </div>
-            <div class="mt-20 flex items-center justify-center gap-8 md:gap-24 opacity-90">
-                <div class="text-center">
-                    <div class="text-4xl md:text-6xl font-extrabold text-white counter" data-count="500">0+</div>
-                    <div class="text-[10px] uppercase tracking-[0.3em] text-amber-500 mt-3">Lives Impacted</div>
+
+            <!-- Floating Badge -->
+            <div
+              class="absolute bottom-8 left-8 z-30 bg-white/90 backdrop-blur-xl border border-slate-100 p-6 rounded-3xl animate-float shadow-2xl"
+            >
+              <div class="flex items-center gap-4">
+                <div
+                  class="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary"
+                >
+                  <i class="ri-music-2-line text-2xl"></i>
                 </div>
-                <div class="text-center border-x border-white/10 px-8 md:px-24">
-                    <div class="text-4xl md:text-6xl font-extrabold text-white counter" data-count="50">0+</div>
-                    <div class="text-[10px] uppercase tracking-[0.3em] text-amber-500 mt-3">Global Missions</div>
+                <div>
+                  <p
+                    class="text-[10px] font-black text-primary uppercase tracking-widest leading-none mb-1"
+                  >
+                    Weekly Vibe
+                  </p>
+                  <p class="text-slate-900 font-bold tracking-tight">
+                    Vibrant Worship Night
+                  </p>
                 </div>
-                <div class="text-center">
-                    <div class="text-4xl md:text-6xl font-extrabold text-white counter" data-count="12">0+</div>
-                    <div class="text-[10px] uppercase tracking-[0.3em] text-amber-500 mt-3">Cell Groups</div>
-                </div>
+              </div>
             </div>
+          </div>
+
+          <!-- Background Shapes -->
+          <div
+            class="absolute -bottom-10 -left-10 w-40 h-40 bg-secondary/50 rounded-full blur-[80px]"
+          ></div>
         </div>
+      </div>
     </section>
 
     <!-- About Section -->
-    <section id="about" class="py-24 relative overflow-hidden">
-        <div class="section-blur-blob blob-1"></div>
-        <div class="container mx-auto px-6">
-            <div class="grid md:grid-cols-2 gap-16 items-center">
-                <div class="reveal">
-                    <div class="accent-line ml-0"></div>
-                    <h2 class="heading-premium text-4xl mb-6">Who We Are</h2>
-                    <p class="text-slate-600 text-lg mb-8 leading-relaxed">
-                        The Youth Fellowship is the heart of the next generation. We believe that youth is a time of incredible potential and spiritual discovery. Our mission is to provide an elegant, safe, and spiritually deep environment for growth.
-                    </p>
-                    <div class="space-y-6">
-                        <div class="flex items-start gap-6 reveal">
-                            <div class="w-14 h-14 bg-amber-50 rounded-2xl flex items-center justify-center text-amber-600 flex-shrink-0">
-                                <i class="fas fa-heart"></i>
-                            </div>
-                            <div>
-                                <h3 class="font-bold text-slate-900 text-xl">Vibrant Community</h3>
-                                <p class="text-slate-500">Building genuine relationships that last a lifetime.</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start gap-6 reveal">
-                            <div class="w-14 h-14 bg-indigo-50 rounded-2xl flex items-center justify-center text-slate-900 flex-shrink-0">
-                                <i class="fas fa-book-open"></i>
-                            </div>
-                            <div>
-                                <h3 class="font-bold text-slate-900 text-xl">Spiritual Depth</h3>
-                                <p class="text-slate-500">Deepening our understanding of the Word through modern perspectives.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="grid grid-cols-2 gap-4 reveal-right">
-                    <div class="space-y-4 pt-8">
-                        <div class="h-64 rounded-3xl bg-indigo-200 overflow-hidden shadow-lg hover-fade">
-                            <img src="{% static 'img/youth-worship.jpg' %}" class="w-full h-full object-cover" alt="Fellowship">
-                        </div>
-                        <div class="h-48 rounded-3xl bg-indigo-900 flex items-center justify-center p-8 text-white">
-                            <p class="text-center font-bold text-xl uppercase tracking-tighter">Impact the world</p>
-                        </div>
-                    </div>
-                    <div class="space-y-4">
-                        <div class="h-48 rounded-3xl bg-pink-500 flex items-center justify-center p-8 text-white">
-                            <p class="text-center font-bold text-xl uppercase tracking-tighter">Grow together</p>
-                        </div>
-                        <div class="h-64 rounded-3xl bg-indigo-100 overflow-hidden shadow-lg hover-fade">
-                            <img src="{% static 'img/Community.jpg' %}" class="w-full h-full object-cover" alt="Study">
-                        </div>
-                    </div>
-                </div>
+    <section id="about" class="py-32 bg-white relative overflow-hidden overflow-x-hidden">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="grid lg:grid-cols-2 gap-20 items-center">
+          <div class="reveal">
+            <div class="flex items-center gap-4 mb-6">
+              <span class="w-12 h-1 bg-primary rounded-full"></span>
+              <span
+                class="text-xs font-black text-primary uppercase tracking-[0.4em]"
+                >Our Core Identity</span
+              >
             </div>
+            <h2
+              class="text-4xl lg:text-6xl font-black text-slate-900 leading-tight mb-8"
+            >
+              Beyond Just a Gathering.<br />
+              A
+              <span class="italic text-primary">Purpose-Driven</span> Community.
+            </h2>
+            <p class="text-lg text-slate-500 leading-relaxed mb-10">
+              The Youth Fellowship is the heartbeat of our church’s future.
+              Established with a vision to ignite spiritual fire and practical
+              leadership, we create a space where every young person can
+              discover their divine assignment.
+            </p>
+
+            <div class="grid md:grid-cols-2 gap-8">
+              <div class="p-8 premium-card group hover:-translate-y-2">
+                <div
+                  class="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center text-primary mb-6 transition-all group-hover:scale-110 group-hover:bg-primary group-hover:text-white"
+                >
+                  <i class="ri-heart-pulse-line text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-3">Vibrant Worship</h3>
+                <p class="text-sm text-slate-500 leading-relaxed">
+                  Experience a connection that transcends words through modern
+                  praise and deep intimacy with God.
+                </p>
+              </div>
+              <div class="p-8 premium-card group hover:-translate-y-2">
+                <div
+                  class="w-14 h-14 rounded-2xl bg-secondary/10 flex items-center justify-center text-secondary mb-6 transition-all group-hover:scale-110 group-hover:bg-secondary group-hover:text-white"
+                >
+                  <i class="ri-compass-3-line text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-3">Strategic Mentorship</h3>
+                <p class="text-sm text-slate-500 leading-relaxed">
+                  Guidance from leaders who care about your professional,
+                  spiritual, and personal growth.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="relative reveal reveal-right">
+            <div class="grid grid-cols-2 gap-6">
+              <div class="space-y-6 pt-12">
+                <div
+                  class="rounded-[2.5rem] overflow-hidden shadow-2xl transition-all duration-700 hover:scale-105 border-4 border-white"
+                >
+                  <img
+                    src="{% static 'img/youth-worship.jpg' %}"
+                    class="w-full h-80 object-cover"
+                    alt="Worship"
+                  />
+                </div>
+                <div
+                  class="bg-indigo-600 rounded-[2rem] p-8 text-white flex flex-col justify-between h-48 animate-pulse-slow"
+                >
+                  <i class="ri-double-quotes-l text-4xl opacity-50"></i>
+                  <p class="font-bold text-lg leading-tight italic">
+                    "Growth is found where community meets faith."
+                  </p>
+                </div>
+              </div>
+              <div class="space-y-6">
+                <div
+                  class="bg-slate-900 rounded-[2rem] p-8 text-white flex flex-col justify-center items-center h-48 text-center border border-white/10"
+                >
+                  <span class="text-4xl font-black mb-1">100%</span>
+                  <span
+                    class="text-[10px] font-black uppercase tracking-widest text-primary"
+                    >Inclusion</span
+                  >
+                </div>
+                <div
+                  class="rounded-[2.5rem] overflow-hidden shadow-2xl transition-all duration-700 hover:scale-105 border-4 border-white"
+                >
+                  <img
+                    src="{% static 'img/Community.jpg' %}"
+                    class="w-full h-80 object-cover"
+                    alt="Fellowship"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <!-- Floating Stat -->
+            <div
+              class="absolute -bottom-10 -right-10 bg-white p-8 rounded-3xl shadow-2xl border border-slate-100 z-30 hidden md:block"
+            >
+              <div class="flex items-center gap-4">
+                <div class="flex -space-x-3">
+                  <img
+                    src="{% static "img/IMG-20241217-WA0010.jpg" %}"
+                    class="w-10 h-10 rounded-full border-2 border-white object-cover"
+                    alt="Member"
+                  />
+                  <img
+                    src="{% static "img/IMG-20241217-WA0009.jpg" %}"
+                    class="w-10 h-10 rounded-full border-2 border-white object-cover"
+                    alt="Member"
+                  />
+                  <img
+                    src="{% static "img/IMG-20241217-WA0008.jpg" %}"
+                    class="w-10 h-10 rounded-full border-2 border-white object-cover"
+                    alt="Member"
+                  />
+                </div>
+                <p class="text-xs font-bold text-slate-800 tracking-tight">
+                  Joined by <br /><span class="text-primary">15+ New</span>
+                  Members
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
     </section>
 
-    <!-- Activities & Highlights Slider -->
-    <section id="activities" class="py-24 bg-slate-950 text-white relative">
-        <div class="container mx-auto px-6">
-            <div class="text-center mb-16 px-4 reveal">
-                <span class="text-elegant text-amber-500 tracking-[0.4em] text-xs">A Movement of Purpose</span>
-                <h2 class="heading-premium text-white text-4xl mt-4">Highlights & Activities</h2>
-                <div class="accent-line"></div>
+    <!-- Activities Section -->
+    <section
+      id="activities"
+      class="py-32 bg-slate-50 relative overflow-x-hidden"
+    >
+      <!-- Background Glow -->
+      <div
+        class="absolute -top-48 -left-48 w-96 h-96 bg-primary/20 rounded-full blur-[100px]"
+      ></div>
+
+      <div class="max-w-7xl mx-auto px-6 relative z-10">
+        <div
+          class="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-20"
+        >
+          <div>
+            <div class="flex items-center gap-4 mb-6">
+              <span class="w-12 h-1 bg-primary rounded-full"></span>
+              <span
+                class="text-xs font-black text-primary uppercase tracking-[0.4em]"
+                >Movement of Purpose</span
+              >
             </div>
-            
-            <!-- Swiper Slider -->
-            <div class="swiper youth-swiper reveal">
-                <div class="swiper-wrapper">
-                    <div class="swiper-slide">
-                        <img src="{% static 'img/1.jpg' %}" alt="Event 1">
-                        <div class="swiper-overlay">
-                            <h3 class="text-xl font-bold">Prayer Summit</h3>
-                            <p class="text-sm opacity-80">Connecting with divine power.</p>
-                        </div>
+            <h2 class="text-4xl lg:text-6xl font-black leading-tight text-slate-900">
+              Highlights & <br /><span class="text-gradient">Experiences</span>
+            </h2>
+          </div>
+          <div class="max-w-xl relative">
+            <!-- 3D Fun Moving Images Scene -->
+            <div class="absolute -top-24 -right-32 w-80 h-80 pointer-events-none hidden lg:block z-[50]" style="perspective: 1500px;">
+                <div class="relative w-full h-full">
+                    <div class="animate-float-3d absolute top-0 right-0">
+                        <img src="{% static "img/1.jpg" %}" class="w-32 h-32 rounded-3xl shadow-2xl border-4 border-white object-cover shadow-primary/20">
                     </div>
-                    <div class="swiper-slide">
-                        <img src="{% static 'img/2.jpg' %}" alt="Event 2">
-                        <div class="swiper-overlay">
-                            <h3 class="text-xl font-bold">Community Outreach</h3>
-                            <p class="text-sm opacity-80">Serving our neighborhood with love.</p>
-                        </div>
+                    <div class="animate-float-3d-slow absolute bottom-4 left-4">
+                        <img src="{% static "img/2.jpg" %}" class="w-24 h-24 rounded-3xl shadow-2xl border-4 border-white object-cover shadow-secondary/20">
                     </div>
-                    <div class="swiper-slide">
-                        <img src="{% static 'img/3.jpg' %}" alt="Event 3">
-                        <div class="swiper-overlay">
-                            <h3 class="text-xl font-bold">Bible Intensive</h3>
-                            <p class="text-sm opacity-80">Deep diving into the scriptures.</p>
-                        </div>
-                    </div>
-                    <div class="swiper-slide">
-                        <img src="{% static 'img/4.jpg' %}" alt="Event 4">
-                        <div class="swiper-overlay">
-                            <h3 class="text-xl font-bold">Youth Night</h3>
-                            <p class="text-sm opacity-80">Fun, fellowship, and faith.</p>
+                    <div class="animate-float-3d absolute top-12 left-0 animation-delay-2000">
+                        <div class="w-12 h-12 bg-primary rounded-2xl flex items-center justify-center text-white shadow-xl rotate-12">
+                            <i class="ri-heart-fill"></i>
                         </div>
                     </div>
                 </div>
-                <!-- Swiper Navigation -->
-                <div class="swiper-pagination"></div>
-                <div class="swiper-button-next"></div>
-                <div class="swiper-button-prev"></div>
             </div>
 
-            <div class="grid md:grid-cols-3 gap-8 mt-16">
-                <!-- Activity 1 -->
-                <div class="card-elegant text-center reveal">
-                    <div class="text-amber-600 text-3xl mb-6"><i class="fas fa-guitar"></i></div>
-                    <h3 class="heading-premium text-xl mb-4">Worship Nights</h3>
-                    <p class="text-slate-600 text-sm mb-6 leading-relaxed">Experience God's presence through contemporary worship and deep prayer.</p>
-                    <span class="text-[10px] font-bold tracking-widest text-amber-500">FRIDAYS @ 6:30 PM</span>
+            <div class="relative z-10 mb-10 space-y-6">
+                <!-- Highlight line with Icon -->
+                <div class="flex items-start gap-4 p-6 bg-slate-50 rounded-[2rem] border-l-4 border-primary shadow-sm hover:shadow-md transition-shadow">
+                    <div class="w-12 h-12 flex-shrink-0 bg-white rounded-xl flex items-center justify-center text-primary shadow-sm">
+                        <i class="ri-sparkling-2-fill text-2xl"></i>
+                    </div>
+                    <div>
+                        <p class="text-slate-800 text-lg md:text-xl font-bold leading-snug">
+                            From <span class="bg-indigo-50 text-primary px-2 rounded-lg">high-energy worship nights</span> to <span class="bg-amber-50 text-secondary px-2 rounded-lg">impactful community outreach</span>.
+                        </p>
+                        <p class="text-slate-500 text-sm mt-3 flex items-center gap-2">
+                            <i class="ri-map-pin-2-line text-primary"></i>
+                            Discover your place in our vibrant spiritual calendar.
+                        </p>
+                    </div>
                 </div>
-
-                <!-- Activity 2 -->
-                <div class="card-elegant text-center reveal" style="transition-delay: 150ms;">
-                    <div class="text-amber-600 text-3xl mb-6"><i class="fas fa-users-rays"></i></div>
-                    <h3 class="heading-premium text-xl mb-4">Cell Groups</h3>
-                    <p class="text-slate-600 text-sm mb-6 leading-relaxed">Small, intimate groups meeting across the city to share and pray.</p>
-                    <span class="text-[10px] font-bold tracking-widest text-amber-500">VARIOUS TIMES</span>
-                </div>
-
-                <!-- Activity 3 -->
-                <div class="card-elegant text-center reveal" style="transition-delay: 300ms;">
-                    <div class="text-amber-600 text-3xl mb-6"><i class="fas fa-hand-holding-heart"></i></div>
-                    <h3 class="heading-premium text-xl mb-4">Outreach</h3>
-                    <p class="text-slate-600 text-sm mb-6 leading-relaxed">Taking the love of Christ beyond the church walls through service.</p>
-                    <span class="text-[10px] font-bold tracking-widest text-amber-500">MONTHLY BASIS</span>
+                
+                <!-- Micro Stat or Tag -->
+                <div class="flex items-center gap-2 ml-4">
+                    <span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">
+                        Always something happening
+                    </span>
                 </div>
             </div>
+
+            <a href="{% url 'youth_activities' %}" class="inline-flex items-center gap-3 px-8 py-4 bg-primary text-white font-black rounded-2xl shadow-2xl shadow-primary/30 hover:shadow-primary/50 hover:-translate-y-1 transition-all group relative z-10">
+                <span>VIEW ALL ACTIVITIES</span>
+                <i class="ri-calendar-todo-line text-xl transition-transform group-hover:rotate-12"></i>
+            </a>
+          </div>
         </div>
+
+        <!-- Swiper Container -->
+        <div class="swiper youth-swiper mb-24">
+          <div class="swiper-wrapper">
+            <template
+              x-for="(event, index) in [
+                        { title: 'Prayer Summit', date: 'Monthly', img: '{% static "img/1.jpg" %}', desc: 'Deep spiritual encounters.' },
+                        { title: 'Community Outreach', date: 'Bi-Weekly', img: '{% static "img/2.jpg" %}', desc: 'Serving with love.' },
+                        { title: 'Bible Intensive', date: 'Saturdays', img: '{% static "img/3.jpg" %}', desc: 'Theological depth.' },
+                        { title: 'Youth Night', date: 'Fridays', img: '{% static "img/4.jpg" %}', desc: 'Faith, Fun, Fellowship.' }
+                    ]"
+            >
+              <div class="swiper-slide group cursor-pointer !w-[320px] md:!w-[400px] activity-card-3d">
+                <div
+                  class="relative aspect-[4/5] rounded-[2.5rem] overflow-hidden border border-white/10"
+                >
+                  <img
+                    :src="event.img"
+                    class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    :alt="event.title"
+                  />
+                  <div
+                    class="absolute inset-x-0 bottom-0 p-8 bg-gradient-to-t from-black/80 via-black/40 to-transparent"
+                  >
+                    <span
+                      class="text-[10px] font-black uppercase tracking-widest text-primary mb-2 block"
+                      x-text="event.date"
+                    ></span>
+                    <h3
+                      class="text-2xl font-black mb-2 text-white"
+                      x-text="event.title"
+                    ></h3>
+                    <p
+                      class="text-sm text-slate-200 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                      x-text="event.desc"
+                    ></p>
+                  </div>
+                </div>
+              </div>
+            </template>
+          </div>
+          <!-- Pagination -->
+          <div class="swiper-pagination active-pagination !-bottom-12"></div>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-8 pt-12">
+          <div
+            class="p-10 rounded-[2.5rem] bg-slate-50 border border-slate-100 hover:bg-slate-100 transition-all group"
+          >
+            <div
+              class="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center text-primary mb-8 group-hover:rotate-12 transition-transform"
+            >
+              <i class="ri-rhythm-line text-3xl"></i>
+            </div>
+            <h3 class="text-2xl font-bold mb-4 text-slate-900">Worship Nights</h3>
+            <p class="text-slate-500 mb-8">
+              Atmospheric worship sessions every Friday at 6:30 PM. Come ready
+              to encounter God.
+            </p>
+            <div
+              class="flex items-center gap-2 text-primary font-bold text-xs uppercase tracking-widest"
+            >
+              <span>Join the Vibe</span>
+              <i class="ri-arrow-right-line"></i>
+            </div>
+          </div>
+
+          <div
+            class="p-10 rounded-[2.5rem] bg-slate-50 border border-slate-100 hover:bg-slate-100 transition-all group"
+            style="transition-delay: 100ms"
+          >
+            <div
+              class="w-16 h-16 rounded-2xl bg-secondary/10 flex items-center justify-center text-secondary mb-8 group-hover:rotate-12 transition-transform"
+            >
+              <i class="ri-team-line text-3xl"></i>
+            </div>
+            <h3 class="text-2xl font-bold mb-4 text-slate-900">Cell Groups</h3>
+            <p class="text-slate-500 mb-8">
+              Intimate bi-weekly meetings across the city for deep fellowship
+              and study.
+            </p>
+            <div
+              class="flex items-center gap-2 text-secondary font-bold text-xs uppercase tracking-widest"
+            >
+              <span>Find your home</span>
+              <i class="ri-arrow-right-line"></i>
+            </div>
+          </div>
+
+          <div
+            class="p-10 rounded-[2.5rem] bg-slate-50 border border-slate-100 hover:bg-slate-100 transition-all group"
+            style="transition-delay: 200ms"
+          >
+            <div
+              class="w-16 h-16 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-indigo-500 mb-8 group-hover:rotate-12 transition-transform"
+            >
+              <i class="ri-global-line text-3xl"></i>
+            </div>
+            <h3 class="text-2xl font-bold mb-4 text-slate-900">Missions</h3>
+            <p class="text-slate-500 mb-8">
+              Monthly outreach programs to local communities and annual global
+              missions.
+            </p>
+            <div
+              class="flex items-center gap-2 text-indigo-400 font-bold text-xs uppercase tracking-widest"
+            >
+              <span>Make Impact</span>
+              <i class="ri-arrow-right-line"></i>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- Leadership Section -->
-    <section id="leadership" class="py-24 bg-white relative">
-        <div class="container mx-auto px-6">
-            <div class="text-center mb-16 reveal">
-                <span class="text-elegant text-amber-500 tracking-[0.4em] text-xs">Our Stewards</span>
-                <h2 class="heading-premium text-slate-900 text-4xl mt-4">Meet Our Leaders</h2>
-                <div class="accent-line"></div>
-            </div>
-            <div class="grid md:grid-cols-4 gap-12">
-                <!-- Leader 1 -->
-                <div class="text-center group reveal">
-                    <div class="w-full aspect-[4/5] rounded-2xl bg-gray-100 mb-6 overflow-hidden relative shadow-sm border border-slate-100">
-                        <img src="{% static 'img/IMG-20241217-WA0010.jpg' %}" class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700" alt="Leader">
-                        <div class="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-slate-900/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                    </div>
-                    <h3 class="heading-premium text-lg">Isaac Mensah</h3>
-                    <p class="text-amber-600 text-[10px] font-bold uppercase tracking-widest mt-2">Youth President</p>
-                </div>
-                <!-- Leader 2 -->
-                <div class="text-center group reveal" style="transition-delay: 100ms;">
-                    <div class="w-full aspect-[4/5] rounded-2xl bg-gray-100 mb-6 overflow-hidden relative shadow-sm border border-slate-100">
-                        <img src="{% static 'img/IMG-20241217-WA0009.jpg' %}" class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700" alt="Leader">
-                        <div class="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-slate-900/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                    </div>
-                    <h3 class="heading-premium text-lg">Sarah Owusu</h3>
-                    <p class="text-amber-600 text-[10px] font-bold uppercase tracking-widest mt-2">General Secretary</p>
-                </div>
-                <!-- Leader 3 -->
-                <div class="text-center group reveal" style="transition-delay: 200ms;">
-                    <div class="w-full aspect-[4/5] rounded-2xl bg-gray-100 mb-6 overflow-hidden relative shadow-sm border border-slate-100">
-                        <img src="{% static 'img/IMG-20241217-WA0008.jpg' %}" class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700" alt="Leader">
-                        <div class="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-slate-900/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                    </div>
-                    <h3 class="heading-premium text-lg">Samuel Boateng</h3>
-                    <p class="text-amber-600 text-[10px] font-bold uppercase tracking-widest mt-2">Worship Director</p>
-                </div>
-                <!-- Leader 4 -->
-                <div class="text-center group reveal" style="transition-delay: 300ms;">
-                    <div class="w-full aspect-[4/5] rounded-2xl bg-gray-100 mb-6 overflow-hidden relative shadow-sm border border-slate-100">
-                        <img src="{% static 'img/IMG-20241217-WA0007.jpg' %}" class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700" alt="Leader">
-                        <div class="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-slate-900/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                    </div>
-                    <h3 class="heading-premium text-lg">Grace Amartey</h3>
-                    <p class="text-amber-600 text-[10px] font-bold uppercase tracking-widest mt-2">Events Coordinator</p>
-                </div>
-            </div>
+    <section id="leadership" class="py-32 bg-white overflow-x-hidden">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="text-center mb-20">
+          <div class="flex items-center justify-center gap-4 mb-6">
+            <span class="w-12 h-1 bg-primary rounded-full"></span>
+            <span
+              class="text-xs font-black text-primary uppercase tracking-[0.4em]"
+              >Our Stewards</span
+            >
+            <span class="w-12 h-1 bg-primary rounded-full"></span>
+          </div>
+          <h2
+            class="text-4xl lg:text-6xl font-black text-slate-900 leading-tight"
+          >
+            Meet Our
+            <span class="text-primary italic font-serif">Visionary</span>
+            Leaders
+          </h2>
         </div>
+
+        <div class="relative py-10" x-data="{}">
+          <div class="swiper leadership-swiper mb-24 !overflow-visible">
+            <div class="swiper-wrapper">
+              <!-- Leader 1 -->
+              <div class="swiper-slide group cursor-pointer w-[280px] md:w-[340px] px-2">
+                <div class="relative aspect-[4/5] rounded-[2.5rem] overflow-hidden bg-white mb-6 border border-slate-100 shadow-sm transition-all duration-500 group-hover:shadow-2xl group-hover:shadow-primary/20 group-hover:-translate-y-2">
+                  <img src="{% static 'img/IMG-20241217-WA0010.jpg' %}" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" alt="Isaac Mensah" />
+                  <div class="absolute inset-x-4 bottom-4 p-6 bg-white/90 backdrop-blur-md rounded-3xl translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
+                    <div class="flex justify-between items-center text-slate-900">
+                      <div class="flex gap-2 text-lg">
+                        <i class="ri-linkedin-box-fill hover:text-primary transition-colors cursor-pointer"></i>
+                        <i class="ri-instagram-line hover:text-primary transition-colors cursor-pointer"></i>
+                      </div>
+                      <i class="ri-arrow-right-up-line text-primary"></i>
+                    </div>
+                  </div>
+                </div>
+                <div class="text-center">
+                  <h3 class="text-xl font-black text-slate-900 transition-colors group-hover:text-primary">Isaac Mensah</h3>
+                  <p class="text-[10px] font-black text-primary uppercase tracking-[0.3em] mt-2 bg-primary/5 inline-block px-3 py-1 rounded-full">Youth President</p>
+                </div>
+              </div>
+              <!-- Leader 2 -->
+              <div class="swiper-slide group cursor-pointer w-[280px] md:w-[340px] px-2">
+                <div class="relative aspect-[4/5] rounded-[2.5rem] overflow-hidden bg-white mb-6 border border-slate-100 shadow-sm transition-all duration-500 group-hover:shadow-2xl group-hover:shadow-primary/20 group-hover:-translate-y-2">
+                  <img src="{% static 'img/IMG-20241217-WA0009.jpg' %}" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" alt="Sarah Owusu" />
+                  <div class="absolute inset-x-4 bottom-4 p-6 bg-white/90 backdrop-blur-md rounded-3xl translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
+                    <div class="flex justify-between items-center text-slate-900">
+                      <div class="flex gap-2 text-lg">
+                        <i class="ri-linkedin-box-fill hover:text-primary transition-colors cursor-pointer"></i>
+                        <i class="ri-instagram-line hover:text-primary transition-colors cursor-pointer"></i>
+                      </div>
+                      <i class="ri-arrow-right-up-line text-primary"></i>
+                    </div>
+                  </div>
+                </div>
+                <div class="text-center">
+                  <h3 class="text-xl font-black text-slate-900 transition-colors group-hover:text-primary">Sarah Owusu</h3>
+                  <p class="text-[10px] font-black text-primary uppercase tracking-[0.3em] mt-2 bg-primary/5 inline-block px-3 py-1 rounded-full">General Secretary</p>
+                </div>
+              </div>
+              <!-- Leader 3 -->
+              <div class="swiper-slide group cursor-pointer w-[280px] md:w-[340px] px-2">
+                <div class="relative aspect-[4/5] rounded-[2.5rem] overflow-hidden bg-white mb-6 border border-slate-100 shadow-sm transition-all duration-500 group-hover:shadow-2xl group-hover:shadow-primary/20 group-hover:-translate-y-2">
+                  <img src="{% static 'img/IMG-20241217-WA0008.jpg' %}" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" alt="Samuel Boateng" />
+                  <div class="absolute inset-x-4 bottom-4 p-6 bg-white/90 backdrop-blur-md rounded-3xl translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
+                    <div class="flex justify-between items-center text-slate-900">
+                      <div class="flex gap-2 text-lg">
+                        <i class="ri-linkedin-box-fill hover:text-primary transition-colors cursor-pointer"></i>
+                        <i class="ri-instagram-line hover:text-primary transition-colors cursor-pointer"></i>
+                      </div>
+                      <i class="ri-arrow-right-up-line text-primary"></i>
+                    </div>
+                  </div>
+                </div>
+                <div class="text-center">
+                  <h3 class="text-xl font-black text-slate-900 transition-colors group-hover:text-primary">Samuel Boateng</h3>
+                  <p class="text-[10px] font-black text-primary uppercase tracking-[0.3em] mt-2 bg-primary/5 inline-block px-3 py-1 rounded-full">Worship Director</p>
+                </div>
+              </div>
+              <!-- Leader 4 -->
+              <div class="swiper-slide group cursor-pointer w-[280px] md:w-[340px] px-2">
+                <div class="relative aspect-[4/5] rounded-[2.5rem] overflow-hidden bg-white mb-6 border border-slate-100 shadow-sm transition-all duration-500 group-hover:shadow-2xl group-hover:shadow-primary/20 group-hover:-translate-y-2">
+                  <img src="{% static 'img/IMG-20241217-WA0007.jpg' %}" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" alt="Grace Amartey" />
+                  <div class="absolute inset-x-4 bottom-4 p-6 bg-white/90 backdrop-blur-md rounded-3xl translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
+                    <div class="flex justify-between items-center text-slate-900">
+                      <div class="flex gap-2 text-lg">
+                        <i class="ri-linkedin-box-fill hover:text-primary transition-colors cursor-pointer"></i>
+                        <i class="ri-instagram-line hover:text-primary transition-colors cursor-pointer"></i>
+                      </div>
+                      <i class="ri-arrow-right-up-line text-primary"></i>
+                    </div>
+                  </div>
+                </div>
+                <div class="text-center">
+                  <h3 class="text-xl font-black text-slate-900 transition-colors group-hover:text-primary">Grace Amartey</h3>
+                  <p class="text-[10px] font-black text-primary uppercase tracking-[0.3em] mt-2 bg-primary/5 inline-block px-3 py-1 rounded-full">Events Coordinator</p>
+                </div>
+              </div>
+            </div>
+            <!-- Pagination -->
+            <div class="swiper-pagination leadership-pagination !-bottom-12"></div>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- Join Us Section -->
-    <section id="contact" class="py-24 bg-gray-50">
-        <div class="container mx-auto px-6 max-w-4xl reveal">
-            <div class="bg-white rounded-3xl p-8 md:p-20 shadow-sm border border-gray-100 relative overflow-hidden">
-                <div class="text-center mb-16">
-                    <span class="text-elegant text-amber-500 tracking-[0.4em] text-xs">Join Us</span>
-                    <h2 class="heading-premium text-slate-950 text-4xl mt-4">Become Part of the Story</h2>
-                    <div class="accent-line"></div>
-                </div>
-                <form class="space-y-8">
-                    <div class="grid md:grid-cols-2 gap-8">
-                        <div class="space-y-3">
-                            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Full Name</label>
-                            <input type="text" placeholder="John Doe" class="w-full pb-3 bg-transparent border-b border-gray-200 focus:border-amber-500 outline-none transition-all placeholder:text-gray-300">
-                        </div>
-                        <div class="space-y-3">
-                            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Phone Number</label>
-                            <input type="tel" placeholder="+233 55 000 0000" class="w-full pb-3 bg-transparent border-b border-gray-200 focus:border-amber-500 outline-none transition-all placeholder:text-gray-300">
-                        </div>
-                    </div>
-                    <div class="space-y-3">
-                        <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Interests</label>
-                        <select class="w-full pb-3 bg-transparent border-b border-gray-200 focus:border-amber-500 outline-none transition-all appearance-none cursor-pointer">
-                            <option>Worship & Praise</option>
-                            <option>Media & Tech</option>
-                            <option>Community Outreach</option>
-                            <option>Bible Study Groups</option>
-                        </select>
-                    </div>
-                    <div class="pt-6">
-                        <button class="btn-premium btn-premium-primary w-full justify-center">
-                            SUBMIT INTEREST
-                            <i class="fas fa-paper-plane text-xs"></i>
-                        </button>
-                    </div>
-                </form>
+    <section id="contact" class="py-32 bg-slate-50 relative overflow-hidden">
+      <div
+        class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full youth-gradient opacity-30"
+      ></div>
+
+      <div class="max-w-4xl mx-auto px-6 relative z-10">
+        <div class="premium-card p-12 md:p-24 overflow-hidden relative">
+          <!-- Decorative Element -->
+          <div
+            class="absolute -top-10 -right-10 w-40 h-40 bg-primary/5 rounded-full blur-3xl"
+          ></div>
+
+          <div class="text-center mb-16">
+            <div class="flex items-center justify-center gap-4 mb-6">
+              <span class="w-12 h-1 bg-primary rounded-full"></span>
+              <span
+                class="text-xs font-black text-primary uppercase tracking-[0.4em]"
+                >Get Involved</span
+              >
+              <span class="w-12 h-1 bg-primary rounded-full"></span>
             </div>
+            <h2
+              class="text-4xl lg:text-5xl font-black text-slate-900 leading-tight"
+            >
+              Become Part of <br /><span class="text-primary italic font-serif"
+                >The Movement</span
+              >
+            </h2>
+          </div>
+
+          <form class="space-y-10">
+            <div class="grid md:grid-cols-2 gap-10">
+              <div class="space-y-4">
+                <label
+                  class="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]"
+                  >Full Name</label
+                >
+                <input
+                  type="text"
+                  placeholder="e.g. Samuel Ade"
+                  class="w-full bg-slate-50 border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-primary/20 text-slate-900 placeholder:text-slate-300 transition-all"
+                />
+              </div>
+              <div class="space-y-4">
+                <label
+                  class="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]"
+                  >WhatsApp / Phone</label
+                >
+                <input
+                  type="tel"
+                  placeholder="+233 ..."
+                  class="w-full bg-slate-50 border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-primary/20 text-slate-900 placeholder:text-slate-300 transition-all"
+                />
+              </div>
+            </div>
+            <div class="space-y-4">
+              <label
+                class="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]"
+                >Areas of Interest</label
+              >
+              <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <template
+                  x-for="interest in ['Worship', 'Media', 'Outreach', 'Drama']"
+                >
+                  <label class="cursor-pointer group">
+                    <input type="checkbox" class="hidden peer" />
+                    <div
+                      class="p-4 rounded-xl border border-slate-100 bg-slate-50 text-center text-xs font-bold text-slate-500 peer-checked:bg-primary peer-checked:text-white peer-checked:border-primary transition-all"
+                    >
+                      <span x-text="interest"></span>
+                    </div>
+                  </label>
+                </template>
+              </div>
+            </div>
+            <div class="pt-6">
+              <button
+                type="button"
+                class="btn-premium btn-primary w-full justify-center py-5 shadow-2xl"
+              >
+                SUBMIT INTEREST
+                <i class="ri-send-plane-fill"></i>
+              </button>
+            </div>
+          </form>
         </div>
+      </div>
     </section>
 
     <!-- Footer -->
-    <footer class="py-12 bg-indigo-950 text-white">
-        <div class="container mx-auto px-6">
-            <div class="flex flex-col md:flex-row justify-between items-center gap-8">
-                <div class="text-center md:text-left">
-                    <h3 class="text-xl font-bold mb-2">The Church of Christ (SM)</h3>
-                    <p class="text-indigo-400 text-sm">Youth Fellowship • Empowering Generations</p>
-                </div>
-                <div class="flex gap-6">
-                    <a href="#" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/20 transition-all"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/20 transition-all"><i class="fab fa-instagram"></i></a>
-                    <a href="#" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/20 transition-all"><i class="fab fa-youtube"></i></a>
-                </div>
-                <div class="text-sm text-gray-500">
-                    &copy; 2026 Youth Fellowship. All rights reserved.
-                </div>
+    <footer class="py-20 bg-slate-950 text-white border-t border-white/5">
+      <div class="max-w-7xl mx-auto px-6">
+        <div
+          class="grid md:grid-cols-3 gap-16 items-center border-b border-white/5 pb-20 mb-12"
+        >
+          <div class="flex flex-col items-center md:items-start">
+            <a href="/" class="flex items-center gap-3 mb-6">
+              <img
+                src="{% static 'img/logo.png' %}"
+                class="w-10 h-10 object-contain brightness-0 invert"
+                alt="Logo"
+              />
+              <span class="text-xl font-black font-display tracking-tight"
+                >YOUTH
+                <span class="text-primary italic font-serif leading-none"
+                  >f.</span
+                ></span
+              >
+            </a>
+            <p class="text-slate-500 text-sm max-w-xs text-center md:text-left">
+              Empowering the next generation to lead with faith, excellence, and
+              purpose since 1994.
+            </p>
+          </div>
+
+          <div class="flex justify-center gap-12">
+            <div class="text-center md:text-left">
+              <p
+                class="text-[10px] font-black uppercase tracking-widest text-primary mb-6"
+              >
+                Quick Links
+              </p>
+              <ul class="space-y-4 text-sm font-bold text-slate-400">
+                <li>
+                  <a href="#about" class="hover:text-white transition-colors"
+                    >Vision</a
+                  >
+                </li>
+                <li>
+                  <a
+                    href="#activities"
+                    class="hover:text-white transition-colors"
+                    >Events</a
+                  >
+                </li>
+                <li>
+                  <a
+                    href="#leadership"
+                    class="hover:text-white transition-colors"
+                    >Team</a
+                  >
+                </li>
+              </ul>
             </div>
+          </div>
+
+          <div class="flex flex-col items-center md:items-end">
+            <p
+              class="text-[10px] font-black uppercase tracking-widest text-primary mb-6"
+            >
+              Connect With Us
+            </p>
+            <div class="flex gap-4">
+              <template
+                x-for="icon in ['facebook', 'instagram', 'youtube', 'twitter-x']"
+              >
+                <a
+                  href="#"
+                  class="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-primary hover:border-primary transition-all duration-300"
+                >
+                  <i :class="'ri-' + icon + '-fill text-xl'"></i>
+                </a>
+              </template>
+            </div>
+          </div>
         </div>
+
+        <div
+          class="flex flex-col md:flex-row justify-between items-center gap-6 text-[10px] font-black uppercase tracking-[0.2em] text-slate-600"
+        >
+          <p>&copy; 2026 YOUTH FELLOWSHIP • ALL RIGHTS RESERVED.</p>
+          <div class="flex gap-8">
+            <a href="#" class="hover:text-primary transition-colors"
+              >Privacy Policy</a
+            >
+            <a href="#" class="hover:text-primary transition-colors"
+              >Terms of Service</a
+            >
+          </div>
+        </div>
+      </div>
     </footer>
 
     <!-- Swiper JS -->
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
     <script>
-        // Hero Swiper Initialization
-        const heroSwiper = new Swiper('.hero-slider', {
-            effect: 'fade',
-            fadeEffect: { crossFade: true },
-            loop: true,
-            autoplay: { delay: 3000, disableOnInteraction: false },
-            speed: 2000,
-        });
+      document.addEventListener('DOMContentLoaded', () => {
+          // Leadership Swiper - Initialized FIRST for safety
+          const leadershipSwiper = new Swiper('.leadership-swiper', {
+              slidesPerView: 'auto',
+              spaceBetween: 20,
+              centeredSlides: false,
+              loop: false,
+              grabCursor: true,
+              autoplay: { 
+                  delay: 4000, 
+                  disableOnInteraction: false 
+              },
+              speed: 1000,
+              pagination: { 
+                  el: '.leadership-pagination', 
+                  clickable: true,
+                  dynamicBullets: true 
+              },
+              breakpoints: {
+                  1024: { 
+                      slidesPerView: 3, 
+                      spaceBetween: 30,
+                      centeredSlides: false 
+                  },
+              }
+          });
 
-        // Activity Swiper Initialization
-        const swiper = new Swiper('.youth-swiper', {
-            loop: true,
-    <script>
-        // Hero Swiper (Smooth Fade)
-        const heroSwiper = new Swiper('.hero-slider', {
-            effect: 'fade',
-            crossFade: true,
-            loop: true,
-            autoplay: { delay: 5000, disableOnInteraction: false },
-            speed: 2500,
-        });
+          // Hero Swiper (Smooth Fade)
+          const heroSwiper = new Swiper('.hero-slider', {
+              effect: 'fade',
+              fadeEffect: { crossFade: true },
+              loop: true,
+              autoplay: { delay: 5000, disableOnInteraction: false },
+              speed: 2500,
+          });
 
-        // Activity Swiper
-        const activitySwiper = new Swiper('.youth-swiper', {
-            loop: true,
-            autoplay: { delay: 4000, disableOnInteraction: false },
-            pagination: { el: '.swiper-pagination', clickable: true },
-            navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
-            breakpoints: {
-                640: { slidesPerView: 1, spaceBetween: 20 },
-                768: { slidesPerView: 2, spaceBetween: 30 },
-                1024: { slidesPerView: 3, spaceBetween: 40 },
-            }
-        });
+          // Activity Swiper (Maximum 3D Impact)
+          const activitySwiper = new Swiper('.youth-swiper', {
+              effect: 'coverflow',
+              grabCursor: true,
+              centeredSlides: true,
+              slidesPerView: 'auto',
+              loop: true,
+              autoplay: { delay: 3500, disableOnInteraction: false },
+              speed: 800,
+              coverflowEffect: {
+                  rotate: 45,
+                  stretch: -50,
+                  depth: 400,
+                  modifier: 1.2,
+                  slideShadows: true,
+              },
+              pagination: { el: '.active-pagination', clickable: true },
+              navigation: { 
+                  nextEl: '.swiper-button-next', 
+                  prevEl: '.swiper-button-prev' 
+              },
+          });
+      });
 
-        // Elegant Counter Animation
-        const counterObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const target = entry.target;
-                    const countTo = parseInt(target.getAttribute('data-count'));
-                    let count = 0;
-                    const duration = 2500;
-                    const increment = countTo / (duration / 16);
-                    
-                    const updateCount = () => {
-                        count += increment;
-                        if (count < countTo) {
-                            target.innerText = Math.floor(count) + '+';
-                            requestAnimationFrame(updateCount);
-                        } else {
-                            target.innerText = countTo + '+';
-                        }
-                    };
-                    updateCount();
-                    counterObserver.unobserve(target);
-                }
-            });
-        }, { threshold: 0.5 });
-        document.querySelectorAll('.counter').forEach(c => counterObserver.observe(c));
+          // Elegant Counter Animation
+          const counterObserver = new IntersectionObserver((entries) => {
+              entries.forEach(entry => {
+                  if (entry.isIntersecting) {
+                      const target = entry.target;
+                      const countTo = parseInt(target.getAttribute('data-count'));
+                      let count = 0;
+                      const duration = 2500;
+                      const increment = countTo / (duration / 16);
 
-        // Smooth Scroll Reveal
-        function reveal() {
-            const reveals = document.querySelectorAll(".reveal");
-            reveals.forEach(el => {
-                const windowHeight = window.innerHeight;
-                const elementTop = el.getBoundingClientRect().top;
-                if (elementTop < windowHeight - 100) {
-                    el.classList.add("active");
-                }
-            });
-        }
-        window.addEventListener("scroll", reveal);
-        reveal();
+                      const updateCount = () => {
+                          count += increment;
+                          if (count < countTo) {
+                              target.innerText = Math.floor(count) + '+';
+                              requestAnimationFrame(updateCount);
+                          } else {
+                              target.innerText = countTo + '+';
+                          }
+                      };
+                      updateCount();
+                      counterObserver.unobserve(target);
+                  }
+              });
+          }, { threshold: 0.5 });
+          document.querySelectorAll('.counter').forEach(c => counterObserver.observe(c));
 
-        // Nav Scroll Effect
-        window.addEventListener('scroll', () => {
-            const nav = document.getElementById('main-nav');
-            if (window.scrollY > 50) {
-                nav.classList.add('bg-slate-950/95', 'backdrop-blur-md', 'shadow-xl', 'py-4');
-                nav.classList.remove('p-6');
-            } else {
-                nav.classList.remove('bg-slate-950/95', 'backdrop-blur-md', 'shadow-xl', 'py-4');
-                nav.classList.add('p-6');
-            }
-        });
+          // Smooth Scroll Reveal
+          function reveal() {
+              const reveals = document.querySelectorAll(".reveal");
+              reveals.forEach(el => {
+                  const windowHeight = window.innerHeight;
+                  const elementTop = el.getBoundingClientRect().top;
+                  if (elementTop < windowHeight - 100) {
+                      el.classList.add("active");
+                  }
+              });
+          }
+          window.addEventListener("scroll", reveal);
+          reveal();
+
+          // Nav Scroll Effect
+          window.addEventListener('scroll', () => {
+              const nav = document.getElementById('main-nav');
+              if (window.scrollY > 50) {
+                  nav.classList.add('bg-white/90', 'backdrop-blur-xl', 'shadow-lg', 'shadow-slate-200/20', 'py-4', 'border-slate-100');
+                  nav.classList.remove('py-6', 'border-transparent');
+              } else {
+                  nav.classList.remove('bg-white/90', 'backdrop-blur-xl', 'shadow-lg', 'shadow-slate-200/20', 'py-4', 'border-slate-100');
+                  nav.classList.add('py-6', 'border-transparent');
+              }
+          });
     </script>
-</body>
+  </body>
 </html>

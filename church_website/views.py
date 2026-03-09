@@ -6,11 +6,16 @@ import fitz  # PyMuPDF
 from django.templatetags.static import static
 from django.http import HttpRequest
 
+from .news_data import NEWS_POSTS, UPCOMING_EVENTS
+
 def home(request):
-    return render(request, "youth_church_landing.html")
+    return render(request, "youth_church_landing.html", {
+        "news_posts": NEWS_POSTS,
+        "upcoming_events": UPCOMING_EVENTS
+    })
 
 def church_news_archive(request):
-    return render(request, "church_news_archive.html")
+    return render(request, "church_news_archive.html", {"news_posts": NEWS_POSTS})
 
 def gallery(request):
     return render(request, "gallery.html") 
@@ -22,7 +27,10 @@ def book(request):
     return render(request, "book.html") 
 
 def youth_church_landing(request):
-    return render(request, "youth_church_landing.html")
+    return render(request, "youth_church_landing.html", {
+        "news_posts": NEWS_POSTS,
+        "upcoming_events": UPCOMING_EVENTS
+    })
 
 def menfellow(request):
     return render(request, "menfellow.html")
@@ -36,7 +44,11 @@ def youth(request):
 
 def child(request):
     return render(request, "child.html")
-    
+def youth_activities(request):
+    return render(request, "youth_activities.html", {
+        "news_posts": NEWS_POSTS,
+        "upcoming_events": UPCOMING_EVENTS
+    })
 
 def my_view(request):
     return render(request, "your_template.html", {"STATIC_URL": static('')})

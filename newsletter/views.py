@@ -50,6 +50,8 @@ def admin_login(request):
     return render(request, "newsletter/admin_login.html")
 
 
+from church_website.news_data import NEWS_POSTS
+
 # Admin dashboard to view all subscribers and website content
 def dashboard(request):
     # Check if the user is authenticated
@@ -58,7 +60,12 @@ def dashboard(request):
 
     subscribers = Subscriber.objects.all()
     content = WebsiteContent.objects.all()
-    return render(request, "newsletter/Admin_Dashboard.html", {'subscribers': subscribers, 'content': content})
+    return render(request, "newsletter/Admin_Dashboard.html", {
+        'subscribers': subscribers, 
+        'content': content,
+        'news_posts': NEWS_POSTS,
+        'upcoming_events': UPCOMING_EVENTS
+    })
 
 
 # Update website content for a specific page

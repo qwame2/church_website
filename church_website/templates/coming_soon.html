@@ -1,0 +1,147 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coming Soon | {{ fellowship_name|default:"Fellowship" }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;900&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#000000',
+                        secondary: '#4B5563',
+                        dark: '#FFFFFF',
+                    },
+                    animation: {
+                        'blob': 'blob 7s infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        blob: {
+                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        [x-cloak] { display: none !important; }
+        .glass {
+            background: rgba(0, 0, 0, 0.02);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        .text-gradient {
+            background: linear-gradient(to right, #000000, #4B5563);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+<body class="bg-dark text-black font-sans selection:bg-black/10 min-h-screen overflow-hidden flex items-center justify-center p-6">
+    
+    <!-- Animated Background Blobs -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none">
+        <div class="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-black/[0.03] rounded-full mix-blend-multiply filter blur-[120px] animate-blob"></div>
+        <div class="absolute bottom-[10%] right-[-5%] w-[450px] h-[450px] bg-black/[0.03] rounded-full mix-blend-multiply filter blur-[120px] animate-blob animation-delay-2000"></div>
+        <div class="absolute top-[30%] left-[20%] w-[300px] h-[300px] bg-black/[0.03] rounded-full mix-blend-multiply filter blur-[100px] animate-blob animation-delay-4000"></div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="relative z-10 max-w-2xl w-full text-center space-y-8" data-aos="fade-up">
+        
+        <!-- Logo and Visual -->
+        <div class="flex flex-col items-center gap-6">
+            <div class="relative group">
+                <div class="absolute inset-0 bg-black/5 blur-2xl rounded-full scale-150 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <img src="{% static 'img/logo.png' %}" alt="Church Logo" class="relative w-24 h-24 md:w-32 md:h-32 object-contain bg-white rounded-2xl p-2 shadow-2xl border border-gray-100">
+            </div>
+
+            <div class="relative inline-block mt-4">
+                <div class="absolute inset-0 bg-black/[0.02] blur-3xl rounded-full"></div>
+                <div class="relative w-24 h-24 md:w-28 md:h-28 glass rounded-full flex items-center justify-center animate-float mx-auto">
+                    {% if fellowship_name == "Men Fellowship" %}
+                        <i class="ri-user-star-line text-4xl md:text-5xl text-gradient animate-pulse-slow"></i>
+                    {% elif fellowship_name == "Women Fellowship" %}
+                        <i class="ri-heart-3-line text-4xl md:text-5xl text-gradient animate-pulse-slow"></i>
+                    {% elif fellowship_name == "Children Fellowship" %}
+                        <i class="ri-open-arm-line text-4xl md:text-5xl text-gradient animate-pulse-slow"></i>
+                    {% else %}
+                        <i class="ri-heart-pulse-line text-4xl md:text-5xl text-gradient animate-pulse-slow"></i>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Typography -->
+        <div class="space-y-4">
+            <h2 class="text-gray-500 font-black tracking-[0.4em] uppercase text-sm md:text-base animate-pulse">
+                New Experience Loading
+            </h2>
+            <h1 class="text-5xl md:text-8xl font-black tracking-tighter leading-none">
+                COMING <span class="text-gradient">SOON</span>
+            </h1>
+            <p class="text-gray-600 text-lg md:text-xl font-light max-w-md mx-auto leading-relaxed">
+                We're crafting a beautiful digital home for the <span class="text-black font-semibold">{{ fellowship_name|default:"Fellowship" }}</span>.
+            </p>
+        </div>
+
+        <!-- Call to Action -->
+        <div class="pt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
+            <a href="/" class="group flex items-center gap-2 px-8 py-4 bg-black text-white font-black rounded-2xl hover:bg-gray-800 transition-all shadow-2xl active:scale-95">
+                <i class="ri-arrow-left-line transition-transform group-hover:-translate-x-1"></i>
+                GO BACK HOME
+            </a>
+            <div class="px-6 py-4 glass rounded-2xl border-black/5 text-gray-500 text-sm font-medium">
+                <span class="flex items-center gap-2 text-black">
+                    <span class="relative flex h-2 w-2">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-black opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-black"></span>
+                    </span>
+                    Stay updated on our socials
+                </span>
+            </div>
+        </div>
+
+        <!-- Footer / Social Connections -->
+        <div class="pt-12 flex justify-center gap-6">
+            <a href="#" class="w-12 h-12 glass rounded-xl flex items-center justify-center text-xl text-gray-500 hover:text-black hover:bg-black/5 transition-all border-black/5">
+                <i class="ri-facebook-fill"></i>
+            </a>
+            <a href="#" class="w-12 h-12 glass rounded-xl flex items-center justify-center text-xl text-gray-500 hover:text-black hover:bg-black/5 transition-all border-black/5">
+                <i class="ri-instagram-line"></i>
+            </a>
+            <a href="#" class="w-12 h-12 glass rounded-xl flex items-center justify-center text-xl text-gray-500 hover:text-black hover:bg-black/5 transition-all border-black/5">
+                <i class="ri-youtube-line"></i>
+            </a>
+        </div>
+    </div>
+
+    <!-- Minimal Scroll Indicator / Ornament -->
+    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-30">
+        <div class="w-[1px] h-12 bg-gradient-to-t from-transparent via-black to-transparent"></div>
+        <span class="text-[10px] uppercase tracking-widest font-black text-black">Spiritual Movement</span>
+    </div>
+
+
+</body>
+</html>

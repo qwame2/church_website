@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Admin Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet" />
   </head>
   <body class="bg-gray-100 font-sans">
     <div class="container mx-auto p-6">
@@ -101,14 +102,102 @@
         </div>
       </div>-->
 
+      <!-- News & Events Section -->
+      <div class="bg-white shadow-md rounded-lg p-6 mb-8">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-2xl font-semibold text-gray-700">News & Events</h2>
+          <span class="text-sm text-gray-400">Latest announcements and stories</span>
+        </div>
+
+        {% if news_posts %}
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for post in news_posts %}
+              <div class="border border-gray-100 rounded-xl overflow-hidden hover:shadow-lg transition-all group bg-white">
+                <div class="relative h-40 overflow-hidden">
+                  <img src="{{ post.image }}" alt="{{ post.title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                  <div class="absolute top-2 right-2">
+                    <span class="px-2 py-1 bg-white/90 backdrop-blur-sm text-primary text-[10px] font-black rounded-lg shadow-sm">{{ post.category }}</span>
+                  </div>
+                </div>
+                <div class="p-4">
+                  <div class="flex items-center gap-2 mb-2 text-[10px] text-gray-400 font-bold uppercase tracking-wider">
+                    <i class="ri-calendar-line"></i>
+                    <span>{{ post.date }}</span>
+                  </div>
+                  <h3 class="font-bold text-gray-800 text-sm mb-2 line-clamp-2 leading-snug">{{ post.title }}</h3>
+                  <p class="text-gray-500 text-xs mb-4 line-clamp-2 leading-relaxed">{{ post.excerpt }}</p>
+                  <a href="{% url 'church_news_archive' %}" class="inline-flex items-center gap-1 text-primary text-xs font-black hover:gap-2 transition-all text-blue-600">
+                    READ ARTICLE <i class="ri-arrow-right-line"></i>
+                  </a>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="text-center py-20 bg-gray-50/50 rounded-2xl border-2 border-dashed border-gray-200">
+            <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm text-gray-300">
+              <i class="ri-article-line text-3xl"></i>
+            </div>
+            <h4 class="text-xl font-bold text-gray-900 mb-2">Latest Updates</h4>
+            <p class="text-gray-500 text-sm max-w-xs mx-auto">New stories and announcements will appear here once published.</p>
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- Upcoming Events Section -->
+      <div class="bg-white shadow-md rounded-lg p-6 mb-8">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-2xl font-semibold text-gray-700">Upcoming Events</h2>
+          <span class="text-sm text-gray-400">Live calendar schedule</span>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="min-w-full bg-white">
+            <thead>
+              <tr class="bg-gray-50 text-gray-500 text-[10px] uppercase font-bold tracking-wider">
+                <th class="py-3 px-4 text-left">Date</th>
+                <th class="py-3 px-4 text-left">Event Title</th>
+                <th class="py-3 px-4 text-left">Category</th>
+                <th class="py-3 px-4 text-left">Location</th>
+                <th class="py-3 px-4 text-right">Status</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100 text-sm">
+              {% for event in upcoming_events %}
+                <tr class="hover:bg-gray-50 transition-colors">
+                  <td class="py-4 px-4 font-bold text-gray-900">{{ event.date }}</td>
+                  <td class="py-4 px-4">{{ event.title }}</td>
+                  <td class="py-4 px-4">
+                    <span class="px-2 py-1 bg-blue-50 text-blue-600 text-[10px] font-bold rounded-lg uppercase" style="{% if event.color %}background-color: {{ event.color }}1a; color: {{ event.color }}{% endif %}">
+                      {{ event.category }}
+                    </span>
+                  </td>
+                  <td class="py-4 px-4 text-gray-500">{{ event.location }}</td>
+                  <td class="py-4 px-4 text-right">
+                    <span class="inline-flex items-center gap-1.5 text-green-500 font-bold text-[10px] uppercase">
+                      <span class="w-1.5 h-1.5 bg-green-500 rounded-full"></span>
+                      Active
+                    </span>
+                  </td>
+                </tr>
+              {% empty %}
+                <tr>
+                  <td colspan="5" class="py-10 text-center text-gray-400 italic">No upcoming events scheduled.</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
       <!-- Logout Button -->
       <hr class="my-6 border-gray-300" />
       <p class="text-center">
         <a
           href="{% url 'admin_login' %}"
-          class="inline-block bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600 transition-colors"
+          class="inline-block bg-gray-800 text-white px-8 py-3 rounded-xl hover:bg-gray-900 transition-all font-bold shadow-lg shadow-gray-200"
         >
-          Log out
+          <i class="ri-logout-box-line mr-2"></i>Log out
         </a>
       </p>
     </div>

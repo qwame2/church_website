@@ -6,13 +6,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>The Church of Christ (SM) Library | Free Christian Resources</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ["Outfit", "sans-serif"],
+              script: ["Pacifico", "cursive"],
+            },
+            colors: {
+              primary: "#7C3AED" /* Violet-600 */,
+              secondary: "#C026D3" /* Fuchsia-600 */,
+              accent: "#F59E0B" /* Amber-500 */,
+              dark: "#0F172A",
+            },
+          }
+        }
+      }
+    </script>
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;900&family=Pacifico&display=swap"
       rel="stylesheet"
     />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css"
+      rel="stylesheet"
     />
     <style>
       /* Mini Player Styles */
@@ -53,20 +75,20 @@
         left: 0;
         right: 0;
         height: 24px;
-        background: #f8f4e9;
+        background: #f5f3ff;
         border-top-left-radius: 12px;
         border-top-right-radius: 12px;
         display: flex;
         align-items: center;
         justify-content: center;
-        color: #8b6b4d;
+        color: #7c3aed;
         cursor: grab;
         border-bottom: 1px solid #e2e8f0;
         font-size: 12px;
       }
 
       .mini-player-drag-handle:hover {
-        background: #f0e6d2;
+        background: #ede9fe;
       }
 
       .mini-player-drag-handle i {
@@ -137,11 +159,11 @@
 
       .mini-player-control-btn:hover {
         background: #f3f4f6;
-        color: #8b6b4d;
+        color: #7c3aed;
       }
 
       .mini-player-control-btn.play-pause-btn {
-        background: #8b6b4d;
+        background: #7c3aed;
         color: white;
         width: 40px;
         height: 40px;
@@ -149,7 +171,7 @@
       }
 
       .mini-player-control-btn.play-pause-btn:hover {
-        background: #6b4f3a;
+        background: #5b21b6;
         transform: scale(1.05);
       }
 
@@ -180,7 +202,7 @@
         left: 0;
         top: 0;
         height: 100%;
-        background: #8b6b4d;
+        background: #7c3aed;
         border-radius: 2px;
         width: 0%;
         transition: width 0.1s linear;
@@ -298,7 +320,7 @@
       }
 
       .library-card.featured {
-        border-left: 4px solid #b8860b;
+        border-left: 4px solid #c026d3;
       }
 
       .library-card.new::after {
@@ -306,7 +328,7 @@
         position: absolute;
         top: 12px;
         right: 12px;
-        background: #b8860b;
+        background: #c026d3;
         color: white;
         font-size: 10px;
         font-weight: 600;
@@ -321,7 +343,7 @@
         width: 100%;
         aspect-ratio: 2/3;
         overflow: hidden;
-        background: linear-gradient(135deg, #e6d5b8 0%, #d4bc8c 100%);
+        background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
       }
 
       .book-cover {
@@ -406,17 +428,17 @@
         align-items: center;
         gap: 6px;
         padding: 4px 10px;
-        background: #f0e6d2;
+        background: #ede9fe;
         border-radius: 20px;
         font-size: 12px;
         font-weight: 500;
-        color: #8b6b4d;
+        color: #7c3aed;
         width: fit-content;
         margin-top: auto;
       }
 
       .access-badge i {
-        color: #8b6b4d;
+        color: #7c3aed;
       }
 
       .read-count {
@@ -451,9 +473,9 @@
       }
 
       .category-tag.active {
-        background: #8b6b4d;
+        background: #7c3aed;
         color: white;
-        border-color: #8b6b4d;
+        border-color: #7c3aed;
       }
 
       .category-tag i {
@@ -463,7 +485,7 @@
 
       /* Hero Section */
       .library-hero {
-        background: linear-gradient(135deg, #8b6b4d 0%, #6b4f3a 100%);
+        background: linear-gradient(135deg, #7c3aed 0%, #c026d3 100%);
         border-radius: 24px;
         padding: 48px 40px;
         margin-bottom: 40px;
@@ -492,7 +514,7 @@
 
       .hero-subtitle {
         font-size: 18px;
-        color: #f0e6d2;
+        color: #ede9fe;
         max-width: 600px;
         margin-bottom: 32px;
         line-height: 1.5;
@@ -517,7 +539,7 @@
 
       .hero-stat-label {
         font-size: 14px;
-        color: #e6d5b8;
+        color: #ede9fe;
       }
 
       /* Free Access Banner */
@@ -537,12 +559,12 @@
       .free-icon {
         width: 48px;
         height: 48px;
-        background: #f0e6d2;
+        background: #ede9fe;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        color: #8b6b4d;
+        color: #7c3aed;
         font-size: 24px;
         flex-shrink: 0;
       }
@@ -589,8 +611,8 @@
 
       .search-input:focus {
         outline: none;
-        border-color: #8b6b4d;
-        box-shadow: 0 0 0 3px rgba(139, 107, 77, 0.1);
+        border-color: #7c3aed;
+        box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
       }
 
       .search-icon {
@@ -635,7 +657,7 @@
       }
 
       .section-title i {
-        color: #8b6b4d;
+        color: #7c3aed;
         margin-right: 8px;
         font-size: 20px;
       }
@@ -674,8 +696,8 @@
       }
 
       .category-chip:hover {
-        border-color: #8b6b4d;
-        background: #f0e6d2;
+        border-color: #7c3aed;
+        background: #ede9fe;
         transform: translateY(-2px);
       }
 
@@ -689,7 +711,7 @@
       }
 
       .category-name i {
-        color: #8b6b4d;
+        color: #7c3aed;
         font-size: 16px;
       }
 
@@ -721,7 +743,7 @@
       }
 
       .now-reading i {
-        color: #8b6b4d;
+        color: #7c3aed;
         font-size: 10px;
       }
 
@@ -744,7 +766,7 @@
       }
 
       .audio-indicator i {
-        color: #8b6b4d;
+        color: #7c3aed;
       }
 
       /* E-book indicator */
@@ -816,8 +838,8 @@
 
       .church-verse {
         font-style: italic;
-        color: #8b6b4d;
-        border-left: 3px solid #8b6b4d;
+        color: #7c3aed;
+        border-left: 3px solid #7c3aed;
         padding-left: 16px;
         margin: 16px 0;
         font-size: 16px;
@@ -3649,7 +3671,7 @@
       style.textContent = `
         .fullscreen-btn:hover {
           background: #f3f4f6;
-          color: #8b6b4d;
+          color: #7c3aed;
         }
         
         /* Fullscreen styles */

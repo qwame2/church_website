@@ -96,59 +96,7 @@
     if (!notificationDot) return;
 
     const currentDate = new Date();
-    const upcomingEvents = [
-      {
-        title: "Sunday Service",
-        start: new Date().toISOString().split("T")[0] + "T09:00:00",
-        end: new Date().toISOString().split("T")[0] + "T12:00:00",
-        color: "#7C3AED",
-        description: "Main Sunday worship service with communion",
-      },
-      {
-        title: "Youth Worship Night",
-        start: "2024-03-10T19:00:00",
-        color: "#C026D3",
-        description:
-          "A night of power and transformation for youth with special guest worship leaders",
-      },
-      {
-        title: "Bible Study",
-        start: "2024-03-15T18:30:00",
-        color: "#F59E0B",
-        description: 'Weekly Bible study fellowship - Topic: "Living by Faith"',
-      },
-      {
-        title: "Prayer Meeting",
-        start: "2024-03-20T18:00:00",
-        color: "#10B981",
-        description: "Corporate prayer gathering for the church and community",
-      },
-      {
-        title: "Community Outreach",
-        start: "2024-03-25T09:00:00",
-        end: "2024-03-25T14:00:00",
-        color: "#3B82F6",
-        description: "Community service and evangelism in local neighborhoods",
-      },
-      {
-        title: "Men's Fellowship",
-        start: "2024-03-28T19:00:00",
-        color: "#1E40AF",
-        description: "Monthly men's gathering for fellowship and discipleship",
-      },
-      {
-        title: "Women's Brunch",
-        start: "2024-04-06T10:00:00",
-        color: "#EC4899",
-        description: "Women's ministry brunch and fellowship",
-      },
-      {
-        title: "Children's Ministry",
-        start: "2026-01-25T10:30:00", // Future event
-        color: "#8B5CF6",
-        description: "Special children's church service with activities",
-      },
-    ];
+    const upcomingEvents = JSON.parse(document.getElementById('events-data').textContent);
 
     // Check if any events are within the next 7 days
     const sevenDaysFromNow = new Date();
@@ -206,64 +154,19 @@
         month: "Month",
         list: "List",
       },
-      events: [
-        {
-          title: "Sunday Service",
-          start: new Date().toISOString().split("T")[0] + "T09:00:00",
-          end: new Date().toISOString().split("T")[0] + "T12:00:00",
-          color: "#7C3AED",
-          description: "Main Sunday worship service with communion",
-          isUpcoming: true,
-        },
-        {
-          title: "Youth Worship Night",
-          start: "2024-03-10T19:00:00",
-          color: "#C026D3",
-          description:
-            "A night of power and transformation for youth with special guest worship leaders",
-        },
-        {
-          title: "Bible Study",
-          start: "2024-03-15T18:30:00",
-          color: "#F59E0B",
-          description:
-            'Weekly Bible study fellowship - Topic: "Living by Faith"',
-        },
-        {
-          title: "Prayer Meeting",
-          start: "2024-03-20T18:00:00",
-          color: "#10B981",
-          description:
-            "Corporate prayer gathering for the church and community",
-        },
-        {
-          title: "Community Outreach",
-          start: "2024-03-25T09:00:00",
-          end: "2024-03-25T14:00:00",
-          color: "#3B82F6",
-          description:
-            "Community service and evangelism in local neighborhoods",
-        },
-        {
-          title: "Men's Fellowship",
-          start: "2024-03-28T19:00:00",
-          color: "#1E40AF",
-          description:
-            "Monthly men's gathering for fellowship and discipleship",
-        },
-        {
-          title: "Women's Brunch",
-          start: "2024-04-06T10:00:00",
-          color: "#EC4899",
-          description: "Women's ministry brunch and fellowship",
-        },
-        {
-          title: "Children's Ministry",
-          start: "2026-01-25T10:30:00",
-          color: "#8B5CF6",
-          description: "Special children's church service with activities",
-        },
-      ],
+      events: (function() {
+        try {
+          const rawData = JSON.parse(document.getElementById('events-data').textContent);
+          return rawData.map(event => ({
+            ...event,
+            start: event.start || event.date, // Fallback to date if start is missing
+            isUpcoming: (new Date(event.start) - new Date()) <= (24 * 60 * 60 * 1000) && (new Date(event.start) - new Date()) > 0
+          }));
+        } catch (e) {
+          console.error("Error parsing calendar events:", e);
+          return [];
+        }
+      })(),
 
       // Custom event rendering to add notification dots
       eventContent: function (arg) {
@@ -305,8 +208,8 @@
 
       eventClick: function (info) {
         const event = info.event;
-        const description =
-          event.extendedProps.description || "No description available";
+        const description = event.extendedProps.description || "No description available";
+        const location = event.extendedProps.location || "Main Sanctuary";
         const startTime = event.start
           ? event.start.toLocaleTimeString([], {
               hour: "2-digit",
@@ -327,7 +230,7 @@
               <p class="mb-2"><strong>Description:</strong> ${description}</p>
               <p class="mb-2"><strong>Date:</strong> ${event.start.toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}</p>
               <p class="mb-2"><strong>Time:</strong> ${startTime} ${endTime ? `to ${endTime}` : ""}</p>
-              <p class="mb-2"><strong>Location:</strong> Main Sanctuary</p>
+              <p class="mb-2"><strong>Location:</strong> ${location}</p>
             </div>
           `,
           icon: "info",
@@ -339,9 +242,44 @@
         }).then((result) => {
           if (result.dismiss === Swal.DismissReason.cancel) {
             // Add to calendar functionality
+            const formatIcalDate = (date) => {
+              if (!date) return "";
+              return date.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
+            };
+
+            const startStr = formatIcalDate(event.start);
+            // Default end to 1 hour after start if not provided
+            const endStr = event.end ? formatIcalDate(event.end) : formatIcalDate(new Date(event.start.getTime() + 60 * 60 * 1000));
+
+            const icsContent = [
+              "BEGIN:VCALENDAR",
+              "VERSION:2.0",
+              "PRODID:-//Church Website//Events//EN",
+              "BEGIN:VEVENT",
+              `UID:${event.id}@churchwebsite.com`,
+              `DTSTAMP:${formatIcalDate(new Date())}`,
+              `DTSTART:${startStr}`,
+              `DTEND:${endStr}`,
+              `SUMMARY:${event.title}`,
+              `DESCRIPTION:${description.replace(/\n/g, "\\n")}`,
+              `LOCATION:${location}`,
+              "END:VEVENT",
+              "END:VCALENDAR"
+            ].join("\r\n");
+
+            const blob = new Blob([icsContent], { type: "text/calendar;charset=utf-8" });
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = url;
+            link.setAttribute("download", `${event.title.replace(/[^a-z0-s0-9]/gi, "_")}.ics`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+
             Swal.fire({
-              title: "Added to Calendar!",
-              text: "Event has been added to your calendar",
+              title: "Downloaded!",
+              text: "The event file has been prepared. Open it to add to your system calendar.",
               icon: "success",
               confirmButtonColor: "#7C3AED",
             });

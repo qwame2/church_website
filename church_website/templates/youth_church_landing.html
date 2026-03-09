@@ -65,6 +65,7 @@
     {% include 'Landing/includes/modals.html' %}
 
     <!-- Scripts -->
+    {{ upcoming_events|json_script:"events-data" }}
     {% include 'Landing/includes/scripts.html' %}
   </body>
 </html>
