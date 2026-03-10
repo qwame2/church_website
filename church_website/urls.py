@@ -5,7 +5,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.sitemaps.views import sitemap
 from .sitemaps import StaticViewSitemap
-from .views import home, church_news_archive, reading_page, youth_church_landing, gallery, book, map, menfellow, wemenfellow, youth, child, podcast, game, youth_activities
+from .views import home, church_news_archive, reading_page, youth_church_landing, gallery, book, map, menfellow, wemenfellow, youth, child, podcast, game
 
 # Define your sitemaps
 sitemaps = {
@@ -23,7 +23,6 @@ urlpatterns = [
     path('menfellow/', menfellow, name='menfellow'),
     path('wemenfellow/', wemenfellow, name='wemenfellow'),
     path('youth/', youth, name='youth'),
-    path('youth-activities/', youth_activities, name='youth_activities'),
     path('book/', book, name='book'),
     path('child/', child, name='child'),
     path('reading/', reading_page, name='reading_page'),

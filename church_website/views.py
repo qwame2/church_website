@@ -44,11 +44,6 @@ def youth(request):
 
 def child(request):
     return render(request, "child.html")
-def youth_activities(request):
-    return render(request, "youth_activities.html", {
-        "news_posts": NEWS_POSTS,
-        "upcoming_events": UPCOMING_EVENTS
-    })
 
 def my_view(request):
     return render(request, "your_template.html", {"STATIC_URL": static('')})

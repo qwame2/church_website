@@ -17,7 +17,6 @@ class StaticViewSitemap(Sitemap):
             'menfellow', 
             'wemenfellow', 
             'youth', 
-            'youth_activities',
             'book', 
             'child', 
             'reading_page', 
