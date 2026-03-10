@@ -266,14 +266,30 @@
             Connect Now
             <i class="ri-arrow-right-up-line"></i>
           </a>
+          <a
+            href="/"
+            class="flex items-center gap-2 px-4 py-2 bg-slate-100 text-slate-600 rounded-xl text-xs font-bold hover:bg-primary hover:text-white transition-all active:scale-95"
+          >
+            <i class="ri-arrow-left-line"></i>
+            <span>BACK</span>
+          </a>
         </div>
 
-        <button
-          @click="mobileMenuOpen = true"
-          class="md:hidden w-12 h-12 rounded-2xl flex items-center justify-center text-slate-900 bg-slate-50 border border-slate-100"
-        >
-          <i class="ri-menu-5-line text-2xl"></i>
-        </button>
+        <div class="flex items-center gap-3 md:hidden">
+          <button
+            @click="mobileMenuOpen = true"
+            class="w-12 h-12 rounded-2xl flex items-center justify-center text-slate-900 bg-slate-50 border border-slate-100"
+          >
+            <i class="ri-menu-5-line text-2xl"></i>
+          </button>
+          <a
+            href="/"
+            class="w-12 h-12 rounded-2xl flex items-center justify-center text-slate-900 bg-slate-50 border border-slate-100"
+            title="Back to Home"
+          >
+            <i class="ri-arrow-left-line text-xl"></i>
+          </a>
+        </div>
       </div>
     </nav>
 
