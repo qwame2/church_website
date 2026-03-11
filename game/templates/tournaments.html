@@ -183,7 +183,7 @@
         class="container mx-auto px-4 py-3 flex items-center justify-between"
       >
         <div class="flex items-center">
-          <h1 class="text-2xl font-['Pacifico'] text-primary mr-8">
+          <h1 class="text-lg md:text-2xl font-['Pacifico'] text-primary mr-2 md:mr-8 whitespace-nowrap">
             Scripture Champions
           </h1>
           <nav class="hidden md:flex space-x-6">
@@ -207,28 +207,24 @@
           </nav>
         </div>
         <div class="flex items-center space-x-4">
-          <div class="bg-blue-50 rounded-full px-3 py-1 flex items-center">
-            <div class="w-5 h-5 flex items-center justify-center text-primary">
-              <i class="ri-award-line"></i>
+          <div class="bg-blue-50 rounded-full px-2 md:px-3 py-1 flex items-center">
+            <div class="w-4 h-4 md:w-5 md:h-5 flex items-center justify-center text-primary">
+              <i class="ri-award-line text-sm md:text-base"></i>
             </div>
-            <span class="ml-1 text-primary font-medium">{{ profile.points }} pts</span>
+            <span class="ml-1 text-primary text-xs md:text-sm font-bold">{{ profile.points }}<span class="hidden md:inline ml-0.5">pts</span></span>
           </div>
           <div class="relative">
-            <button
-              class="w-8 h-8 flex items-center justify-center text-gray-600 hover:text-primary transition relative"
-            >
-              <i class="ri-notification-3-line text-xl"></i>
-              <span
-                class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"
-              ></span>
+            <button class="w-7 h-7 md:w-8 md:h-8 flex items-center justify-center text-gray-600 hover:text-primary transition relative">
+              <i class="ri-notification-3-line text-lg md:text-xl"></i>
+              <span class="absolute top-1 right-1 w-1.5 h-1.5 md:w-2 md:h-2 bg-red-500 rounded-full border border-white"></span>
             </button>
           </div>
-          <div class="flex items-center space-x-2">
-            <div class="w-8 h-8 bg-primary rounded-full overflow-hidden">
+          <div class="flex items-center space-x-1 md:space-x-2">
+            <div class="w-7 h-7 md:w-8 md:h-8 bg-primary/10 rounded-full overflow-hidden border border-primary/20 p-0.5">
               <img
                 src="https://ui-avatars.com/api/?name={{ request.user.username }}&background=1e40af&color=fff"
                 alt="Profile"
-                class="w-full h-full object-cover object-top"
+                class="w-full h-full object-cover rounded-full"
               />
             </div>
             <span class="hidden md:inline text-sm font-medium"
@@ -456,12 +452,12 @@
     <!-- Tournament Cards -->
     <section class="py-8">
       <div class="container mx-auto px-4">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
           <!-- Tournament Card 1 -->
           <div
             class="tournament-card bg-white rounded-xl overflow-hidden shadow-md border border-gray-100"
           >
-            <div class="h-40 bg-blue-600 relative overflow-hidden">
+            <div class="h-24 md:h-40 bg-blue-600 relative overflow-hidden">
               <img
                 src="https://readdy.ai/api/search-image?query=An%2520open%2520Bible%2520with%2520the%2520book%2520of%2520Psalms%2520visible%2C%2520surrounded%2520by%2520study%2520materials%2520and%2520soft%2520natural%2520lighting%2C%2520creating%2520a%2520peaceful%2520study%2520atmosphere%2C%2520high%2520quality%2520photorealistic%2520image%2520with%2520warm%2520colors%2520and%2520shallow%2520depth%2520of%2520field&width=400&height=200&seq=tournament2&orientation=landscape"
                 alt="Psalms Tournament"
@@ -474,53 +470,41 @@
               </div>
             </div>
 
-            <div class="p-5">
-              <div class="flex justify-between items-start mb-3">
-                <h3 class="text-lg font-bold text-gray-900">
+            <div class="p-3 md:p-5">
+              <div class="flex justify-between items-start mb-2 md:mb-3">
+                <h3 class="text-sm md:text-lg font-bold text-gray-900 line-clamp-1">
                   Psalms Deep Dive
                 </h3>
                 <span
-                  class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full"
+                  class="bg-green-100 text-green-800 text-[8px] md:text-xs px-1.5 md:px-2 py-0.5 md:py-1 rounded-full whitespace-nowrap"
                   >Easy</span
                 >
               </div>
 
-              <p class="text-gray-600 text-sm mb-4">
+              <p class="text-gray-600 text-[10px] md:text-sm mb-2 md:mb-4 line-clamp-2">
                 Explore the beauty and depth of the Psalms in this
                 beginner-friendly tournament.
               </p>
 
-              <div class="space-y-2 mb-4">
-                <div class="flex items-center text-sm text-gray-600">
-                  <div
-                    class="w-5 h-5 flex items-center justify-center mr-2 text-gray-400"
-                  >
+              <div class="space-y-1 md:space-y-2 mb-3 md:mb-4">
+                <div class="flex items-center text-[8px] md:text-sm text-gray-600">
+                  <div class="w-3 h-3 md:w-5 md:h-5 flex items-center justify-center mr-1 md:mr-2 text-gray-400">
                     <i class="ri-calendar-line"></i>
                   </div>
-                  <span>June 1 - June 10, 2026</span>
+                  <span>June 1 - June 10</span>
                 </div>
-                <div class="flex items-center text-sm text-gray-600">
-                  <div
-                    class="w-5 h-5 flex items-center justify-center mr-2 text-gray-400"
-                  >
+                <div class="flex items-center text-[8px] md:text-sm text-gray-600">
+                  <div class="w-3 h-3 md:w-5 md:h-5 flex items-center justify-center mr-1 md:mr-2 text-gray-400">
                     <i class="ri-user-line"></i>
                   </div>
-                  <span>87 participants registered</span>
-                </div>
-                <div class="flex items-center text-sm text-gray-600">
-                  <div
-                    class="w-5 h-5 flex items-center justify-center mr-2 text-gray-400"
-                  >
-                    <i class="ri-trophy-line"></i>
-                  </div>
-                  <span>Prize: 1,000 points + Badge</span>
+                  <span>87 registered</span>
                 </div>
               </div>
 
               <button
-                class="w-full py-2 bg-primary text-white font-medium rounded-lg hover:bg-blue-800 transition whitespace-nowrap !rounded-button"
+                class="w-full py-1.5 md:py-2 bg-primary text-white font-bold rounded-lg text-[10px] md:text-sm hover:bg-blue-800 transition shadow-lg shadow-primary/20 active:scale-95"
               >
-                Join Tournament
+                Join
               </button>
             </div>
           </div>
@@ -529,7 +513,7 @@
           <div
             class="tournament-card bg-white rounded-xl overflow-hidden shadow-md border border-gray-100"
           >
-            <div class="h-40 bg-indigo-600 relative overflow-hidden">
+            <div class="h-24 md:h-40 bg-indigo-600 relative overflow-hidden">
               <img
                 src="https://readdy.ai/api/search-image?query=A%2520detailed%2520map%2520of%2520ancient%2520Israel%2520and%2520surrounding%2520regions%2520during%2520Biblical%2520times%2C%2520with%2520key%2520locations%2520marked%2C%2520parchment-like%2520texture%2C%2520soft%2520lighting%2C%2520high%2520quality%2520photorealistic%2520image%2520with%2520warm%2520earthy%2520tones&width=400&height=200&seq=tournament3&orientation=landscape"
                 alt="Paul's Journeys Tournament"
@@ -542,53 +526,41 @@
               </div>
             </div>
 
-            <div class="p-5">
-              <div class="flex justify-between items-start mb-3">
-                <h3 class="text-lg font-bold text-gray-900">
-                  Paul's Missionary Journeys
+            <div class="p-3 md:p-5">
+              <div class="flex justify-between items-start mb-2 md:mb-3">
+                <h3 class="text-sm md:text-lg font-bold text-gray-900 line-clamp-1">
+                  Paul's Journeys
                 </h3>
                 <span
-                  class="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full"
+                  class="bg-yellow-100 text-yellow-800 text-[8px] md:text-xs px-1.5 md:px-2 py-0.5 md:py-1 rounded-full whitespace-nowrap"
                   >Medium</span
                 >
               </div>
 
-              <p class="text-gray-600 text-sm mb-4">
+              <p class="text-gray-600 text-[10px] md:text-sm mb-2 md:mb-4 line-clamp-2">
                 Test your knowledge of Paul's travels and the early church in
                 this exciting tournament.
               </p>
 
-              <div class="space-y-2 mb-4">
-                <div class="flex items-center text-sm text-gray-600">
-                  <div
-                    class="w-5 h-5 flex items-center justify-center mr-2 text-gray-400"
-                  >
+              <div class="space-y-1 md:space-y-2 mb-3 md:mb-4">
+                <div class="flex items-center text-[8px] md:text-sm text-gray-600">
+                  <div class="w-3 h-3 md:w-5 md:h-5 flex items-center justify-center mr-1 md:mr-2 text-gray-400">
                     <i class="ri-calendar-line"></i>
                   </div>
-                  <span>June 5 - June 20, 2026</span>
+                  <span>June 5 - June 20</span>
                 </div>
-                <div class="flex items-center text-sm text-gray-600">
-                  <div
-                    class="w-5 h-5 flex items-center justify-center mr-2 text-gray-400"
-                  >
+                <div class="flex items-center text-[8px] md:text-sm text-gray-600">
+                  <div class="w-3 h-3 md:w-5 md:h-5 flex items-center justify-center mr-1 md:mr-2 text-gray-400">
                     <i class="ri-user-line"></i>
                   </div>
-                  <span>124 participants registered</span>
-                </div>
-                <div class="flex items-center text-sm text-gray-600">
-                  <div
-                    class="w-5 h-5 flex items-center justify-center mr-2 text-gray-400"
-                  >
-                    <i class="ri-trophy-line"></i>
-                  </div>
-                  <span>Prize: 2,000 points + Silver Badge</span>
+                  <span>124 registered</span>
                 </div>
               </div>
 
               <button
-                class="w-full py-2 bg-primary text-white font-medium rounded-lg hover:bg-blue-800 transition whitespace-nowrap !rounded-button"
+                class="w-full py-1.5 md:py-2 bg-primary text-white font-bold rounded-lg text-[10px] md:text-sm hover:bg-blue-800 transition shadow-lg shadow-primary/20 active:scale-95"
               >
-                Join Tournament
+                Join
               </button>
             </div>
           </div>
@@ -597,7 +569,7 @@
           <div
             class="tournament-card bg-white rounded-xl overflow-hidden shadow-md border border-gray-100"
           >
-            <div class="h-40 bg-red-600 relative overflow-hidden">
+            <div class="h-24 md:h-40 bg-red-600 relative overflow-hidden">
               <img
                 src="https://readdy.ai/api/search-image?query=A%2520detailed%2520scene%2520of%2520the%2520book%2520of%2520Revelation%2C%2520with%2520symbolic%2520imagery%2520including%2520scrolls%2C%2520seals%2C%2520and%2520heavenly%2520elements%2C%2520dramatic%2520lighting%2C%2520high%2520quality%2520photorealistic%2520image%2520with%2520rich%2520colors%2520and%2520mystical%2520atmosphere&width=400&height=200&seq=tournament4&orientation=landscape"
                 alt="Revelation Tournament"
@@ -610,53 +582,41 @@
               </div>
             </div>
 
-            <div class="p-5">
-              <div class="flex justify-between items-start mb-3">
-                <h3 class="text-lg font-bold text-gray-900">
-                  Revelation Challenge
+            <div class="p-3 md:p-5">
+              <div class="flex justify-between items-start mb-2 md:mb-3">
+                <h3 class="text-sm md:text-lg font-bold text-gray-900 line-clamp-1">
+                  Revelation
                 </h3>
                 <span
-                  class="bg-red-100 text-red-800 text-xs px-2 py-1 rounded-full"
+                  class="bg-red-100 text-red-800 text-[8px] md:text-xs px-1.5 md:px-2 py-0.5 md:py-1 rounded-full whitespace-nowrap"
                   >Hard</span
                 >
               </div>
 
-              <p class="text-gray-600 text-sm mb-4">
+              <p class="text-gray-600 text-[10px] md:text-sm mb-2 md:mb-4 line-clamp-2">
                 Dive into the prophetic imagery and symbolism of Revelation in
                 this advanced tournament.
               </p>
 
-              <div class="space-y-2 mb-4">
-                <div class="flex items-center text-sm text-gray-600">
-                  <div
-                    class="w-5 h-5 flex items-center justify-center mr-2 text-gray-400"
-                  >
+              <div class="space-y-1 md:space-y-2 mb-3 md:mb-4">
+                <div class="flex items-center text-[8px] md:text-sm text-gray-600">
+                  <div class="w-3 h-3 md:w-5 md:h-5 flex items-center justify-center mr-1 md:mr-2 text-gray-400">
                     <i class="ri-calendar-line"></i>
                   </div>
-                  <span>June 12 - July 3, 2026</span>
+                  <span>June 12 - July 3</span>
                 </div>
-                <div class="flex items-center text-sm text-gray-600">
-                  <div
-                    class="w-5 h-5 flex items-center justify-center mr-2 text-gray-400"
-                  >
+                <div class="flex items-center text-[8px] md:text-sm text-gray-600">
+                  <div class="w-3 h-3 md:w-5 md:h-5 flex items-center justify-center mr-1 md:mr-2 text-gray-400">
                     <i class="ri-user-line"></i>
                   </div>
-                  <span>62 participants registered</span>
-                </div>
-                <div class="flex items-center text-sm text-gray-600">
-                  <div
-                    class="w-5 h-5 flex items-center justify-center mr-2 text-gray-400"
-                  >
-                    <i class="ri-trophy-line"></i>
-                  </div>
-                  <span>Prize: 3,000 points + Gold Badge</span>
+                  <span>62 registered</span>
                 </div>
               </div>
 
               <button
-                class="w-full py-2 bg-primary text-white font-medium rounded-lg hover:bg-blue-800 transition whitespace-nowrap !rounded-button"
+                class="w-full py-1.5 md:py-2 bg-primary text-white font-bold rounded-lg text-[10px] md:text-sm hover:bg-blue-800 transition shadow-lg shadow-primary/20 active:scale-95"
               >
-                Join Tournament
+                Join
               </button>
             </div>
           </div>
