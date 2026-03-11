@@ -141,20 +141,114 @@
                 </div>
               </div>
               <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {% for game in games %}
+                <!-- Solo Quiz -->
                 <div class="bg-white rounded-2xl border border-gray-100 p-6 text-center hover:shadow-xl hover:border-primary/20 transition-all duration-300 group">
                   <div class="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
-                    <i class="{{ game.icon_class }} text-primary text-2xl"></i>
+                    <i class="ri-user-line text-primary text-2xl"></i>
                   </div>
-                  <h4 class="font-bold text-gray-900 mb-2">{{ game.title }}</h4>
-                  <p class="text-gray-500 text-sm mb-4">{{ game.description }}</p>
+                  <h4 class="font-bold text-gray-900 mb-2">Solo Quiz</h4>
+                  <p class="text-gray-500 text-sm mb-4">Test your knowledge at your own pace with adaptive levels.</p>
                   <button class="w-full bg-primary text-white py-3 rounded-xl font-bold hover:bg-blue-800 shadow-lg shadow-primary/20 transition-all active:scale-95">
-                    {{ game.button_text }}
+                    Start Now
                   </button>
                 </div>
-                {% empty %}
-                <p class="text-center text-gray-500 py-8 col-span-full">No activities available right now. Check back soon!</p>
-                {% endfor %}
+
+                <!-- Challenge Friend -->
+                <div class="bg-white rounded-2xl border border-gray-100 p-6 text-center hover:shadow-xl hover:border-primary/20 transition-all duration-300 group">
+                  <div class="w-14 h-14 bg-indigo-50 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                    <i class="ri-team-line text-indigo-600 text-2xl"></i>
+                  </div>
+                  <h4 class="font-bold text-gray-900 mb-2">Challenge Friend</h4>
+                  <p class="text-gray-500 text-sm mb-4">Compete head-to-head with friends and climb the ranks.</p>
+                  <button class="w-full bg-indigo-600 text-white py-3 rounded-xl font-bold hover:bg-indigo-700 shadow-lg shadow-indigo-200 transition-all active:scale-95">
+                    Challenge
+                  </button>
+                </div>
+
+                <!-- Daily Bible Trivia -->
+                <div class="bg-white rounded-2xl border border-gray-100 p-6 text-center hover:shadow-xl hover:border-yellow-500/20 transition-all duration-300 group relative">
+                  <span class="absolute top-4 right-4 bg-yellow-400 text-white text-[10px] font-black px-2 py-1 rounded-lg animate-pulse">2X POINTS</span>
+                  <div class="w-14 h-14 bg-yellow-50 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                    <i class="ri-flashlight-line text-yellow-600 text-2xl"></i>
+                  </div>
+                  <h4 class="font-bold text-gray-900 mb-2">Daily Trivia</h4>
+                  <p class="text-gray-500 text-sm mb-4">Answer today's special set of questions for bonus points!</p>
+                  <button class="w-full bg-yellow-500 text-white py-3 rounded-xl font-bold hover:bg-yellow-600 shadow-lg shadow-yellow-200 transition-all active:scale-95">
+                    Play Daily
+                  </button>
+                </div>
+
+                <!-- Memory Verse -->
+                <div class="bg-white rounded-2xl border border-gray-100 p-6 text-center hover:shadow-xl hover:border-green-500/20 transition-all duration-300 group">
+                  <div class="w-14 h-14 bg-green-50 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                    <i class="ri-book-read-line text-green-600 text-2xl"></i>
+                  </div>
+                  <h4 class="font-bold text-gray-900 mb-2">Verse Memorizer</h4>
+                  <p class="text-gray-500 text-sm mb-4">Unscramble and memorize key verses from the Bible.</p>
+                  <button class="w-full bg-green-600 text-white py-3 rounded-xl font-bold hover:bg-green-700 shadow-lg shadow-green-200 transition-all active:scale-95">
+                    Practice
+                  </button>
+                </div>
+
+                <!-- Word Search -->
+                <div class="bg-white rounded-2xl border border-gray-100 p-6 text-center hover:shadow-xl hover:border-orange-500/20 transition-all duration-300 group">
+                  <div class="w-14 h-14 bg-orange-50 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                    <i class="ri-search-eye-line text-orange-600 text-2xl"></i>
+                  </div>
+                  <h4 class="font-bold text-gray-900 mb-2">Biblical Word Search</h4>
+                  <p class="text-gray-500 text-sm mb-4">Find names of prophets, cities, and miracles hidden in the grid.</p>
+                  <button class="w-full bg-orange-500 text-white py-3 rounded-xl font-bold hover:bg-orange-600 shadow-lg shadow-orange-200 transition-all active:scale-95">
+                    Find Words
+                  </button>
+                </div>
+
+                <!-- Parable Match -->
+                <div class="bg-white rounded-2xl border border-gray-100 p-6 text-center hover:shadow-xl hover:border-purple-500/20 transition-all duration-300 group">
+                  <div class="w-14 h-14 bg-purple-50 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                    <i class="ri-puzzle-line text-purple-600 text-2xl"></i>
+                  </div>
+                  <h4 class="font-bold text-gray-900 mb-2">Parable Puzzle</h4>
+                  <p class="text-gray-500 text-sm mb-4">Match Jesus' parables to their deep spiritual meanings.</p>
+                  <button class="w-full bg-purple-600 text-white py-3 rounded-xl font-bold hover:bg-purple-700 shadow-lg shadow-purple-200 transition-all active:scale-95">
+                    Solve Puzzle
+                  </button>
+                </div>
+
+                <!-- Team Quest -->
+                <div class="bg-white rounded-2xl border border-gray-100 p-6 text-center hover:shadow-xl hover:border-red-500/20 transition-all duration-300 group">
+                  <div class="w-14 h-14 bg-red-50 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                    <i class="ri-sword-line text-red-600 text-2xl"></i>
+                  </div>
+                  <h4 class="font-bold text-gray-900 mb-2">Team Battle Royale</h4>
+                  <p class="text-gray-500 text-sm mb-4">Join your cell group and compete against other teams!</p>
+                  <button class="w-full bg-red-600 text-white py-3 rounded-xl font-bold hover:bg-red-700 shadow-lg shadow-red-200 transition-all active:scale-95">
+                    Join Battle
+                  </button>
+                </div>
+
+                <!-- Practice Mode -->
+                <div class="bg-white rounded-2xl border border-gray-100 p-6 text-center hover:shadow-xl hover:border-slate-500/20 transition-all duration-300 group">
+                  <div class="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                    <i class="ri-book-open-line text-slate-600 text-2xl"></i>
+                  </div>
+                  <h4 class="font-bold text-gray-900 mb-2">Free Practice</h4>
+                  <p class="text-gray-500 text-sm mb-4">Explore our entire library of questions with no limits.</p>
+                  <button class="w-full bg-slate-900 text-white py-3 rounded-xl font-bold hover:bg-slate-800 shadow-lg shadow-slate-200 transition-all active:scale-95">
+                    Enter Library
+                  </button>
+                </div>
+
+                <!-- Character Quest -->
+                <div class="bg-white rounded-2xl border border-gray-100 p-6 text-center hover:shadow-xl hover:border-cyan-500/20 transition-all duration-300 group">
+                  <div class="w-14 h-14 bg-cyan-50 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                    <i class="ri-user-search-line text-cyan-600 text-2xl"></i>
+                  </div>
+                  <h4 class="font-bold text-gray-900 mb-2">Character Quest</h4>
+                  <p class="text-gray-500 text-sm mb-4">Guess the Bible character based on their life clues.</p>
+                  <button class="w-full bg-cyan-600 text-white py-3 rounded-xl font-bold hover:bg-cyan-700 shadow-lg shadow-cyan-200 transition-all active:scale-95">
+                    Start Quest
+                  </button>
+                </div>
               </div>
             </div>
 
