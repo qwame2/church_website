@@ -7,7 +7,7 @@ from django.templatetags.static import static
 from django.http import HttpRequest
 
 from .news_data import NEWS_POSTS, UPCOMING_EVENTS
-
+from django.contrib.auth.decorators import login_required
 def home(request):
     return render(request, "youth_church_landing.html", {
         "news_posts": NEWS_POSTS,
@@ -53,8 +53,7 @@ def my_view(request):
 def podcast(request):
     return render(request, "podcast.html")
 
-def game(request):
-    return render(request, "game.html")
+
 
 
 

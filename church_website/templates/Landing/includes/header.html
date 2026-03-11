@@ -206,7 +206,7 @@
                 <i class="ri-mic-line"></i> Podcast
               </a>
               <a
-                href="{%url 'game' %}"
+                href="{% url 'game_dashboard' %}"
                 @click="activeTab = '#game'; open = false"
                 class="flex items-center gap-3 px-4 py-3 hover:bg-purple-50 text-sm transition-colors"
                 :class="activeTab === '#game' ? 'text-primary font-bold' : 'text-gray-700'"

@@ -24,7 +24,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sitemaps',
-    'newsletter',  
+    'newsletter',
+    'game',
 ]
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -39,8 +40,11 @@ ROOT_URLCONF = 'church_website.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'church_website', 'templates')], 
-        'DIRS': [BASE_DIR / "church_website/templates", BASE_DIR / "newsletter/templates"],  # Ensure BASE_DIR is used here
+        'DIRS': [
+            BASE_DIR / "church_website/templates",
+            BASE_DIR / "newsletter/templates",
+            BASE_DIR / "game/templates"
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -55,10 +59,18 @@ TEMPLATES = [
 WSGI_APPLICATION = 'church_website.wsgi.application'
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'postgres',
+        'USER': 'postgres',
+        'PASSWORD': 'Adomakoqwame123@',
+        'HOST': 'localhost',
+        'PORT': '5400',
     }
 }
+
+LOGIN_REDIRECT_URL = 'game_dashboard'
+LOGOUT_REDIRECT_URL = 'login'
+LOGIN_URL = 'login'
 
 AUTH_PASSWORD_VALIDATORS = [
     {

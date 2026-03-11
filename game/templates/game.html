@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Component</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1e40af',
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet" />
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
+        .rounded-button { border-radius: 9999px; }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+      <div class="container mx-auto px-4 py-3 flex items-center justify-between">
+        <div class="flex items-center">
+          <h1 class="text-2xl font-['Pacifico'] text-primary mr-8">
+            Scripture Champions
+          </h1>
+          <nav class="hidden md:flex space-x-6">
+            <a href="{% url 'game_dashboard' %}" class="text-primary font-medium">Dashboard</a>
+            <a href="#" class="text-gray-600 hover:text-primary transition">Tournaments</a>
+            <a href="#" class="text-gray-600 hover:text-primary transition">Practice</a>
+            <a href="#" class="text-gray-600 hover:text-primary transition">Leaderboard</a>
+            <a href="#" class="text-gray-600 hover:text-primary transition">Community</a>
+          </nav>
+        </div>
+        <div class="flex items-center space-x-4">
+          <div class="bg-blue-50 rounded-full px-3 py-1 flex items-center">
+            <div class="w-5 h-5 flex items-center justify-center text-primary">
+              <i class="ri-award-line"></i>
+            </div>
+            <span class="ml-1 text-primary font-medium">{{ profile.points }} pts</span>
+          </div>
+          <div class="relative">
+            <button class="w-8 h-8 flex items-center justify-center text-gray-600 hover:text-primary transition relative">
+              <i class="ri-notification-3-line text-xl"></i>
+              <span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
+            </button>
+          </div>
+          <div class="flex items-center space-x-2">
+            <div class="w-8 h-8 bg-primary rounded-full overflow-hidden">
+              <img
+                src="https://ui-avatars.com/api/?name={{ user.username }}&background=1e40af&color=fff"
+                alt="Profile"
+                class="w-full h-full object-cover"
+              />
+            </div>
+            <div class="hidden md:flex flex-col">
+              <span class="text-xs font-bold">{{ user.username }}</span>
+              <a href="{% url 'logout' %}" class="text-[10px] text-red-500 hover:text-red-700 font-bold uppercase transition-colors">Logout</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+  <section class="py-12 bg-white">
+      <div class="container mx-auto px-4">
+        <div class="flex flex-col md:flex-row gap-8">
+          <!-- Left Column -->
+          <div class="w-full md:w-2/3">
+            <!-- Welcome Message -->
+            <div class="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
+              <div>
+                <h3 class="text-3xl font-black text-gray-900 tracking-tight">Welcome back, {{ user.username }}!</h3>
+                <p class="text-gray-500 font-medium">
+                  Continue your biblical journey and prepare for the upcoming tournament.
+                </p>
+              </div>
+              <div class="bg-indigo-600 text-white p-4 rounded-2xl shadow-xl shadow-indigo-100 flex items-center gap-4 max-w-sm">
+                <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                  <i class="ri-heart-line text-xl"></i>
+                </div>
+                <div>
+                  <p class="text-[10px] font-black uppercase tracking-widest opacity-80 leading-none mb-1">Verse of the Day</p>
+                  <p class="text-xs font-bold leading-tight">"Thy word is a lamp unto my feet..." - Psalm 119:105</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Tournament Status -->
+            <div class="bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg p-6 mb-8">
+              {% if tournament %}
+              <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-gray-900">{{ tournament.name }} Status</h3>
+                <span class="bg-white text-primary px-3 py-1 rounded-full text-sm font-medium shadow-sm">
+                  {{ tournament.status }}
+                </span>
+              </div>
+              <div class="bg-white bg-opacity-90 rounded-lg p-4 shadow-sm">
+                <div class="flex flex-wrap justify-between gap-4">
+                  <div class="text-center">
+                    <p class="text-gray-600 text-sm">Your Rank</p>
+                    <p class="text-2xl font-bold text-primary">{{ user_rank }}{% if user_rank == 1 %}st{% elif user_rank == 2 %}nd{% elif user_rank == 3 %}rd{% else %}th{% endif %}</p>
+                  </div>
+                  <div class="text-center">
+                    <p class="text-gray-600 text-sm">Points Needed</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ points_needed }}</p>
+                  </div>
+                  <div class="text-center">
+                    <p class="text-gray-600 text-sm">Days Left</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ tournament.days_left }}</p>
+                  </div>
+                  <div class="text-center flex-1 min-w-[150px]">
+                    <p class="text-gray-600 text-sm mb-2">Qualification Progress</p>
+                    <div class="flex items-center">
+                      <div class="w-full bg-gray-200 rounded-full h-2.5">
+                        <div class="bg-primary h-2.5 rounded-full transition-all duration-500" style="width: {{ progress_percentage }}%"></div>
+                      </div>
+                      <span class="ml-2 text-xs font-bold text-primary">{{ progress_percentage }}%</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {% else %}
+              <div class="text-center py-4">
+                <p class="text-gray-500 italic">No active tournaments at the moment. Keep practicing!</p>
+              </div>
+              {% endif %}
+            </div>
+
+            <!-- Explore Activities -->
+            <div class="mb-8">
+              <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-gray-900">Explore Activities</h3>
+                <div class="flex gap-2">
+                  <span class="px-3 py-1 bg-blue-100 text-primary rounded-full text-xs font-bold uppercase tracking-wider">Classic</span>
+                  <span class="px-3 py-1 bg-purple-100 text-purple-600 rounded-full text-xs font-bold uppercase tracking-wider">New</span>
+                </div>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {% for game in games %}
+                <div class="bg-white rounded-2xl border border-gray-100 p-6 text-center hover:shadow-xl hover:border-primary/20 transition-all duration-300 group">
+                  <div class="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                    <i class="{{ game.icon_class }} text-primary text-2xl"></i>
+                  </div>
+                  <h4 class="font-bold text-gray-900 mb-2">{{ game.title }}</h4>
+                  <p class="text-gray-500 text-sm mb-4">{{ game.description }}</p>
+                  <button class="w-full bg-primary text-white py-3 rounded-xl font-bold hover:bg-blue-800 shadow-lg shadow-primary/20 transition-all active:scale-95">
+                    {{ game.button_text }}
+                  </button>
+                </div>
+                {% empty %}
+                <p class="text-center text-gray-500 py-8 col-span-full">No activities available right now. Check back soon!</p>
+                {% endfor %}
+              </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div>
+              <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-gray-900">Recent Activity</h3>
+                <a href="#" class="text-primary text-sm font-medium">View All</a>
+              </div>
+              <div class="bg-white rounded-lg border border-gray-100 divide-y divide-gray-100">
+                {% for activity in activities %}
+                  <div class="p-4 flex items-center">
+                    <div class="w-10 h-10 {{ activity.icon_bg_color }} rounded-full flex items-center justify-center mr-4">
+                      <i class="{{ activity.icon_class }} {{ activity.icon_text_color }}"></i>
+                    </div>
+                    <div class="flex-1">
+                      <p class="text-gray-900 font-medium">{{ activity.title }}</p>
+                      <p class="text-gray-500 text-sm">{{ activity.description }} • {{ activity.created_at|timesince }} ago</p>
+                    </div>
+                  </div>
+                {% empty %}
+                  <p class="text-center text-gray-500 py-8">No recent activity.</p>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column -->
+          <div class="w-full md:w-1/3">
+            <!-- Daily Missions -->
+            <div class="bg-white rounded-2xl border border-gray-100 p-6 mb-8 shadow-sm">
+              <div class="flex items-center justify-between mb-6">
+                <h3 class="text-xl font-bold text-gray-900">Daily Missions</h3>
+                <span class="text-xs font-bold text-primary bg-blue-50 px-2 py-1 rounded">{{ completed_missions_count }}/{{ total_missions_count }} DONE</span>
+              </div>
+              <div class="space-y-4">
+                {% for um in missions %}
+                <div class="flex items-start gap-4">
+                  <div class="w-8 h-8 rounded-full {% if um.completed %}bg-green-100{% else %}bg-blue-100{% endif %} flex items-center justify-center flex-shrink-0 mt-1">
+                    <i class="{% if um.completed %}ri-check-line text-green-600{% else %}{{ um.mission.icon_class }} text-primary{% endif %}"></i>
+                  </div>
+                  <div class="flex-1">
+                    <div class="flex justify-between items-center mb-1">
+                      <p class="text-sm font-bold text-gray-900 {% if um.completed %}line-through opacity-50{% endif %}">{{ um.mission.title }}</p>
+                      <span class="text-[10px] font-black text-yellow-600 bg-yellow-50 px-2 py-0.5 rounded">+{{ um.mission.reward_points }}</span>
+                    </div>
+                    <div class="w-full bg-gray-100 rounded-full h-1.5">
+                      <div class="{% if um.completed %}bg-green-500{% else %}bg-primary{% endif %} h-1.5 rounded-full" style="width: {{ um.progress_percentage }}%"></div>
+                    </div>
+                  </div>
+                </div>
+                {% empty %}
+                <p class="text-center text-gray-500 text-sm">No missions today.</p>
+                {% endfor %}
+              </div>
+              <button class="w-full mt-6 py-2 bg-slate-50 text-slate-600 rounded-xl text-xs font-bold hover:bg-slate-100 transition-colors uppercase tracking-widest">
+                Refresh in 6h 42m
+              </button>
+            </div>
+
+            <div class="bg-white rounded-lg border border-gray-100 p-5 mb-8">
+              <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-gray-900">Current Rankings</h3>
+                <div class="bg-blue-50 text-primary px-2 py-1 rounded text-xs font-medium">
+                  May Qualifiers
+                </div>
+              </div>
+              <div class="space-y-3 mb-4">
+                {% for entry in leaderboard %}
+                  <div class="flex items-center p-2 rounded {% if entry.user == user %}bg-blue-50{% endif %}">
+                    <span class="w-6 text-center font-medium {% if entry.user == user %}text-primary{% else %}text-gray-500{% endif %}">{{ forloop.counter }}</span>
+                    <div class="w-8 h-8 bg-gray-200 rounded-full mx-3 overflow-hidden">
+                      <img src="https://ui-avatars.com/api/?name={{ entry.user.username }}&background=random" alt="{{ entry.user.username }}" class="w-full h-full object-cover" />
+                    </div>
+                    <span class="flex-1 font-medium {% if entry.user == user %}text-primary font-bold{% endif %}">{{ entry.user.username }}</span>
+                    <span class="font-bold {% if entry.user == user %}text-primary{% else %}text-gray-700{% endif %}">{{ entry.points }}</span>
+                  </div>
+                {% empty %}
+                  <p class="text-center text-gray-500 py-4">No rankings yet.</p>
+                {% endfor %}
+              </div>
+              <a href="#" class="text-sm text-primary font-medium hover:underline">View Full Leaderboard</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+</body>
+</html>
