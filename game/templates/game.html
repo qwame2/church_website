@@ -123,26 +123,26 @@
                 </span>
               </div>
               <div class="bg-white bg-opacity-90 rounded-lg p-4 shadow-sm">
-                <div class="flex flex-wrap justify-between gap-4">
-                  <div class="text-center">
-                    <p class="text-gray-600 text-sm">Your Rank</p>
-                    <p class="text-2xl font-bold text-primary">{{ user_rank }}{% if user_rank == 1 %}st{% elif user_rank == 2 %}nd{% elif user_rank == 3 %}rd{% else %}th{% endif %}</p>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div class="bg-blue-50/50 p-3 rounded-xl text-center">
+                    <p class="text-gray-600 text-[10px] md:text-sm uppercase tracking-wider font-bold">Your Rank</p>
+                    <p class="text-xl md:text-2xl font-black text-primary">{{ user_rank }}{% if user_rank == 1 %}st{% elif user_rank == 2 %}nd{% elif user_rank == 3 %}rd{% else %}th{% endif %}</p>
                   </div>
-                  <div class="text-center">
-                    <p class="text-gray-600 text-sm">Points Needed</p>
-                    <p class="text-2xl font-bold text-gray-900">{{ points_needed }}</p>
+                  <div class="bg-blue-50/50 p-3 rounded-xl text-center">
+                    <p class="text-gray-600 text-[10px] md:text-sm uppercase tracking-wider font-bold">Points Needed</p>
+                    <p class="text-xl md:text-2xl font-black text-gray-900">{{ points_needed }}</p>
                   </div>
-                  <div class="text-center">
-                    <p class="text-gray-600 text-sm">Days Left</p>
-                    <p class="text-2xl font-bold text-gray-900">{{ tournament.days_left }}</p>
+                  <div class="bg-blue-50/50 p-3 rounded-xl text-center">
+                    <p class="text-gray-600 text-[10px] md:text-sm uppercase tracking-wider font-bold">Days Left</p>
+                    <p class="text-xl md:text-2xl font-black text-gray-900">{{ tournament.days_left }}</p>
                   </div>
-                  <div class="text-center flex-1 min-w-[150px]">
-                    <p class="text-gray-600 text-sm mb-2">Qualification Progress</p>
-                    <div class="flex items-center">
-                      <div class="w-full bg-gray-200 rounded-full h-2.5">
-                        <div class="bg-primary h-2.5 rounded-full transition-all duration-500" style="width: {{ progress_percentage }}%"></div>
+                  <div class="bg-blue-50/50 p-3 rounded-xl text-center flex flex-col justify-center">
+                    <p class="text-gray-600 text-[10px] md:text-sm uppercase tracking-wider font-bold mb-1">Progress</p>
+                    <div class="flex items-center gap-2">
+                      <div class="flex-1 bg-white rounded-full h-2">
+                        <div class="bg-primary h-2 rounded-full" style="width: {{ progress_percentage }}%"></div>
                       </div>
-                      <span class="ml-2 text-xs font-bold text-primary">{{ progress_percentage }}%</span>
+                      <span class="text-[10px] font-black text-primary">{{ progress_percentage }}%</span>
                     </div>
                   </div>
                 </div>
@@ -163,113 +163,113 @@
                   <span class="px-3 py-1 bg-purple-100 text-purple-600 rounded-full text-xs font-bold uppercase tracking-wider">New</span>
                 </div>
               </div>
-              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
                 <!-- Solo Quiz -->
-                <div class="bg-white rounded-2xl border border-gray-100 p-6 text-center hover:shadow-xl hover:border-primary/20 transition-all duration-300 group">
-                  <div class="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
-                    <i class="ri-user-line text-primary text-2xl"></i>
+                <div class="bg-white rounded-2xl border border-gray-100 p-4 md:p-6 text-center hover:shadow-xl hover:border-primary/20 transition-all duration-300 group">
+                  <div class="w-10 h-10 md:w-14 md:h-14 bg-blue-50 rounded-xl md:rounded-2xl flex items-center justify-center mx-auto mb-2 md:mb-4 group-hover:scale-110 transition-transform">
+                    <i class="ri-user-line text-primary text-xl md:text-2xl"></i>
                   </div>
-                  <h4 class="font-bold text-gray-900 mb-2">Solo Quiz</h4>
-                  <p class="text-gray-500 text-sm mb-4">Test your knowledge at your own pace with adaptive levels.</p>
-                  <button class="w-full bg-primary text-white py-3 rounded-xl font-bold hover:bg-blue-800 shadow-lg shadow-primary/20 transition-all active:scale-95">
-                    Start Now
+                  <h4 class="font-bold text-gray-900 text-sm md:text-base mb-1 md:mb-2">Solo Quiz</h4>
+                  <p class="text-gray-500 text-[10px] md:text-sm mb-3 md:mb-4 line-clamp-2 md:line-clamp-none">Test your knowledge at your own pace with adaptive levels.</p>
+                  <button class="w-full bg-primary text-white py-2 md:py-3 rounded-lg md:rounded-xl font-bold text-xs md:text-base hover:bg-blue-800 shadow-lg shadow-primary/20 transition-all active:scale-95">
+                    Start
                   </button>
                 </div>
 
                 <!-- Challenge Friend -->
-                <div class="bg-white rounded-2xl border border-gray-100 p-6 text-center hover:shadow-xl hover:border-primary/20 transition-all duration-300 group">
-                  <div class="w-14 h-14 bg-indigo-50 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
-                    <i class="ri-team-line text-indigo-600 text-2xl"></i>
+                <div class="bg-white rounded-2xl border border-gray-100 p-4 md:p-6 text-center hover:shadow-xl hover:border-primary/20 transition-all duration-300 group">
+                  <div class="w-10 h-10 md:w-14 md:h-14 bg-indigo-50 rounded-xl md:rounded-2xl flex items-center justify-center mx-auto mb-2 md:mb-4 group-hover:scale-110 transition-transform">
+                    <i class="ri-team-line text-indigo-600 text-xl md:text-2xl"></i>
                   </div>
-                  <h4 class="font-bold text-gray-900 mb-2">Challenge Friend</h4>
-                  <p class="text-gray-500 text-sm mb-4">Compete head-to-head with friends and climb the ranks.</p>
-                  <button class="w-full bg-indigo-600 text-white py-3 rounded-xl font-bold hover:bg-indigo-700 shadow-lg shadow-indigo-200 transition-all active:scale-95">
-                    Challenge
+                  <h4 class="font-bold text-gray-900 text-sm md:text-base mb-1 md:mb-2">Challenge</h4>
+                  <p class="text-gray-500 text-[10px] md:text-sm mb-3 md:mb-4 line-clamp-2 md:line-clamp-none">Compete head-to-head with friends and climb the ranks.</p>
+                  <button class="w-full bg-indigo-600 text-white py-2 md:py-3 rounded-lg md:rounded-xl font-bold text-xs md:text-base hover:bg-indigo-700 shadow-lg shadow-indigo-200 transition-all active:scale-95">
+                    Invite
                   </button>
                 </div>
 
                 <!-- Daily Bible Trivia -->
-                <div class="bg-white rounded-2xl border border-gray-100 p-6 text-center hover:shadow-xl hover:border-yellow-500/20 transition-all duration-300 group relative">
-                  <span class="absolute top-4 right-4 bg-yellow-400 text-white text-[10px] font-black px-2 py-1 rounded-lg animate-pulse">2X POINTS</span>
-                  <div class="w-14 h-14 bg-yellow-50 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
-                    <i class="ri-flashlight-line text-yellow-600 text-2xl"></i>
+                <div class="bg-white rounded-2xl border border-gray-100 p-4 md:p-6 text-center hover:shadow-xl hover:border-yellow-500/20 transition-all duration-300 group relative">
+                  <span class="absolute top-2 right-2 md:top-4 md:right-4 bg-yellow-400 text-white text-[8px] md:text-[10px] font-black px-1.5 py-0.5 md:px-2 md:py-1 rounded-md md:rounded-lg animate-pulse">2X XP</span>
+                  <div class="w-10 h-10 md:w-14 md:h-14 bg-yellow-50 rounded-xl md:rounded-2xl flex items-center justify-center mx-auto mb-2 md:mb-4 group-hover:scale-110 transition-transform">
+                    <i class="ri-flashlight-line text-yellow-600 text-xl md:text-2xl"></i>
                   </div>
-                  <h4 class="font-bold text-gray-900 mb-2">Daily Trivia</h4>
-                  <p class="text-gray-500 text-sm mb-4">Answer today's special set of questions for bonus points!</p>
-                  <button class="w-full bg-yellow-500 text-white py-3 rounded-xl font-bold hover:bg-yellow-600 shadow-lg shadow-yellow-200 transition-all active:scale-95">
-                    Play Daily
+                  <h4 class="font-bold text-gray-900 text-sm md:text-base mb-1 md:mb-2">Daily Trivia</h4>
+                  <p class="text-gray-500 text-[10px] md:text-sm mb-3 md:mb-4 line-clamp-2 md:line-clamp-none">Answer today's special set of questions for bonus points!</p>
+                  <button class="w-full bg-yellow-500 text-white py-2 md:py-3 rounded-lg md:rounded-xl font-bold text-xs md:text-base hover:bg-yellow-600 shadow-lg shadow-yellow-200 transition-all active:scale-95">
+                    Play
                   </button>
                 </div>
 
                 <!-- Memory Verse -->
-                <div class="bg-white rounded-2xl border border-gray-100 p-6 text-center hover:shadow-xl hover:border-green-500/20 transition-all duration-300 group">
-                  <div class="w-14 h-14 bg-green-50 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
-                    <i class="ri-book-read-line text-green-600 text-2xl"></i>
+                <div class="bg-white rounded-2xl border border-gray-100 p-4 md:p-6 text-center hover:shadow-xl hover:border-green-500/20 transition-all duration-300 group">
+                  <div class="w-10 h-10 md:w-14 md:h-14 bg-green-50 rounded-xl md:rounded-2xl flex items-center justify-center mx-auto mb-2 md:mb-4 group-hover:scale-110 transition-transform">
+                    <i class="ri-book-read-line text-green-600 text-xl md:text-2xl"></i>
                   </div>
-                  <h4 class="font-bold text-gray-900 mb-2">Verse Memorizer</h4>
-                  <p class="text-gray-500 text-sm mb-4">Unscramble and memorize key verses from the Bible.</p>
-                  <button class="w-full bg-green-600 text-white py-3 rounded-xl font-bold hover:bg-green-700 shadow-lg shadow-green-200 transition-all active:scale-95">
+                  <h4 class="font-bold text-gray-900 text-sm md:text-base mb-1 md:mb-2">Memorizer</h4>
+                  <p class="text-gray-500 text-[10px] md:text-sm mb-3 md:mb-4 line-clamp-2 md:line-clamp-none">Unscramble and memorize key verses from the Bible.</p>
+                  <button class="w-full bg-green-600 text-white py-2 md:py-3 rounded-lg md:rounded-xl font-bold text-xs md:text-base hover:bg-green-700 shadow-lg shadow-green-200 transition-all active:scale-95">
                     Practice
                   </button>
                 </div>
 
                 <!-- Word Search -->
-                <div class="bg-white rounded-2xl border border-gray-100 p-6 text-center hover:shadow-xl hover:border-orange-500/20 transition-all duration-300 group">
-                  <div class="w-14 h-14 bg-orange-50 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
-                    <i class="ri-search-eye-line text-orange-600 text-2xl"></i>
+                <div class="bg-white rounded-2xl border border-gray-100 p-4 md:p-6 text-center hover:shadow-xl hover:border-orange-500/20 transition-all duration-300 group">
+                  <div class="w-10 h-10 md:w-14 md:h-14 bg-orange-50 rounded-xl md:rounded-2xl flex items-center justify-center mx-auto mb-2 md:mb-4 group-hover:scale-110 transition-transform">
+                    <i class="ri-search-eye-line text-orange-600 text-xl md:text-2xl"></i>
                   </div>
-                  <h4 class="font-bold text-gray-900 mb-2">Biblical Word Search</h4>
-                  <p class="text-gray-500 text-sm mb-4">Find names of prophets, cities, and miracles hidden in the grid.</p>
-                  <button class="w-full bg-orange-500 text-white py-3 rounded-xl font-bold hover:bg-orange-600 shadow-lg shadow-orange-200 transition-all active:scale-95">
-                    Find Words
+                  <h4 class="font-bold text-gray-900 text-sm md:text-base mb-1 md:mb-2">Word Search</h4>
+                  <p class="text-gray-500 text-[10px] md:text-sm mb-3 md:mb-4 line-clamp-2 md:line-clamp-none">Find names of prophets, cities, and miracles hidden in the grid.</p>
+                  <button class="w-full bg-orange-500 text-white py-2 md:py-3 rounded-lg md:rounded-xl font-bold text-xs md:text-base hover:bg-orange-600 shadow-lg shadow-orange-200 transition-all active:scale-95">
+                    Play
                   </button>
                 </div>
 
                 <!-- Parable Match -->
-                <div class="bg-white rounded-2xl border border-gray-100 p-6 text-center hover:shadow-xl hover:border-purple-500/20 transition-all duration-300 group">
-                  <div class="w-14 h-14 bg-purple-50 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
-                    <i class="ri-puzzle-line text-purple-600 text-2xl"></i>
+                <div class="bg-white rounded-2xl border border-gray-100 p-4 md:p-6 text-center hover:shadow-xl hover:border-purple-500/20 transition-all duration-300 group">
+                  <div class="w-10 h-10 md:w-14 md:h-14 bg-purple-50 rounded-xl md:rounded-2xl flex items-center justify-center mx-auto mb-2 md:mb-4 group-hover:scale-110 transition-transform">
+                    <i class="ri-puzzle-line text-purple-600 text-xl md:text-2xl"></i>
                   </div>
-                  <h4 class="font-bold text-gray-900 mb-2">Parable Puzzle</h4>
-                  <p class="text-gray-500 text-sm mb-4">Match Jesus' parables to their deep spiritual meanings.</p>
-                  <button class="w-full bg-purple-600 text-white py-3 rounded-xl font-bold hover:bg-purple-700 shadow-lg shadow-purple-200 transition-all active:scale-95">
-                    Solve Puzzle
+                  <h4 class="font-bold text-gray-900 text-sm md:text-base mb-1 md:mb-2">Parables</h4>
+                  <p class="text-gray-500 text-[10px] md:text-sm mb-3 md:mb-4 line-clamp-2 md:line-clamp-none">Match Jesus' parables to their deep spiritual meanings.</p>
+                  <button class="w-full bg-purple-600 text-white py-2 md:py-3 rounded-lg md:rounded-xl font-bold text-xs md:text-base hover:bg-purple-700 shadow-lg shadow-purple-200 transition-all active:scale-95">
+                    Solve
                   </button>
                 </div>
 
                 <!-- Team Quest -->
-                <div class="bg-white rounded-2xl border border-gray-100 p-6 text-center hover:shadow-xl hover:border-red-500/20 transition-all duration-300 group">
-                  <div class="w-14 h-14 bg-red-50 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
-                    <i class="ri-sword-line text-red-600 text-2xl"></i>
+                <div class="bg-white rounded-2xl border border-gray-100 p-4 md:p-6 text-center hover:shadow-xl hover:border-red-500/20 transition-all duration-300 group">
+                  <div class="w-10 h-10 md:w-14 md:h-14 bg-red-50 rounded-xl md:rounded-2xl flex items-center justify-center mx-auto mb-2 md:mb-4 group-hover:scale-110 transition-transform">
+                    <i class="ri-sword-line text-red-600 text-xl md:text-2xl"></i>
                   </div>
-                  <h4 class="font-bold text-gray-900 mb-2">Team Battle Royale</h4>
-                  <p class="text-gray-500 text-sm mb-4">Join your cell group and compete against other teams!</p>
-                  <button class="w-full bg-red-600 text-white py-3 rounded-xl font-bold hover:bg-red-700 shadow-lg shadow-red-200 transition-all active:scale-95">
-                    Join Battle
+                  <h4 class="font-bold text-gray-900 text-sm md:text-base mb-1 md:mb-2">Team Battle</h4>
+                  <p class="text-gray-500 text-[10px] md:text-sm mb-3 md:mb-4 line-clamp-2 md:line-clamp-none">Join your cell group and compete against other teams!</p>
+                  <button class="w-full bg-red-600 text-white py-2 md:py-3 rounded-lg md:rounded-xl font-bold text-xs md:text-base hover:bg-red-700 shadow-lg shadow-red-200 transition-all active:scale-95">
+                    Join
                   </button>
                 </div>
 
                 <!-- Practice Mode -->
-                <div class="bg-white rounded-2xl border border-gray-100 p-6 text-center hover:shadow-xl hover:border-slate-500/20 transition-all duration-300 group">
-                  <div class="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
-                    <i class="ri-book-open-line text-slate-600 text-2xl"></i>
+                <div class="bg-white rounded-2xl border border-gray-100 p-4 md:p-6 text-center hover:shadow-xl hover:border-slate-500/20 transition-all duration-300 group">
+                  <div class="w-10 h-10 md:w-14 md:h-14 bg-slate-50 rounded-xl md:rounded-2xl flex items-center justify-center mx-auto mb-2 md:mb-4 group-hover:scale-110 transition-transform">
+                    <i class="ri-book-open-line text-slate-600 text-xl md:text-2xl"></i>
                   </div>
-                  <h4 class="font-bold text-gray-900 mb-2">Free Practice</h4>
-                  <p class="text-gray-500 text-sm mb-4">Explore our entire library of questions with no limits.</p>
-                  <button class="w-full bg-slate-900 text-white py-3 rounded-xl font-bold hover:bg-slate-800 shadow-lg shadow-slate-200 transition-all active:scale-95">
-                    Enter Library
+                  <h4 class="font-bold text-gray-900 text-sm md:text-base mb-1 md:mb-2">Practice</h4>
+                  <p class="text-gray-500 text-[10px] md:text-sm mb-3 md:mb-4 line-clamp-2 md:line-clamp-none">Explore our entire library of questions with no limits.</p>
+                  <button class="w-full bg-slate-900 text-white py-2 md:py-3 rounded-lg md:rounded-xl font-bold text-xs md:text-base hover:bg-slate-800 shadow-lg shadow-slate-200 transition-all active:scale-95">
+                    Study
                   </button>
                 </div>
 
                 <!-- Character Quest -->
-                <div class="bg-white rounded-2xl border border-gray-100 p-6 text-center hover:shadow-xl hover:border-cyan-500/20 transition-all duration-300 group">
-                  <div class="w-14 h-14 bg-cyan-50 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
-                    <i class="ri-user-search-line text-cyan-600 text-2xl"></i>
+                <div class="bg-white rounded-2xl border border-gray-100 p-4 md:p-6 text-center hover:shadow-xl hover:border-cyan-500/20 transition-all duration-300 group">
+                  <div class="w-10 h-10 md:w-14 md:h-14 bg-cyan-50 rounded-xl md:rounded-2xl flex items-center justify-center mx-auto mb-2 md:mb-4 group-hover:scale-110 transition-transform">
+                    <i class="ri-user-search-line text-cyan-600 text-xl md:text-2xl"></i>
                   </div>
-                  <h4 class="font-bold text-gray-900 mb-2">Character Quest</h4>
-                  <p class="text-gray-500 text-sm mb-4">Guess the Bible character based on their life clues.</p>
-                  <button class="w-full bg-cyan-600 text-white py-3 rounded-xl font-bold hover:bg-cyan-700 shadow-lg shadow-cyan-200 transition-all active:scale-95">
-                    Start Quest
+                  <h4 class="font-bold text-gray-900 text-sm md:text-base mb-1 md:mb-2">Characters</h4>
+                  <p class="text-gray-500 text-[10px] md:text-sm mb-3 md:mb-4 line-clamp-2 md:line-clamp-none">Guess the Bible character based on their life clues.</p>
+                  <button class="w-full bg-cyan-600 text-white py-2 md:py-3 rounded-lg md:rounded-xl font-bold text-xs md:text-base hover:bg-cyan-700 shadow-lg shadow-cyan-200 transition-all active:scale-95">
+                    Guess
                   </button>
                 </div>
               </div>
@@ -307,19 +307,19 @@
                 <h3 class="text-xl font-bold text-gray-900">Daily Missions</h3>
                 <span class="text-xs font-bold text-primary bg-blue-50 px-2 py-1 rounded">{{ completed_missions_count }}/{{ total_missions_count }} DONE</span>
               </div>
-              <div class="space-y-4">
+              <div class="grid grid-cols-1 gap-3">
                 {% for um in missions %}
-                <div class="flex items-start gap-4">
-                  <div class="w-8 h-8 rounded-full {% if um.completed %}bg-green-100{% else %}bg-blue-100{% endif %} flex items-center justify-center flex-shrink-0 mt-1">
+                <div class="bg-blue-50/30 border border-blue-100/50 p-3 rounded-2xl flex items-start gap-4">
+                  <div class="w-8 h-8 rounded-full {% if um.completed %}bg-green-100{% else %}bg-blue-100{% endif %} flex items-center justify-center flex-shrink-0">
                     <i class="{% if um.completed %}ri-check-line text-green-600{% else %}{{ um.mission.icon_class }} text-primary{% endif %}"></i>
                   </div>
                   <div class="flex-1">
                     <div class="flex justify-between items-center mb-1">
-                      <p class="text-sm font-bold text-gray-900 {% if um.completed %}line-through opacity-50{% endif %}">{{ um.mission.title }}</p>
-                      <span class="text-[10px] font-black text-yellow-600 bg-yellow-50 px-2 py-0.5 rounded">+{{ um.mission.reward_points }}</span>
+                      <p class="text-xs font-bold text-gray-900 {% if um.completed %}line-through opacity-50{% endif %}">{{ um.mission.title }}</p>
+                      <span class="text-[8px] font-black text-yellow-600 bg-yellow-50 px-1.5 py-0.5 rounded">+{{ um.mission.reward_points }}</span>
                     </div>
-                    <div class="w-full bg-gray-100 rounded-full h-1.5">
-                      <div class="{% if um.completed %}bg-green-500{% else %}bg-primary{% endif %} h-1.5 rounded-full" style="width: {{ um.progress_percentage }}%"></div>
+                    <div class="w-full bg-gray-100 rounded-full h-1">
+                      <div class="{% if um.completed %}bg-green-500{% else %}bg-primary{% endif %} h-1 rounded-full" style="width: {{ um.progress_percentage }}%"></div>
                     </div>
                   </div>
                 </div>
