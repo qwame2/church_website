@@ -5,6 +5,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.sitemaps.views import sitemap
 from .sitemaps import StaticViewSitemap
+from django.views.generic import TemplateView
 from .views import home, church_news_archive, reading_page, youth_church_landing, gallery, book, map, menfellow, wemenfellow, youth, child, podcast
 
 # Define your sitemaps
@@ -15,7 +16,9 @@ sitemaps = {
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("game/", include("game.urls")),
-    path("subscribe/", include("newsletter.urls")),  
+    path("subscribe/", include("newsletter.urls")),
+    path("manifest.json", TemplateView.as_view(template_name="manifest.json", content_type="application/json")),
+    path("sw.js", TemplateView.as_view(template_name="sw.js", content_type="application/javascript")),
     path("", home, name="home"), 
     path('church-news-archive/', church_news_archive, name='church_news_archive'),
     path('youth-church-landing/', youth_church_landing, name='youth_church_landing'),
