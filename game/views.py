@@ -95,3 +95,16 @@ def game_dashboard(request):
         'progress_percentage': progress_percentage,
     }
     return render(request, "game.html", context)
+
+@login_required
+def tournaments_view(request):
+    profile, created = Profile.objects.get_or_create(user=request.user)
+    tournament = Tournament.objects.filter(active=True).first()
+    leaderboard = Profile.objects.order_by('-points')[:5]
+    
+    context = {
+        'profile': profile,
+        'tournament': tournament,
+        'leaderboard': leaderboard,
+    }
+    return render(request, "tournaments.html", context)

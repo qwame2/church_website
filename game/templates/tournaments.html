@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tournaments - Scripture Champions League</title>
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: { primary: "#1e40af", secondary: "#6b7280" },
+            borderRadius: {
+              none: "0px",
+              sm: "4px",
+              DEFAULT: "8px",
+              md: "12px",
+              lg: "16px",
+              xl: "20px",
+              "2xl": "24px",
+              "3xl": "32px",
+              full: "9999px",
+              button: "8px",
+            },
+          },
+        },
+      };
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
+    <style>
+      :where([class^="ri-"])::before {
+        content: "\f3c2";
+      }
+      body {
+        font-family: "Inter", sans-serif;
+      }
+      input[type="number"]::-webkit-inner-spin-button,
+      input[type="number"]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+      .custom-checkbox {
+        position: relative;
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+      }
+      .custom-checkbox input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+      .checkmark {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 20px;
+        height: 20px;
+        background-color: #fff;
+        border: 2px solid #d1d5db;
+        border-radius: 4px;
+        transition: all 0.2s ease;
+      }
+      .custom-checkbox input:checked ~ .checkmark {
+        background-color: #1e40af;
+        border-color: #1e40af;
+      }
+      .checkmark:after {
+        content: "";
+        position: absolute;
+        display: none;
+        left: 6px;
+        top: 2px;
+        width: 5px;
+        height: 10px;
+        border: solid white;
+        border-width: 0 2px 2px 0;
+        transform: rotate(45deg);
+      }
+      .custom-checkbox input:checked ~ .checkmark:after {
+        display: block;
+      }
+      .tournament-card {
+        transition: all 0.3s ease;
+      }
+      .tournament-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1),
+          0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      }
+      .filter-dropdown {
+        position: relative;
+      }
+      .dropdown-menu {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        z-index: 50;
+        min-width: 200px;
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+          0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        padding: 0.5rem 0;
+        margin-top: 0.5rem;
+      }
+      .filter-dropdown.active .dropdown-menu {
+        display: block;
+      }
+      .dropdown-item {
+        padding: 0.5rem 1rem;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .dropdown-item:hover {
+        background-color: #f3f4f6;
+      }
+      .dropdown-item.selected {
+        background-color: #e0e7ff;
+        color: #1e40af;
+      }
+      .tab-button {
+        position: relative;
+      }
+      .tab-button.active:after {
+        content: "";
+        position: absolute;
+        bottom: -12px;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background-color: #1e40af;
+      }
+      .featured-tournament {
+        background-image: linear-gradient(
+            to right,
+            rgba(30, 64, 175, 0.9),
+            rgba(30, 64, 175, 0.7)
+          ),
+          url("https://readdy.ai/api/search-image?query=A%2520dramatic%2520Bible%2520study%2520scene%2520with%2520people%2520gathered%2520around%2520an%2520open%2520Bible%2520with%2520soft%2520lighting%2520and%2520a%2520warm%2520atmosphere%252C%2520showing%2520community%2520and%2520learning%252C%2520high%2520quality%2520photorealistic%2520image%2520with%2520natural%2520colors%2520and%2520lighting&width=1200&height=400&seq=tournament1&orientation=landscape");
+        background-size: cover;
+        background-position: center;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-50 min-h-screen">
+    <!-- Header/Navigation -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+      <div
+        class="container mx-auto px-4 py-3 flex items-center justify-between"
+      >
+        <div class="flex items-center">
+          <h1 class="text-2xl font-['Pacifico'] text-primary mr-8">
+            Scripture Champions
+          </h1>
+          <nav class="hidden md:flex space-x-6">
+            <a
+              href="{% url 'game_dashboard' %}"
+              class="text-gray-600 hover:text-primary transition"
+              >Dashboard</a
+            >
+            <a href="{% url 'tournaments' %}" class="text-primary font-medium">Tournaments</a>
+            <a
+              href="#"
+              class="text-gray-600 hover:text-primary transition"
+              >Practice</a
+            >
+            <a href="#" class="text-gray-600 hover:text-primary transition"
+              >Leaderboard</a
+            >
+            <a href="#" class="text-gray-600 hover:text-primary transition"
+              >Community</a
+            >
+          </nav>
+        </div>
+        <div class="flex items-center space-x-4">
+          <div class="bg-blue-50 rounded-full px-3 py-1 flex items-center">
+            <div class="w-5 h-5 flex items-center justify-center text-primary">
+              <i class="ri-award-line"></i>
+            </div>
+            <span class="ml-1 text-primary font-medium">{{ profile.points }} pts</span>
+          </div>
+          <div class="relative">
+            <button
+              class="w-8 h-8 flex items-center justify-center text-gray-600 hover:text-primary transition relative"
+            >
+              <i class="ri-notification-3-line text-xl"></i>
+              <span
+                class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"
+              ></span>
+            </button>
+          </div>
+          <div class="flex items-center space-x-2">
+            <div class="w-8 h-8 bg-primary rounded-full overflow-hidden">
+              <img
+                src="https://ui-avatars.com/api/?name={{ request.user.username }}&background=1e40af&color=fff"
+                alt="Profile"
+                class="w-full h-full object-cover object-top"
+              />
+            </div>
+            <span class="hidden md:inline text-sm font-medium"
+              >{{ request.user.username }}</span
+            >
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Page Title and Filters -->
+    <section class="bg-white border-b border-gray-200">
+      <div class="container mx-auto px-4 py-6">
+        <div
+          class="flex flex-col md:flex-row md:items-center md:justify-between mb-6"
+        >
+          <div>
+            <h2 class="text-2xl font-bold text-gray-900">
+              Bible Knowledge Tournaments
+            </h2>
+            <p class="text-gray-600 mt-1">
+              Compete with others and test your Scripture knowledge
+            </p>
+          </div>
+          <div class="mt-4 md:mt-0">
+            <div class="relative">
+              <input
+                type="text"
+                placeholder="Search tournaments..."
+                class="w-full md:w-64 px-4 py-2 pr-10 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+              />
+              <div
+                class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+              >
+                <i class="ri-search-line"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-4">
+          <div class="filter-dropdown" id="category-filter">
+            <button
+              class="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg text-sm bg-white hover:bg-gray-50 transition whitespace-nowrap !rounded-button"
+            >
+              <i class="ri-filter-3-line text-gray-500"></i>
+              <span>Category: All</span>
+              <i class="ri-arrow-down-s-line text-gray-500"></i>
+            </button>
+            <div class="dropdown-menu">
+              <div class="dropdown-item selected" data-value="all">
+                All Categories
+              </div>
+              <div class="dropdown-item" data-value="old-testament">
+                Old Testament
+              </div>
+              <div class="dropdown-item" data-value="new-testament">
+                New Testament
+              </div>
+              <div class="dropdown-item" data-value="bible-characters">
+                Bible Characters
+              </div>
+              <div class="dropdown-item" data-value="biblical-themes">
+                Biblical Themes
+              </div>
+              <div class="dropdown-item" data-value="church-history">
+                Church History
+              </div>
+            </div>
+          </div>
+
+          <div class="filter-dropdown" id="status-filter">
+            <button
+              class="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg text-sm bg-white hover:bg-gray-50 transition whitespace-nowrap !rounded-button"
+            >
+              <i class="ri-time-line text-gray-500"></i>
+              <span>Status: All</span>
+              <i class="ri-arrow-down-s-line text-gray-500"></i>
+            </button>
+            <div class="dropdown-menu">
+              <div class="dropdown-item selected" data-value="all">
+                All Statuses
+              </div>
+              <div class="dropdown-item" data-value="ongoing">Ongoing</div>
+              <div class="dropdown-item" data-value="upcoming">Upcoming</div>
+              <div class="dropdown-item" data-value="completed">Completed</div>
+            </div>
+          </div>
+
+          <div class="filter-dropdown" id="difficulty-filter">
+            <button
+              class="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg text-sm bg-white hover:bg-gray-50 transition whitespace-nowrap !rounded-button"
+            >
+              <i class="ri-bar-chart-line text-gray-500"></i>
+              <span>Difficulty: All</span>
+              <i class="ri-arrow-down-s-line text-gray-500"></i>
+            </button>
+            <div class="dropdown-menu">
+              <div class="dropdown-item selected" data-value="all">
+                All Difficulties
+              </div>
+              <div class="dropdown-item" data-value="easy">Easy</div>
+              <div class="dropdown-item" data-value="medium">Medium</div>
+              <div class="dropdown-item" data-value="hard">Hard</div>
+              <div class="dropdown-item" data-value="expert">Expert</div>
+            </div>
+          </div>
+
+          <div class="ml-auto hidden md:flex">
+            <button
+              class="flex items-center space-x-2 px-4 py-2 bg-primary text-white rounded-lg text-sm hover:bg-blue-800 transition whitespace-nowrap !rounded-button"
+            >
+              <i class="ri-calendar-event-line"></i>
+              <span>My Tournaments</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Featured Tournament -->
+    <section class="py-8">
+      <div class="container mx-auto px-4">
+        <div class="featured-tournament rounded-xl overflow-hidden shadow-lg">
+          <div class="p-8 md:p-10 text-white">
+            <div
+              class="flex flex-col md:flex-row md:items-center md:justify-between"
+            >
+              <div class="mb-6 md:mb-0 md:mr-8">
+                <div
+                  class="inline-block px-3 py-1 bg-yellow-500 text-white text-xs font-semibold rounded-full mb-4"
+                >
+                  FEATURED TOURNAMENT
+                </div>
+                <h3 class="text-3xl font-bold mb-2">
+                  Scriptures Through the Ages
+                </h3>
+                <p class="text-blue-100 mb-4 max-w-xl">
+                  Explore the historical context of Biblical texts from Genesis
+                  to Revelation in this comprehensive tournament.
+                </p>
+
+                <div class="flex flex-wrap gap-4 mb-6">
+                  <div class="flex items-center">
+                    <div class="w-5 h-5 flex items-center justify-center mr-2">
+                      <i class="ri-calendar-line"></i>
+                    </div>
+                    <span>{{ tournament.name }} - Ends {{ tournament.end_date|date:"M d, Y" }}</span>
+                  </div>
+                  <div class="flex items-center">
+                    <div class="w-5 h-5 flex items-center justify-center mr-2">
+                      <i class="ri-user-line"></i>
+                    </div>
+                    <span>248 participants</span>
+                  </div>
+                  <div class="flex items-center">
+                    <div class="w-5 h-5 flex items-center justify-center mr-2">
+                      <i class="ri-trophy-line"></i>
+                    </div>
+                    <span>Prize: 5,000 points + Gold Badge</span>
+                  </div>
+                </div>
+
+                <button
+                  class="px-6 py-3 bg-white text-primary font-medium rounded-lg hover:bg-gray-100 transition shadow-md whitespace-nowrap !rounded-button"
+                >
+                  Join Tournament
+                </button>
+              </div>
+
+              <div class="bg-white bg-opacity-20 rounded-lg p-4 w-full md:w-64">
+                <div class="text-center mb-4">
+                  <h4 class="font-semibold mb-1">Tournament Progress</h4>
+                  <p class="text-sm text-blue-100">{{ tournament.status }}</p>
+                </div>
+
+                <div class="mb-4">
+                  <div class="flex justify-between text-sm mb-1">
+                    <span>Registration</span>
+                    <span>75% Complete</span>
+                  </div>
+                  <div class="w-full bg-white bg-opacity-30 rounded-full h-2">
+                    <div
+                      class="bg-yellow-500 h-2 rounded-full"
+                      style="width: 75%"
+                    ></div>
+                  </div>
+                </div>
+
+                <div class="text-center text-sm">
+                  <p class="mb-1">Tournament ends in:</p>
+                  <div class="flex justify-center gap-2 text-white">
+                    <div class="bg-blue-800 bg-opacity-50 rounded px-2 py-1">
+                      <span class="font-bold">{{ tournament.days_left }}</span>
+                      <span>days</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tournament Tabs -->
+    <section class="py-4">
+      <div class="container mx-auto px-4">
+        <div class="border-b border-gray-200">
+          <div class="flex space-x-8">
+            <button class="tab-button active py-4 text-primary font-medium">
+              Upcoming
+            </button>
+            <button class="tab-button py-4 text-gray-600 hover:text-gray-900">
+              Ongoing
+            </button>
+            <button class="tab-button py-4 text-gray-600 hover:text-gray-900">
+              Completed
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tournament Cards -->
+    <section class="py-8">
+      <div class="container mx-auto px-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <!-- Tournament Card 1 -->
+          <div
+            class="tournament-card bg-white rounded-xl overflow-hidden shadow-md border border-gray-100"
+          >
+            <div class="h-40 bg-blue-600 relative overflow-hidden">
+              <img
+                src="https://readdy.ai/api/search-image?query=An%2520open%2520Bible%2520with%2520the%2520book%2520of%2520Psalms%2520visible%2C%2520surrounded%2520by%2520study%2520materials%2520and%2520soft%2520natural%2520lighting%2C%2520creating%2520a%2520peaceful%2520study%2520atmosphere%2C%2520high%2520quality%2520photorealistic%2520image%2520with%2520warm%2520colors%2520and%2520shallow%2520depth%2520of%2520field&width=400&height=200&seq=tournament2&orientation=landscape"
+                alt="Psalms Tournament"
+                class="w-full h-full object-cover object-top"
+              />
+              <div
+                class="absolute top-3 right-3 bg-yellow-500 text-white text-xs font-semibold px-2 py-1 rounded-full"
+              >
+                UPCOMING
+              </div>
+            </div>
+
+            <div class="p-5">
+              <div class="flex justify-between items-start mb-3">
+                <h3 class="text-lg font-bold text-gray-900">
+                  Psalms Deep Dive
+                </h3>
+                <span
+                  class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full"
+                  >Easy</span
+                >
+              </div>
+
+              <p class="text-gray-600 text-sm mb-4">
+                Explore the beauty and depth of the Psalms in this
+                beginner-friendly tournament.
+              </p>
+
+              <div class="space-y-2 mb-4">
+                <div class="flex items-center text-sm text-gray-600">
+                  <div
+                    class="w-5 h-5 flex items-center justify-center mr-2 text-gray-400"
+                  >
+                    <i class="ri-calendar-line"></i>
+                  </div>
+                  <span>June 1 - June 10, 2026</span>
+                </div>
+                <div class="flex items-center text-sm text-gray-600">
+                  <div
+                    class="w-5 h-5 flex items-center justify-center mr-2 text-gray-400"
+                  >
+                    <i class="ri-user-line"></i>
+                  </div>
+                  <span>87 participants registered</span>
+                </div>
+                <div class="flex items-center text-sm text-gray-600">
+                  <div
+                    class="w-5 h-5 flex items-center justify-center mr-2 text-gray-400"
+                  >
+                    <i class="ri-trophy-line"></i>
+                  </div>
+                  <span>Prize: 1,000 points + Badge</span>
+                </div>
+              </div>
+
+              <button
+                class="w-full py-2 bg-primary text-white font-medium rounded-lg hover:bg-blue-800 transition whitespace-nowrap !rounded-button"
+              >
+                Join Tournament
+              </button>
+            </div>
+          </div>
+
+          <!-- Tournament Card 2 -->
+          <div
+            class="tournament-card bg-white rounded-xl overflow-hidden shadow-md border border-gray-100"
+          >
+            <div class="h-40 bg-indigo-600 relative overflow-hidden">
+              <img
+                src="https://readdy.ai/api/search-image?query=A%2520detailed%2520map%2520of%2520ancient%2520Israel%2520and%2520surrounding%2520regions%2520during%2520Biblical%2520times%2C%2520with%2520key%2520locations%2520marked%2C%2520parchment-like%2520texture%2C%2520soft%2520lighting%2C%2520high%2520quality%2520photorealistic%2520image%2520with%2520warm%2520earthy%2520tones&width=400&height=200&seq=tournament3&orientation=landscape"
+                alt="Paul's Journeys Tournament"
+                class="w-full h-full object-cover object-top"
+              />
+              <div
+                class="absolute top-3 right-3 bg-blue-500 text-white text-xs font-semibold px-2 py-1 rounded-full"
+              >
+                UPCOMING
+              </div>
+            </div>
+
+            <div class="p-5">
+              <div class="flex justify-between items-start mb-3">
+                <h3 class="text-lg font-bold text-gray-900">
+                  Paul's Missionary Journeys
+                </h3>
+                <span
+                  class="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full"
+                  >Medium</span
+                >
+              </div>
+
+              <p class="text-gray-600 text-sm mb-4">
+                Test your knowledge of Paul's travels and the early church in
+                this exciting tournament.
+              </p>
+
+              <div class="space-y-2 mb-4">
+                <div class="flex items-center text-sm text-gray-600">
+                  <div
+                    class="w-5 h-5 flex items-center justify-center mr-2 text-gray-400"
+                  >
+                    <i class="ri-calendar-line"></i>
+                  </div>
+                  <span>June 5 - June 20, 2026</span>
+                </div>
+                <div class="flex items-center text-sm text-gray-600">
+                  <div
+                    class="w-5 h-5 flex items-center justify-center mr-2 text-gray-400"
+                  >
+                    <i class="ri-user-line"></i>
+                  </div>
+                  <span>124 participants registered</span>
+                </div>
+                <div class="flex items-center text-sm text-gray-600">
+                  <div
+                    class="w-5 h-5 flex items-center justify-center mr-2 text-gray-400"
+                  >
+                    <i class="ri-trophy-line"></i>
+                  </div>
+                  <span>Prize: 2,000 points + Silver Badge</span>
+                </div>
+              </div>
+
+              <button
+                class="w-full py-2 bg-primary text-white font-medium rounded-lg hover:bg-blue-800 transition whitespace-nowrap !rounded-button"
+              >
+                Join Tournament
+              </button>
+            </div>
+          </div>
+
+          <!-- Tournament Card 3 -->
+          <div
+            class="tournament-card bg-white rounded-xl overflow-hidden shadow-md border border-gray-100"
+          >
+            <div class="h-40 bg-red-600 relative overflow-hidden">
+              <img
+                src="https://readdy.ai/api/search-image?query=A%2520detailed%2520scene%2520of%2520the%2520book%2520of%2520Revelation%2C%2520with%2520symbolic%2520imagery%2520including%2520scrolls%2C%2520seals%2C%2520and%2520heavenly%2520elements%2C%2520dramatic%2520lighting%2C%2520high%2520quality%2520photorealistic%2520image%2520with%2520rich%2520colors%2520and%2520mystical%2520atmosphere&width=400&height=200&seq=tournament4&orientation=landscape"
+                alt="Revelation Tournament"
+                class="w-full h-full object-cover object-top"
+              />
+              <div
+                class="absolute top-3 right-3 bg-red-500 text-white text-xs font-semibold px-2 py-1 rounded-full"
+              >
+                STARTS SOON
+              </div>
+            </div>
+
+            <div class="p-5">
+              <div class="flex justify-between items-start mb-3">
+                <h3 class="text-lg font-bold text-gray-900">
+                  Revelation Challenge
+                </h3>
+                <span
+                  class="bg-red-100 text-red-800 text-xs px-2 py-1 rounded-full"
+                  >Hard</span
+                >
+              </div>
+
+              <p class="text-gray-600 text-sm mb-4">
+                Dive into the prophetic imagery and symbolism of Revelation in
+                this advanced tournament.
+              </p>
+
+              <div class="space-y-2 mb-4">
+                <div class="flex items-center text-sm text-gray-600">
+                  <div
+                    class="w-5 h-5 flex items-center justify-center mr-2 text-gray-400"
+                  >
+                    <i class="ri-calendar-line"></i>
+                  </div>
+                  <span>June 12 - July 3, 2026</span>
+                </div>
+                <div class="flex items-center text-sm text-gray-600">
+                  <div
+                    class="w-5 h-5 flex items-center justify-center mr-2 text-gray-400"
+                  >
+                    <i class="ri-user-line"></i>
+                  </div>
+                  <span>62 participants registered</span>
+                </div>
+                <div class="flex items-center text-sm text-gray-600">
+                  <div
+                    class="w-5 h-5 flex items-center justify-center mr-2 text-gray-400"
+                  >
+                    <i class="ri-trophy-line"></i>
+                  </div>
+                  <span>Prize: 3,000 points + Gold Badge</span>
+                </div>
+              </div>
+
+              <button
+                class="w-full py-2 bg-primary text-white font-medium rounded-lg hover:bg-blue-800 transition whitespace-nowrap !rounded-button"
+              >
+                Join Tournament
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-8 text-center">
+          <button
+            class="px-6 py-3 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition whitespace-nowrap !rounded-button"
+          >
+            Load More Tournaments
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Leaderboard Section -->
+    <section class="py-8 bg-gray-50 border-t border-gray-200">
+      <div class="container mx-auto px-4">
+        <div class="max-w-4xl mx-auto">
+          <div class="flex items-center justify-between mb-6">
+            <h2 class="text-2xl font-bold text-gray-900">
+              Tournament Leaderboard
+            </h2>
+            <a href="#" class="text-primary hover:text-blue-700 font-medium"
+              >View Full Leaderboard</a
+            >
+          </div>
+
+          <div class="bg-white rounded-xl shadow-md overflow-hidden">
+            <div class="p-6">
+              <div class="flex items-center justify-between mb-4">
+                <h3 class="font-semibold text-gray-900">
+                  Top Performers This Month
+                </h3>
+                <div class="flex items-center text-sm text-gray-600">
+                  <div
+                    class="w-5 h-5 flex items-center justify-center mr-1 text-gray-400"
+                  >
+                    <i class="ri-trophy-line"></i>
+                  </div>
+                  <span>May 2026</span>
+                </div>
+              </div>
+
+              <div class="space-y-4">
+                {% for entry in leaderboard %}
+                <div class="flex items-center p-3 {% if forloop.first %}bg-yellow-50{% else %}bg-gray-50{% endif %} rounded-lg">
+                  <div
+                    class="w-8 h-8 flex items-center justify-center {% if forloop.first %}bg-yellow-500{% elif forloop.counter == 2 %}bg-gray-400{% elif forloop.counter == 3 %}bg-orange-500{% else %}bg-gray-200{% endif %} text-white rounded-full font-bold mr-3"
+                  >
+                    {{ forloop.counter }}
+                  </div>
+                  <div
+                    class="w-10 h-10 bg-gray-200 rounded-full overflow-hidden mr-4"
+                  >
+                    <img
+                      src="https://ui-avatars.com/api/?name={{ entry.user.username }}&background=random"
+                      alt="User"
+                      class="w-full h-full object-cover object-top"
+                    />
+                  </div>
+                  <div class="flex-grow">
+                    <h4 class="font-medium text-gray-900">{{ entry.user.username }} {% if entry.user == request.user %}(You){% endif %}</h4>
+                    <p class="text-sm text-gray-600">
+                      Champion Rank
+                    </p>
+                  </div>
+                  <div class="text-right">
+                    <div class="font-bold text-primary text-xl">{{ entry.points }}</div>
+                    <div class="text-xs text-gray-500">points</div>
+                  </div>
+                </div>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tournament Statistics -->
+    <section class="py-8 bg-white">
+      <div class="container mx-auto px-4">
+        <div class="max-w-4xl mx-auto">
+          <div class="flex items-center justify-between mb-6">
+            <h2 class="text-2xl font-bold text-gray-900">
+              Tournament Statistics
+            </h2>
+            <div class="flex space-x-2">
+              <button
+                class="px-3 py-1 text-sm border border-gray-300 rounded-full bg-white text-gray-700 hover:bg-gray-50 transition whitespace-nowrap !rounded-button"
+              >
+                This Month
+              </button>
+              <button
+                class="px-3 py-1 text-sm border border-gray-300 rounded-full bg-white text-gray-700 hover:bg-gray-50 transition whitespace-nowrap !rounded-button"
+              >
+                All Time
+              </button>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-white rounded-xl shadow-md overflow-hidden">
+              <div class="p-4 border-b border-gray-100">
+                <h3 class="font-semibold text-gray-900">
+                  Tournament Participation
+                </h3>
+              </div>
+              <div class="p-4">
+                <div id="participation-chart" class="w-full h-64"></div>
+              </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-md overflow-hidden">
+              <div class="p-4 border-b border-gray-100">
+                <h3 class="font-semibold text-gray-900">
+                  Tournament Categories
+                </h3>
+              </div>
+              <div class="p-4">
+                <div id="categories-chart" class="w-full h-64"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section class="py-12 bg-gray-50 border-t border-gray-200">
+      <div class="container mx-auto px-4 text-center">
+        <h2 class="text-3xl font-bold text-gray-900 mb-4">
+          Ready to Test Your Bible Knowledge?
+        </h2>
+        <p class="text-gray-600 mb-8 max-w-2xl mx-auto">
+          Join our tournaments to compete with others, earn points, and become a
+          Scripture Champion!
+        </p>
+        <div class="flex flex-col sm:flex-row justify-center gap-4">
+          <a
+            href="{% url 'game_dashboard' %}"
+            class="px-6 py-3 bg-white text-primary font-medium rounded-lg border border-primary hover:bg-blue-50 transition whitespace-nowrap !rounded-button"
+          >
+            Practice First
+          </a>
+          <button
+            class="px-6 py-3 bg-primary text-white font-medium rounded-lg hover:bg-blue-800 transition shadow-md whitespace-nowrap !rounded-button"
+          >
+            Join a Tournament
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <script id="dropdown-handler">
+      document.addEventListener("DOMContentLoaded", function () {
+        // Handle dropdowns
+        const dropdowns = document.querySelectorAll(".filter-dropdown");
+
+        dropdowns.forEach((dropdown) => {
+          const button = dropdown.querySelector("button");
+          const menu = dropdown.querySelector(".dropdown-menu");
+          const items = dropdown.querySelectorAll(".dropdown-item");
+          const labelSpan = button.querySelector(
+            "span:not(.ri-arrow-down-s-line)"
+          );
+          const originalLabel = labelSpan.textContent.split(":")[0];
+
+          button.addEventListener("click", function (e) {
+            e.stopPropagation();
+            dropdown.classList.toggle("active");
+
+            // Close other dropdowns
+            dropdowns.forEach((otherDropdown) => {
+              if (otherDropdown !== dropdown) {
+                otherDropdown.classList.remove("active");
+              }
+            });
+          });
+
+          items.forEach((item) => {
+            item.addEventListener("click", function () {
+              // Update selected state
+              items.forEach((i) => i.classList.remove("selected"));
+              item.classList.add("selected");
+
+              // Update button label
+              const value = item.textContent;
+              labelSpan.textContent = `${originalLabel}: ${value}`;
+
+              // Close dropdown
+              dropdown.classList.remove("active");
+            });
+          });
+        });
+
+        // Close dropdowns when clicking outside
+        document.addEventListener("click", function () {
+          dropdowns.forEach((dropdown) => {
+            dropdown.classList.remove("active");
+          });
+        });
+
+        // Tab switching
+        const tabButtons = document.querySelectorAll(".tab-button");
+
+        tabButtons.forEach((button) => {
+          button.addEventListener("click", function () {
+            tabButtons.forEach((btn) => {
+              btn.classList.remove("active");
+              btn.classList.remove("text-primary");
+              btn.classList.add("text-gray-600");
+            });
+
+            button.classList.add("active");
+            button.classList.remove("text-gray-600");
+            button.classList.add("text-primary");
+          });
+        });
+      });
+    </script>
+
+    <script id="chart-initialization">
+      document.addEventListener("DOMContentLoaded", function () {
+        // Initialize participation chart
+        const participationChart = echarts.init(
+          document.getElementById("participation-chart")
+        );
+        const participationOption = {
+          animation: false,
+          tooltip: {
+            trigger: "axis",
+            backgroundColor: "rgba(255, 255, 255, 0.9)",
+            borderColor: "#e5e7eb",
+            textStyle: {
+              color: "#1f2937",
+            },
+          },
+          grid: {
+            left: "3%",
+            right: "4%",
+            bottom: "3%",
+            top: "3%",
+            containLabel: true,
+          },
+          xAxis: {
+            type: "category",
+            boundaryGap: false,
+            data: ["Jan", "Feb", "Mar", "Apr", "May"],
+            axisLine: {
+              lineStyle: {
+                color: "#d1d5db",
+              },
+            },
+            axisLabel: {
+              color: "#1f2937",
+            },
+          },
+          yAxis: {
+            type: "value",
+            axisLine: {
+              lineStyle: {
+                color: "#d1d5db",
+              },
+            },
+            axisLabel: {
+              color: "#1f2937",
+            },
+            splitLine: {
+              lineStyle: {
+                color: "#e5e7eb",
+              },
+            },
+          },
+          series: [
+            {
+              name: "Participants",
+              type: "line",
+              smooth: true,
+              lineStyle: {
+                width: 3,
+                color: "rgba(87, 181, 231, 1)",
+              },
+              areaStyle: {
+                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                  {
+                    offset: 0,
+                    color: "rgba(87, 181, 231, 0.2)",
+                  },
+                  {
+                    offset: 1,
+                    color: "rgba(87, 181, 231, 0.0)",
+                  },
+                ]),
+              },
+              data: [320, 450, 380, 520, 720],
+              symbol: "none",
+            },
+            {
+              name: "Tournaments",
+              type: "line",
+              smooth: true,
+              lineStyle: {
+                width: 3,
+                color: "rgba(141, 211, 199, 1)",
+              },
+              areaStyle: {
+                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                  {
+                    offset: 0,
+                    color: "rgba(141, 211, 199, 0.2)",
+                  },
+                  {
+                    offset: 1,
+                    color: "rgba(141, 211, 199, 0.0)",
+                  },
+                ]),
+              },
+              data: [10, 12, 8, 15, 18],
+              symbol: "none",
+            },
+          ],
+        };
+        participationChart.setOption(participationOption);
+
+        // Initialize categories chart
+        const categoriesChart = echarts.init(
+          document.getElementById("categories-chart")
+        );
+        const categoriesOption = {
+          animation: false,
+          tooltip: {
+            trigger: "item",
+            backgroundColor: "rgba(255, 255, 255, 0.9)",
+            borderColor: "#e5e7eb",
+            textStyle: {
+              color: "#1f2937",
+            },
+          },
+          legend: {
+            orient: "horizontal",
+            bottom: 0,
+            left: "center",
+            textStyle: {
+              color: "#1f2937",
+            },
+          },
+          series: [
+            {
+              name: "Tournament Categories",
+              type: "pie",
+              radius: ["40%", "70%"],
+              avoidLabelOverlap: false,
+              itemStyle: {
+                borderRadius: 8,
+                borderColor: "#fff",
+                borderWidth: 2,
+              },
+              label: {
+                show: false,
+              },
+              emphasis: {
+                label: {
+                  show: true,
+                  fontSize: 14,
+                  fontWeight: "bold",
+                },
+              },
+              labelLine: {
+                show: false,
+              },
+              data: [
+                {
+                  value: 35,
+                  name: "Old Testament",
+                  itemStyle: { color: "rgba(87, 181, 231, 1)" },
+                },
+                {
+                  value: 30,
+                  name: "New Testament",
+                  itemStyle: { color: "rgba(141, 211, 199, 1)" },
+                },
+                {
+                  value: 15,
+                  name: "Bible Characters",
+                  itemStyle: { color: "rgba(251, 191, 114, 1)" },
+                },
+                {
+                  value: 20,
+                  name: "Biblical Themes",
+                  itemStyle: { color: "rgba(252, 141, 98, 1)" },
+                },
+              ],
+            },
+          ],
+        };
+        categoriesChart.setOption(categoriesOption);
+
+        // Handle resize
+        window.addEventListener("resize", function () {
+          participationChart.resize();
+          categoriesChart.resize();
+        });
+      });
+    </script>
+  </body>
+</html>
