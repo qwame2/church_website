@@ -20,9 +20,32 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
         .rounded-button { border-radius: 9999px; }
+        
+        /* Mobile-app optimizations */
+        html {
+            -webkit-tap-highlight-color: transparent;
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            padding-bottom: env(safe-area-inset-bottom, 0);
+        }
+
+        @media (max-width: 768px) {
+            .mobile-nav-active {
+                color: #1e40af;
+            }
+            .mobile-nav-active i {
+                transform: translateY(-4px);
+                transition: transform 0.2s ease-out;
+            }
+            .content-container {
+                padding-bottom: 80px; /* Spacer for bottom nav */
+            }
+        }
     </style>
 </head>
-<body class="bg-gray-50">
+<body class="bg-gray-50 content-container">
     <header class="bg-white shadow-sm sticky top-0 z-50">
       <div class="container mx-auto px-4 py-3 flex items-center justify-between">
         <div class="flex items-center">
@@ -336,5 +359,40 @@
         </div>
       </div>
     </section>
+
+    <!-- Mobile Bottom Navigation -->
+    <div class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-6 py-3 flex justify-between items-center z-50 shadow-[0_-4px_10px_rgba(0,0,0,0.05)] pb-[calc(12px+env(safe-area-inset-bottom))]">
+      <a href="{% url 'game_dashboard' %}" class="flex flex-col items-center gap-1 mobile-nav-active">
+        <i class="ri-home-5-fill text-xl"></i>
+        <span class="text-[10px] font-bold uppercase tracking-widest">Home</span>
+      </a>
+      <a href="{% url 'tournaments' %}" class="flex flex-col items-center gap-1 text-gray-400">
+        <i class="ri-trophy-line text-xl"></i>
+        <span class="text-[10px] font-bold uppercase tracking-widest">League</span>
+      </a>
+      <div class="relative -mt-8 flex flex-col items-center">
+        <button class="w-14 h-14 bg-primary text-white rounded-full shadow-lg shadow-primary/30 flex items-center justify-center border-4 border-white active:scale-90 transition-transform">
+          <i class="ri-play-fill text-2xl"></i>
+        </button>
+      </div>
+      <a href="#" class="flex flex-col items-center gap-1 text-gray-400">
+        <i class="ri-medal-line text-xl"></i>
+        <span class="text-[10px] font-bold uppercase tracking-widest">Rank</span>
+      </a>
+      <a href="#" class="flex flex-col items-center gap-1 text-gray-400">
+        <i class="ri-user-3-line text-xl"></i>
+        <span class="text-[10px] font-bold uppercase tracking-widest">Profile</span>
+      </a>
+    </div>
+
+    <script>
+        // Simple script to handle bottom nav active state locally if needed
+        document.querySelectorAll('.md\\:hidden a').forEach(link => {
+            link.addEventListener('click', function() {
+                // In a real app, this state would be handled by the backend/router
+                // but we add it here for immediate tactile feedback
+            });
+        });
+    </script>
 </body>
 </html>
