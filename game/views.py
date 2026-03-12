@@ -54,12 +54,13 @@ def game_dashboard(request):
     game_list = Game.objects.filter(active=True)
     
     # Get user missions
-    all_user_missions = UserMission.objects.filter(user=request.user)
-    completed_missions = all_user_missions.filter(completed=True).count()
-    missions = all_user_missions[:3]
+    all_user_missions_qs = UserMission.objects.filter(user=request.user)
+    completed_missions = all_user_missions_qs.filter(completed=True).count()
+    missions = all_user_missions_qs[:3]
     
     # Get recent activities
-    activities = Activity.objects.filter(user=request.user)[:5]
+    activities_qs = Activity.objects.filter(user=request.user)
+    activities = activities_qs[:5]
     
     # Get active tournament
     tournament = Tournament.objects.filter(active=True).first()
@@ -86,7 +87,7 @@ def game_dashboard(request):
         'games': game_list,
         'missions': missions,
         'completed_missions_count': completed_missions,
-        'total_missions_count': all_user_missions.count(),
+        'total_missions_count': all_user_missions_qs.count(),
         'activities': activities,
         'leaderboard': leaderboard,
         'user_rank': user_rank,

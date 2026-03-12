@@ -1,9 +1,10 @@
 {
   "name": "Scripture Champions Church",
-  "short_name": "Scripture Champions",
+  "short_name": "Scripture",
   "description": "The official webapp for Scripture Champions Church - Join the quest for knowledge.",
   "start_url": "/",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#ffffff",
   "theme_color": "#1e40af",
   "icons": [
@@ -11,11 +12,17 @@
       "src": "/static/img/logo.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "maskable"
     },
     {
       "src": "/static/img/logo.png",
       "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/static/img/logo.png",
+      "sizes": "180x180",
       "type": "image/png"
     }
   ]
