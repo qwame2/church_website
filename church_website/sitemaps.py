@@ -21,7 +21,7 @@ class StaticViewSitemap(Sitemap):
             'child', 
             'reading_page', 
             'podcast', 
-            'game',
+            
         ]
 
     def location(self, item):
