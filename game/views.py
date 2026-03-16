@@ -3,8 +3,10 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .models import Profile, Game
+from django.views.decorators.cache import never_cache
+from .models import Profile, Game, UserMission, Activity, Tournament
 
+@never_cache
 def register_view(request):
     if request.method == 'POST':
         u = request.POST.get('username')
@@ -26,6 +28,7 @@ def register_view(request):
     
     return render(request, 'register.html')
 
+@never_cache
 def login_view(request):
     if request.method == 'POST':
         u = request.POST.get('username')
@@ -40,13 +43,13 @@ def login_view(request):
             
     return render(request, 'login.html')
 
+@never_cache
 def logout_view(request):
     logout(request)
     return redirect('login')
 
-from .models import Profile, Game, UserMission, Activity, Tournament
-
-@login_required
+@never_cache
+@login_required(login_url='login')
 def game_dashboard(request):
     profile, created = Profile.objects.get_or_create(user=request.user)
     
@@ -97,7 +100,8 @@ def game_dashboard(request):
     }
     return render(request, "game.html", context)
 
-@login_required
+@never_cache
+@login_required(login_url='login')
 def tournaments_view(request):
     profile, created = Profile.objects.get_or_create(user=request.user)
     tournament = Tournament.objects.filter(active=True).first()
