@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     'game',
 ]
 MIDDLEWARE = [
+    'church_website.middleware.CDNNoCacheMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -117,4 +118,3 @@ if not DEBUG:
 # Session Management Settings
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 SESSION_COOKIE_AGE = 3600  # 1 hour absolute max duration
-SESSION_SAVE_EVERY_REQUEST = True
