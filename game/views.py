@@ -46,7 +46,11 @@ def login_view(request):
 @never_cache
 def logout_view(request):
     logout(request)
-    return redirect('login')
+    next_page = request.GET.get('next', 'login')
+    # If next_page starts with /, interpret it as a raw path, otherwise it's a view name
+    if next_page.startswith('/'):
+        return redirect(next_page)
+    return redirect(next_page)
 
 @never_cache
 @login_required(login_url='login')

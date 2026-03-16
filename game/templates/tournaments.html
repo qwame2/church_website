@@ -184,7 +184,7 @@
         class="container mx-auto px-4 py-3 flex items-center justify-between"
       >
         <div class="flex items-center">
-          <a href="{% url 'home' %}" class="flex items-center justify-center w-8 h-8 rounded-full hover:bg-gray-100 text-gray-600 transition mr-2 md:mr-3" title="Back to Main Site">
+          <a href="{% url 'logout' %}?next={% url 'home' %}" class="flex items-center justify-center w-8 h-8 rounded-full hover:bg-gray-100 text-gray-600 transition mr-2 md:mr-3" title="Back to Main Site">
             <i class="ri-arrow-left-line text-xl"></i>
           </a>
           <h1 class="text-lg md:text-2xl font-['Pacifico'] text-primary mr-2 md:mr-8 whitespace-nowrap">
