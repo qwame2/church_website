@@ -5,6 +5,7 @@
 <!-- Primary SEO -->
 {% include 'pwa_tags.html' %}
 <title>HOME – THE CHURCH OF CHRIST (SM)</title>
+<link rel="canonical" href="https://www.thecocsm.org{{ request.path }}" />
 <link
   rel="icon"
   type="image/png"
@@ -26,11 +27,13 @@
 <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "Organization",
+    "@type": "Church",
     "name": "The Church of Christ (SM)",
     "alternateName": "The Church of Christ Spiritual Movement",
-    "url": "https://www.thecocsm.org",
+    "url": "https://www.thecocsm.org/",
     "logo": "https://www.thecocsm.org/static/img/thecocsm.png",
+    "image": "https://www.thecocsm.org/static/img/thecocsm.png",
+    "description": "Welcome to The Church of Christ (SM). Join us for worship, powerful sermons, Bible study, prayer meetings, and spiritual growth in Christ.",
     "sameAs": [
       "https://www.facebook.com/",
       "https://www.youtube.com/",
@@ -45,7 +48,12 @@
     "@type": "WebSite",
     "name": "The Church of Christ (SM)",
     "alternateName": "Church of Christ SM",
-    "url": "https://www.thecocsm.org"
+    "url": "https://www.thecocsm.org/",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://www.thecocsm.org/search?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
   }
 </script>
 
@@ -461,6 +469,7 @@
   .line-clamp-2 {
     display: -webkit-box;
     -webkit-line-clamp: 2;
+    line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
   }

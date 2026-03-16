@@ -4,13 +4,16 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.sitemaps.views import sitemap
-from .sitemaps import StaticViewSitemap
+from .sitemaps import HighPrioritySitemap, MediumPrioritySitemap, StandardPrioritySitemap, GameSectionSitemap
 from django.views.generic import TemplateView
 from .views import home, church_news_archive, reading_page, youth_church_landing, gallery, book, map, menfellow, wemenfellow, youth, child, podcast
 
 # Define your sitemaps
 sitemaps = {
-    "static": StaticViewSitemap,
+    "high_priority": HighPrioritySitemap,
+    "medium_priority": MediumPrioritySitemap,
+    "standard": StandardPrioritySitemap,
+    "game": GameSectionSitemap,
 }
 
 urlpatterns = [
