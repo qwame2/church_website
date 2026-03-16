@@ -395,5 +395,32 @@
             });
         });
     </script>
+    <script>
+        // Active logout mechanism on refresh or exiting game section
+        window.isInternalGameNav = false;
+        
+        // Listen to all link clicks
+        document.addEventListener('click', function(e) {
+            let anchor = e.target.closest('a');
+            if (anchor) {
+                let href = anchor.getAttribute('href');
+                // Check if they are clicking a link connecting them to another game view (or a blank # link)
+                if (href && (href.includes("{% url 'game_dashboard' %}") || href.includes("{% url 'tournaments' %}") || href === "#")) {
+                    window.isInternalGameNav = true;
+                }
+            }
+        });
+        
+        document.addEventListener('submit', function(e) {
+            window.isInternalGameNav = true;
+        });
+
+        // Fire request to logout instantly on unload if it wasn't an internal click
+        window.addEventListener('beforeunload', function(e) {
+            if (!window.isInternalGameNav) {
+                navigator.sendBeacon("{% url 'logout' %}");
+            }
+        });
+    </script>
 </body>
 </html>
